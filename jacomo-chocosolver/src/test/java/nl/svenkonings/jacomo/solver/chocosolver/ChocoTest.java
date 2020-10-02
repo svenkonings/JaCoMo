@@ -3,16 +3,16 @@ package nl.svenkonings.jacomo.solver.chocosolver;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.model.Model;
+import nl.svenkonings.jacomo.model.VarList;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.solvers.chocosolver.ChocoSolver;
-import nl.svenkonings.jacomo.variables.Var;
 import nl.svenkonings.jacomo.variables.integer.BoundedIntVar;
 import nl.svenkonings.jacomo.variables.integer.ConstantIntVar;
 import nl.svenkonings.jacomo.variables.integer.IntVar;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("ConstantConditions")
 public class ChocoTest {
@@ -27,17 +27,10 @@ public class ChocoTest {
         Constraint constraint = new BoolExprConstraint(var1.lt(var2));
         model.addConstraint(constraint);
         Solver solver = new ChocoSolver();
-        List<Var> result = solver.solve(model);
-        assertEquals(result.size(), 2);
-        for (Var var : result) {
-            IntVar intVar = (IntVar) var;
-            if (intVar.getName().equals("var1")) {
-                assertEquals(intVar.getValue(), 3);
-            } else if (intVar.getName().equals("var2")) {
-                assertTrue(intVar.getValue() > 3);
-            } else {
-                fail();
-            }
-        }
+        VarList result = solver.solve(model);
+        var1 = (IntVar) result.getVar("var1");
+        assertEquals(var1.getValue(), 3);
+        var2 = (IntVar) result.getVar("var2");
+        assertTrue(var2.getValue() > 3);
     }
 }

@@ -2,47 +2,57 @@ package nl.svenkonings.jacomo.model;
 
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.DuplicateNameException;
+import nl.svenkonings.jacomo.exceptions.NameNotFoundException;
 import nl.svenkonings.jacomo.variables.Var;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Model {
-    private final @NotNull List<Var> vars;
+    private final @NotNull VarList vars;
     private final @NotNull List<Constraint> constraints;
 
     public Model() {
-        vars = new ArrayList<>();
+        vars = new VarList();
         constraints = new ArrayList<>();
     }
 
-    public @NotNull List<Var> getVars() {
-        return Collections.unmodifiableList(vars);
-    }
-
-    public @NotNull List<Constraint> getConstraints() {
-        return Collections.unmodifiableList(constraints);
-    }
-
     public boolean containsVar(@NotNull String name) {
-        return vars.stream().anyMatch(var -> var.getName().equals(name));
+        return vars.containsVar(name);
+    }
+
+    public @Nullable Var getVar(@NotNull String name) {
+        return vars.getVar(name);
+    }
+
+    public @NotNull List<Var> getVars() {
+        return vars.getVars();
     }
 
     public void addVar(@NotNull Var var) throws DuplicateNameException {
-        if (containsVar(var.getName())) {
-            throw new DuplicateNameException("Var with name %s already exists", var.getName());
-        }
-        vars.add(var);
+        vars.addVar(var);
+    }
+
+    public boolean removeVar(@NotNull String name) {
+        return vars.removeVar(name);
     }
 
     public void addConstraint(@NotNull Constraint constraint) {
         constraints.add(constraint);
     }
 
-    public boolean removeVar(@NotNull String name) {
-        return vars.removeIf(var -> var.getName().equals(name));
+    public void updateVar(Var newVar) throws NameNotFoundException {
+        vars.updateVar(newVar);
+    }
+
+    public @NotNull List<Constraint> getConstraints() {
+        return Collections.unmodifiableList(constraints);
     }
 
     public boolean removeConstraint(@NotNull Constraint constraint) {
@@ -50,11 +60,11 @@ public class Model {
     }
 
     public <T> List<T> visitVars(@NotNull Visitor<T> visitor) {
-        return vars.stream().map(visitor::visit).collect(Collectors.toList());
+        return getVars().stream().map(visitor::visit).collect(Collectors.toList());
     }
 
     public <T> List<T> visitConstraints(@NotNull Visitor<T> visitor) {
-        return constraints.stream().map(visitor::visit).collect(Collectors.toList());
+        return getConstraints().stream().map(visitor::visit).collect(Collectors.toList());
     }
 
     public <T> List<T> visitAll(@NotNull Visitor<T> visitor) {
@@ -65,7 +75,7 @@ public class Model {
 
     @Override
     public String toString() {
-        return String.format("Model(vars: %d, constraints: %d)", vars.size(), constraints.size());
+        return String.format("Model(vars: %d, constraints: %d)", getVars().size(), getConstraints().size());
     }
 
     @Override
