@@ -1,6 +1,8 @@
 package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.UnknownTypeException;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
@@ -24,6 +26,15 @@ public interface Visitor<T> {
             result = visit(child);
         }
         return result;
+    }
+
+    // Constraints
+    default T visitConstraint(Constraint constraint) {
+        return visitElem(constraint);
+    }
+
+    default T visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
+        return visitConstraint(boolExprConstraint);
     }
 
     // Expressions
@@ -171,6 +182,10 @@ public interface Visitor<T> {
         switch (elem.getType()) {
             case Elem:
                 return visitElem(elem);
+            case Constraint:
+                return visitConstraint((Constraint) elem);
+            case BoolExprConstraint:
+                return visitBoolExprConstraint((BoolExprConstraint) elem);
             // Expressions
             case Expr:
                 return visitExpr((Expr) elem);

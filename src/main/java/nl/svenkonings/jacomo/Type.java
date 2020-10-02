@@ -2,6 +2,9 @@ package nl.svenkonings.jacomo;
 
 public enum Type {
     Elem,
+    // Constraints
+    Constraint,
+    BoolExprConstraint,
     // Expressions
     Expr,
     // Bool expressions
