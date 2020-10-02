@@ -131,4 +131,19 @@ public class BoundedIntVar implements UpdatableIntVar {
     public String toString() {
         return intVarString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoundedIntVar that = (BoundedIntVar) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(lowerBound, that.lowerBound) &&
+                Objects.equals(upperBound, that.upperBound);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, lowerBound, upperBound);
+    }
 }

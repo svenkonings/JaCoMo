@@ -45,4 +45,23 @@ public class EqExpr implements ReBoolExpr {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "(" + left + " == " + right + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EqExpr eqExpr = (EqExpr) o;
+        return Objects.equals(left, eqExpr.left) &&
+                Objects.equals(right, eqExpr.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
+    }
 }

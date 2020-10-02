@@ -5,6 +5,8 @@ import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @SuppressWarnings("ConstantConditions")
 public class AndExpr implements BiBoolExpr {
     private final @NotNull BoolExpr left;
@@ -42,5 +44,24 @@ public class AndExpr implements BiBoolExpr {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + left + " && " + right + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AndExpr andExpr = (AndExpr) o;
+        return Objects.equals(left, andExpr.left) &&
+                Objects.equals(right, andExpr.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 }

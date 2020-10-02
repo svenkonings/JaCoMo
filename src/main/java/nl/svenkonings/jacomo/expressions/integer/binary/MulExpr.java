@@ -5,6 +5,8 @@ import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @SuppressWarnings("ConstantConditions")
 public class MulExpr implements BiIntExpr {
 
@@ -71,5 +73,24 @@ public class MulExpr implements BiIntExpr {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + left + " * " + right + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MulExpr mulExpr = (MulExpr) o;
+        return Objects.equals(left, mulExpr.left) &&
+                Objects.equals(right, mulExpr.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 }

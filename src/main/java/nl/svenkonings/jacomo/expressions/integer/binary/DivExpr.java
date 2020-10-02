@@ -5,6 +5,8 @@ import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @SuppressWarnings("ConstantConditions")
 public class DivExpr implements BiIntExpr {
 
@@ -71,5 +73,24 @@ public class DivExpr implements BiIntExpr {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + left + " / " + right + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DivExpr divExpr = (DivExpr) o;
+        return Objects.equals(left, divExpr.left) &&
+                Objects.equals(right, divExpr.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ConstantBoolVar implements BoolVar {
     private final @NotNull String name;
@@ -45,5 +46,19 @@ public class ConstantBoolVar implements BoolVar {
     @Override
     public String toString() {
         return boolVarString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstantBoolVar that = (ConstantBoolVar) o;
+        return value == that.value &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, value);
     }
 }

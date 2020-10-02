@@ -60,4 +60,18 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
     public String toString() {
         return boolVarString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InstantiatableBoolVar that = (InstantiatableBoolVar) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, value);
+    }
 }

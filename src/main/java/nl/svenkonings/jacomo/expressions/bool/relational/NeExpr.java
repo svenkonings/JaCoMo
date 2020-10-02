@@ -45,4 +45,23 @@ public class NeExpr implements ReBoolExpr {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "(" + left + " != " + right + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NeExpr neExpr = (NeExpr) o;
+        return Objects.equals(left, neExpr.left) &&
+                Objects.equals(right, neExpr.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
+    }
 }
