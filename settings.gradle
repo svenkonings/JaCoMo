@@ -1,2 +1,4 @@
 rootProject.name = 'JaCoMo'
 include 'jacomo'
+include 'jacomo-chocosolver'
+

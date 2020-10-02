@@ -3,6 +3,7 @@ package nl.svenkonings.jacomo.visitor;
 import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
+import nl.svenkonings.jacomo.exceptions.SolveException;
 import nl.svenkonings.jacomo.exceptions.UnknownTypeException;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
@@ -21,11 +22,7 @@ import nl.svenkonings.jacomo.variables.integer.*;
 public interface Visitor<T> {
     // Elements
     default T visitElem(Elem elem) {
-        T result = null;
-        for (Elem child : elem.getChildren()) {
-            result = visit(child);
-        }
-        return result;
+        throw new SolveException("Element type not supported by this visitor: %s", elem.getType());
     }
 
     // Constraints

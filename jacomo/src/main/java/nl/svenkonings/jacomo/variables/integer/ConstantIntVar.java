@@ -4,7 +4,6 @@ import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +39,7 @@ public class ConstantIntVar implements IntVar {
     }
 
     @Override
-    public @Nullable Integer getValue() {
+    public @NotNull Integer getValue() {
         return value;
     }
 
@@ -50,7 +49,7 @@ public class ConstantIntVar implements IntVar {
     }
 
     @Override
-    public @Nullable Integer getLowerBound() {
+    public @NotNull Integer getLowerBound() {
         return value;
     }
 
@@ -60,7 +59,7 @@ public class ConstantIntVar implements IntVar {
     }
 
     @Override
-    public @Nullable Integer getUpperBound() {
+    public @NotNull Integer getUpperBound() {
         return value;
     }
 
