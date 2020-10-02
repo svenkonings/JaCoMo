@@ -178,7 +178,7 @@ public interface Visitor<T> {
         return visitUpdatableIntVar(boundedIntVar);
     }
 
-    default T visit(Elem elem) {
+    default T visit(Elem elem) throws UnknownTypeException {
         switch (elem.getType()) {
             case Elem:
                 return visitElem(elem);
