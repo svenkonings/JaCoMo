@@ -1,10 +1,13 @@
 package nl.svenkonings.jacomo.variables.integer;
 
+import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.exceptions.ContradictionException;
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,13 +50,13 @@ public class BoundedIntVar implements UpdatableIntVar {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
+    public @NotNull List<? extends Elem> getChildren() {
+        return ListUtil.of();
     }
 
     @Override
-    public @Nullable IntExpr getExpression() {
-        return null;
+    public @NotNull Type getType() {
+        return Type.BoundedIntVar;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class BoundedIntVar implements UpdatableIntVar {
     }
 
     @Override
-    public void updateValue(int value) throws ContradictionException {
+    public void instantiateValue(int value) throws ContradictionException {
         if (lowerBound != null && value < lowerBound) {
             throw new ContradictionException("New value %d is lower than lower bound %d", value, lowerBound);
         }

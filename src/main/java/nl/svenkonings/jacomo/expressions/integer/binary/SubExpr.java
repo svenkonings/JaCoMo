@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.expressions.integer.binary;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,11 @@ public class SubExpr implements BiIntExpr {
     public SubExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public @NotNull Type getType() {
+        return Type.SubExpr;
     }
 
     @Override

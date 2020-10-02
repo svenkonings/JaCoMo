@@ -1,8 +1,12 @@
 package nl.svenkonings.jacomo.variables.bool;
 
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.Type;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConstantBoolVar implements BoolVar {
     private final @NotNull String name;
@@ -19,13 +23,13 @@ public class ConstantBoolVar implements BoolVar {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
+    public @NotNull List<? extends Elem> getChildren() {
+        return ListUtil.of();
     }
 
     @Override
-    public @Nullable BoolExpr getExpression() {
-        return null;
+    public @NotNull Type getType() {
+        return Type.ConstantBoolVar;
     }
 
     @Override

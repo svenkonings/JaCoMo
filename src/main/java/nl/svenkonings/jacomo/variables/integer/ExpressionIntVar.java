@@ -1,8 +1,12 @@
 package nl.svenkonings.jacomo.variables.integer;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ExpressionIntVar implements IntVar {
 
@@ -19,14 +23,18 @@ public class ExpressionIntVar implements IntVar {
         return name;
     }
 
-    @Override
-    public boolean hasExpression() {
-        return true;
+    public @NotNull IntExpr getExpression() {
+        return expression;
     }
 
     @Override
-    public @NotNull IntExpr getExpression() {
-        return expression;
+    public @NotNull List<IntExpr> getChildren() {
+        return ListUtil.of(expression);
+    }
+
+    @Override
+    public @NotNull Type getType() {
+        return Type.ExpressionIntVar;
     }
 
     @Override

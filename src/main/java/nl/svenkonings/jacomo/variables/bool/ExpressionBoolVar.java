@@ -1,8 +1,12 @@
 package nl.svenkonings.jacomo.variables.bool;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ExpressionBoolVar implements BoolVar {
     private final @NotNull String name;
@@ -18,14 +22,18 @@ public class ExpressionBoolVar implements BoolVar {
         return name;
     }
 
-    @Override
-    public boolean hasExpression() {
-        return true;
+    public @NotNull BoolExpr getExpression() {
+        return expression;
     }
 
     @Override
-    public @NotNull BoolExpr getExpression() {
-        return expression;
+    public @NotNull List<BoolExpr> getChildren() {
+        return ListUtil.of(expression);
+    }
+
+    @Override
+    public @NotNull Type getType() {
+        return Type.ExpressionBoolVar;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.expressions.bool.binary;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,11 @@ public class OrExpr implements BiBoolExpr {
     public OrExpr(@NotNull BoolExpr left, @NotNull BoolExpr right) {
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public @NotNull Type getType() {
+        return Type.OrExpr;
     }
 
     @Override

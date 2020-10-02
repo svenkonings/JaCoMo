@@ -1,8 +1,12 @@
 package nl.svenkonings.jacomo.variables.integer;
 
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.Type;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConstantIntVar implements IntVar {
 
@@ -20,13 +24,13 @@ public class ConstantIntVar implements IntVar {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
+    public @NotNull List<? extends Elem> getChildren() {
+        return ListUtil.of();
     }
 
     @Override
-    public @Nullable IntExpr getExpression() {
-        return null;
+    public @NotNull Type getType() {
+        return Type.ConstantIntVar;
     }
 
     @Override

@@ -1,11 +1,18 @@
 package nl.svenkonings.jacomo.expressions.integer;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.relational.*;
 import nl.svenkonings.jacomo.expressions.integer.binary.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IntExpr extends Expr {
+    @Override
+    default @NotNull Type getType() {
+        return Type.IntExpr;
+    }
+
     boolean hasValue();
 
     @Nullable Integer getValue();

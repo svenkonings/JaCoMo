@@ -1,13 +1,15 @@
 package nl.svenkonings.jacomo.variables.integer;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.variables.Var;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public interface IntVar extends Var, IntExpr {
-    boolean hasExpression();
-
-    @Nullable IntExpr getExpression();
+    @Override
+    default @NotNull Type getType() {
+        return Type.IntVar;
+    }
 
     default String intVarString() {
         String name = getName();

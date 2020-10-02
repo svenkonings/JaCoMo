@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.expressions.bool.relational;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,11 @@ public class NeExpr implements ReBoolExpr {
     public NeExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public @NotNull Type getType() {
+        return Type.NeExpr;
     }
 
     @Override

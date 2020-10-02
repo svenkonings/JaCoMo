@@ -1,10 +1,13 @@
 package nl.svenkonings.jacomo.variables.bool;
 
+import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.exceptions.ContradictionException;
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class InstantiatableBoolVar implements UpdatableBoolVar {
@@ -26,13 +29,13 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
+    public @NotNull List<? extends Elem> getChildren() {
+        return ListUtil.of();
     }
 
     @Override
-    public @Nullable BoolExpr getExpression() {
-        return null;
+    public @NotNull Type getType() {
+        return Type.InstantiatableBoolVar;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
     }
 
     @Override
-    public void updateValue(boolean value) throws ContradictionException {
+    public void instantiateValue(boolean value) throws ContradictionException {
         if (this.value != null && !Objects.equals(this.value, value)) {
             throw new ContradictionException("Value already instantiated");
         }
