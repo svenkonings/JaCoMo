@@ -4,10 +4,12 @@ import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.exceptions.UnknownTypeException;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.expressions.bool.relational.*;
+import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.expressions.integer.binary.*;
 import nl.svenkonings.jacomo.variables.Var;
@@ -32,6 +34,10 @@ public interface Visitor<T> {
     // Bool expressions
     default T visitBoolExpr(BoolExpr boolExpr) {
         return visitExpr(boolExpr);
+    }
+
+    default T visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
+        return visitBoolExpr(constantBoolExpr);
     }
 
     // Binary bool expressions
@@ -79,6 +85,10 @@ public interface Visitor<T> {
     // Int expressions
     default T visitIntExpr(IntExpr intExpr) {
         return visitExpr(intExpr);
+    }
+
+    default T visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
+        return visitIntExpr(constantIntExpr);
     }
 
     // Binary int expressions
@@ -167,6 +177,8 @@ public interface Visitor<T> {
             // Bool expressions
             case BoolExpr:
                 return visitBoolExpr((BoolExpr) elem);
+            case ConstantBoolExpr:
+                return visitConstantBoolExpr((ConstantBoolExpr) elem);
             // Binary bool expressions
             case BiBoolExpr:
                 return visitBiBoolExpr((BiBoolExpr) elem);
@@ -192,6 +204,8 @@ public interface Visitor<T> {
             // Int expressions
             case IntExpr:
                 return visitIntExpr((IntExpr) elem);
+            case ConstantIntExpr:
+                return visitConstantIntExpr((ConstantIntExpr) elem);
             // Binary int expressions
             case BiIntExpr:
                 return visitBiIntExpr((BiIntExpr) elem);

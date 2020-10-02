@@ -6,6 +6,7 @@ public enum Type {
     Expr,
     // Bool expressions
     BoolExpr,
+    ConstantBoolExpr,
     // Binary bool expressions
     BiBoolExpr,
     AndExpr,
@@ -20,6 +21,7 @@ public enum Type {
     LeExpr,
     // Int expressions
     IntExpr,
+    ConstantIntExpr,
     // Binary int expressions
     BiIntExpr,
     AddExpr,
