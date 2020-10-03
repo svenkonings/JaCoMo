@@ -36,9 +36,9 @@ viable product release is as follows:
       - [x] Minimum
       - [x] Maximum
   - [x] Boolean constraints
-- [ ] Model factory methods for creating variables
+- [x] Model factory methods for creating variables
 - [x] Visitor pattern for traversing the model
-- [x] Solver implementations
+- [ ] Solver implementations
   - [x] ChocoSolver
   - [ ] OR-tools
 - [ ] Unit-test for non-trivial classes and system tests
