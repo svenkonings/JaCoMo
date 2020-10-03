@@ -7,11 +7,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represent an Or boolean expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class OrExpr implements BiBoolExpr {
     private final @NotNull BoolExpr left;
     private final @NotNull BoolExpr right;
 
+    /**
+     * Create a new Or boolean expression.
+     *
+     * @param left  the left-hand side of the Or expression
+     * @param right the right-hand side of the Or expression
+     */
     public OrExpr(@NotNull BoolExpr left, @NotNull BoolExpr right) {
         this.left = left;
         this.right = right;

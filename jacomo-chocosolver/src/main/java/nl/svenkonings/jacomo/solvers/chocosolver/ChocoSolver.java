@@ -1,9 +1,9 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
-import nl.svenkonings.jacomo.exceptions.SolveException;
-import nl.svenkonings.jacomo.exceptions.UnknownTypeException;
+import nl.svenkonings.jacomo.exceptions.checked.SolveException;
+import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
 import nl.svenkonings.jacomo.model.Model;
-import nl.svenkonings.jacomo.model.VarList;
+import nl.svenkonings.jacomo.model.VarMap;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.variables.Var;
 import nl.svenkonings.jacomo.variables.bool.ConstantBoolVar;
@@ -13,15 +13,25 @@ import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Solver implementation using ChocoSolver.
+ */
 public class ChocoSolver implements Solver {
+
+    /**
+     * Create a new ChocoSolver solver.
+     */
+    public ChocoSolver() {
+    }
+
     @Override
-    public @NotNull VarList solve(@NotNull Model model) throws SolveException {
+    public @NotNull VarMap solve(@NotNull Model model) throws SolveException {
         ChocoVisitor visitor = new ChocoVisitor();
         model.visitAll(visitor);
         if (!visitor.getModel().getSolver().solve()) {
             throw new SolveException("Could not find a solution");
         }
-        VarList result = new VarList();
+        VarMap result = new VarMap();
         visitor.getVars().forEach((name, variable) -> result.addVar(chocoToJaCoMo(name, variable)));
         return result;
     }

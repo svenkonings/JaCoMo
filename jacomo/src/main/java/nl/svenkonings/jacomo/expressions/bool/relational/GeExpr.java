@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents a Greater-or-equals expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class GeExpr implements ReBoolExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Greater-or-equals boolean expression.
+     *
+     * @param left  the left-hand side of the Greater-or-equals expression
+     * @param right the right-hand side of the Greater-or-equals expression
+     */
     public GeExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

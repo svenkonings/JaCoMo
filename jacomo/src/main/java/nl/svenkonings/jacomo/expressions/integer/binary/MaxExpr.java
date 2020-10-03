@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Maximum expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class MaxExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Maximum integer expression.
+     *
+     * @param left  the left-hand side of the Maximum expression
+     * @param right the right-hand side of the Maximum expression
+     */
     public MaxExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

@@ -3,8 +3,8 @@ package nl.svenkonings.jacomo.visitor;
 import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
-import nl.svenkonings.jacomo.exceptions.SolveException;
-import nl.svenkonings.jacomo.exceptions.UnknownTypeException;
+import nl.svenkonings.jacomo.exceptions.unchecked.NotImplementedException;
+import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
@@ -22,7 +22,7 @@ import nl.svenkonings.jacomo.variables.integer.*;
 public interface Visitor<T> {
     // Elements
     default T visitElem(Elem elem) {
-        throw new SolveException("Element type not supported by this visitor: %s", elem.getType());
+        throw new NotImplementedException("Element type not supported by this visitor: %s", elem.getType());
     }
 
     // Constraints
@@ -175,6 +175,14 @@ public interface Visitor<T> {
         return visitUpdatableIntVar(boundedIntVar);
     }
 
+    /**
+     * Visits the specified element. This method will select which visit method
+     * to use based on the result of {@link Elem#getType()}.
+     *
+     * @param elem the specified element
+     * @return the result of the selected visit method
+     * @throws UnknownTypeException if the element type is not known by this visitor
+     */
     default T visit(Elem elem) throws UnknownTypeException {
         switch (elem.getType()) {
             case Elem:

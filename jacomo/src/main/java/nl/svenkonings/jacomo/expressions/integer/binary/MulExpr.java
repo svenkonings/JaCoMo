@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Multiplication expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class MulExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Multiplication integer expression.
+     *
+     * @param left  the left-hand side of the Multiplication expression
+     * @param right the right-hand side of the Multiplication expression
+     */
     public MulExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

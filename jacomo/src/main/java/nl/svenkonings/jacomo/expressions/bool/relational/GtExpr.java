@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents a Greater-than expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class GtExpr implements ReBoolExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Greater-than boolean expression.
+     *
+     * @param left  the left-hand side of the Greater-than expression
+     * @param right the right-hand side of the Greater-than expression
+     */
     public GtExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

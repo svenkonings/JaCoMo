@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Minimum expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class MinExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Minimum integer expression.
+     *
+     * @param left  the left-hand side of the Minimum expression
+     * @param right the right-hand side of the Minimum expression
+     */
     public MinExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

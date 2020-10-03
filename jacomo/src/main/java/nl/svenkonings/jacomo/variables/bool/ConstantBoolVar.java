@@ -9,10 +9,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a constant boolean variable.
+ */
 public class ConstantBoolVar implements BoolVar {
     private final @NotNull String name;
     private final boolean value;
 
+    /**
+     * Create a new constant boolean variable with the specified name and value.
+     *
+     * @param name  the specified name
+     * @param value the specified value
+     */
     public ConstantBoolVar(@NotNull String name, boolean value) {
         this.name = name;
         this.value = value;

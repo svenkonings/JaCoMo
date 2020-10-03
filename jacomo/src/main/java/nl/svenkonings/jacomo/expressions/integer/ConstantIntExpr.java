@@ -9,10 +9,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a constant integer expression.
+ */
 public class ConstantIntExpr implements IntExpr {
 
     private final int value;
 
+    /**
+     * Create a new constant integer expression with the specified value.
+     *
+     * @param value the specified value
+     */
     public ConstantIntExpr(int value) {
         this.value = value;
     }

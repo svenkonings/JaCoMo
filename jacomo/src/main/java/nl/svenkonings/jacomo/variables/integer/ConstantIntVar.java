@@ -8,11 +8,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a constant integer variable.
+ */
 public class ConstantIntVar implements IntVar {
 
     private final @NotNull String name;
     private final int value;
 
+    /**
+     * Create a new constant integer variable with the specified name and value.
+     *
+     * @param name  the specified name
+     * @param value the specified value
+     */
     public ConstantIntVar(@NotNull String name, int value) {
         this.name = name;
         this.value = value;

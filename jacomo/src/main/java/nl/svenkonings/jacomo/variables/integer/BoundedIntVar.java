@@ -2,7 +2,7 @@ package nl.svenkonings.jacomo.variables.integer;
 
 import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.Type;
-import nl.svenkonings.jacomo.exceptions.ContradictionException;
+import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a integer variable. The variable has an optional lower and upper bound.
+ * Represents a bounded integer variable. The variable has an optional lower and upper bound.
  * If both bounds are equal, the variable represents a single value.
  * Boundaries can only be tightened and never loosened.
  */
@@ -23,18 +23,37 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     private @Nullable Integer upperBound;
 
+    /**
+     * Create a new integer variable with the specified name.
+     * The bounds are left undefined.
+     *
+     * @param name the specified name
+     */
     public BoundedIntVar(@NotNull String name) {
         this.name = name;
         this.lowerBound = null;
         this.upperBound = null;
     }
 
+    /**
+     * Create a new integer variable with the specified name and value.
+     *
+     * @param name  the specified name
+     * @param value the specified value
+     */
     public BoundedIntVar(@NotNull String name, @Nullable Integer value) {
         this.name = name;
         this.lowerBound = value;
         this.upperBound = value;
     }
 
+    /**
+     * Create a new integer variable with the specified name, lower- and upper-bound.
+     *
+     * @param name       the specified name
+     * @param lowerBound the specified lower-bound
+     * @param upperBound the specified upper-bound
+     */
     public BoundedIntVar(@NotNull String name, @Nullable Integer lowerBound, @Nullable Integer upperBound) throws ContradictionException {
         this.name = name;
         if (lowerBound != null && upperBound != null && lowerBound > upperBound) {

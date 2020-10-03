@@ -2,7 +2,7 @@ package nl.svenkonings.jacomo.variables.bool;
 
 import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.Type;
-import nl.svenkonings.jacomo.exceptions.ContradictionException;
+import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,14 +10,28 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represent a boolean variable which can be left undefined or instantiated later.
+ */
 public class InstantiatableBoolVar implements UpdatableBoolVar {
     private final @NotNull String name;
     private @Nullable Boolean value;
 
+    /**
+     * Creates a new undefined boolean variable with the specified name.
+     *
+     * @param name the specified name
+     */
     public InstantiatableBoolVar(@NotNull String name) {
         this(name, null);
     }
 
+    /**
+     * Creates a new boolean variable with the specified name and value.
+     *
+     * @param name  the specified name
+     * @param value the specified value
+     */
     public InstantiatableBoolVar(@NotNull String name, @Nullable Boolean value) {
         this.name = name;
         this.value = value;
@@ -40,7 +54,7 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
 
     @Override
     public boolean hasValue() {
-        return true;
+        return value != null;
     }
 
     @Override

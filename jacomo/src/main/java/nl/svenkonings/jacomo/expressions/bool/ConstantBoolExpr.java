@@ -9,10 +9,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a constant boolean expression.
+ */
 public class ConstantBoolExpr implements BoolExpr {
 
     private final boolean value;
 
+    /**
+     * Create a new constant boolean expression with the specified value.
+     *
+     * @param value the specified value
+     */
     public ConstantBoolExpr(boolean value) {
         this.value = value;
     }

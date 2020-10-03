@@ -8,13 +8,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represent a constraint using a boolean expression.
+ */
 public class BoolExprConstraint implements Constraint {
     private final @NotNull BoolExpr expr;
 
+    /**
+     * Create a constraint with the specified expression.
+     *
+     * @param expr the specified expression
+     */
     public BoolExprConstraint(@NotNull BoolExpr expr) {
         this.expr = expr;
     }
 
+    /**
+     * Returns the expression of this constraint.
+     *
+     * @return the expression of this constraint
+     */
     public @NotNull BoolExpr getExpr() {
         return expr;
     }

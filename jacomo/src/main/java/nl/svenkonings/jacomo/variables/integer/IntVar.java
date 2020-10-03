@@ -5,12 +5,20 @@ import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.variables.Var;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a named integer variable.
+ */
 public interface IntVar extends Var, IntExpr {
     @Override
     default @NotNull Type getType() {
         return Type.IntVar;
     }
 
+    /**
+     * Returns a string representation of this variable.
+     *
+     * @return a string representation of this variable
+     */
     default String intVarString() {
         String name = getName();
         Integer lowerBound = getLowerBound();

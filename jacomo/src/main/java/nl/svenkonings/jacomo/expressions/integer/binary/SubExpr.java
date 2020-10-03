@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Subtraction expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class SubExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Subtraction integer expression.
+     *
+     * @param left  the left-hand side of the Subtraction expression
+     * @param right the right-hand side of the Subtraction expression
+     */
     public SubExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

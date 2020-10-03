@@ -5,12 +5,20 @@ import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.variables.Var;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a named boolean variable.
+ */
 public interface BoolVar extends Var, BoolExpr {
     @Override
     default @NotNull Type getType() {
         return Type.BoolVar;
     }
 
+    /**
+     * Returns a string representation of this variable.
+     *
+     * @return a string representation of this variable
+     */
     default String boolVarString() {
         String name = getName();
         if (hasValue()) {

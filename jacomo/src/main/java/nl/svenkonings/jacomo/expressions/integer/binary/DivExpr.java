@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Division expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class DivExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Division integer expression.
+     *
+     * @param left  the left-hand side of the Division expression
+     * @param right the right-hand side of the Division expression
+     */
     public DivExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

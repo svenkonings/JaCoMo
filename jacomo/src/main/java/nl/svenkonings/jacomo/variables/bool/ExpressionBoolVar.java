@@ -9,10 +9,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a boolean variable defined by an expression.
+ */
 public class ExpressionBoolVar implements BoolVar {
     private final @NotNull String name;
     private final @NotNull BoolExpr expression;
 
+    /**
+     * Create a new boolean variable with the specified name and expression.
+     *
+     * @param name       the specified name
+     * @param expression the specified expression
+     */
     public ExpressionBoolVar(@NotNull String name, @NotNull BoolExpr expression) {
         this.name = name;
         this.expression = expression;

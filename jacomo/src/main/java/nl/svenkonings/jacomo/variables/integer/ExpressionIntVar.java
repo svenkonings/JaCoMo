@@ -9,11 +9,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents an integer variable defined by an expression.
+ */
 public class ExpressionIntVar implements IntVar {
 
     private final @NotNull String name;
     private final @NotNull IntExpr expression;
 
+    /**
+     * Create a new integer variable with the specified name and expression.
+     *
+     * @param name       the specified name
+     * @param expression the specified expression
+     */
     public ExpressionIntVar(@NotNull String name, @NotNull IntExpr expression) {
         this.name = name;
         this.expression = expression;

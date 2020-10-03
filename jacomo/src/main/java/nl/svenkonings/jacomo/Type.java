@@ -1,5 +1,8 @@
 package nl.svenkonings.jacomo;
 
+/**
+ * Enumeration of element types.
+ */
 public enum Type {
     Elem,
     // Constraints

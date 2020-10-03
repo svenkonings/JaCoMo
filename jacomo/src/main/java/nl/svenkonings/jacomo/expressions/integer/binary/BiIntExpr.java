@@ -6,13 +6,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Represent a binary integer expression between two integer expressions.
+ */
 public interface BiIntExpr extends IntExpr {
     @Override
     default @NotNull List<IntExpr> getChildren() {
         return ListUtil.of(getLeft(), getRight());
     }
 
+    /**
+     * Returns the left-hand integer expression.
+     *
+     * @return the left-hand integer expression
+     */
     @NotNull IntExpr getLeft();
 
+    /**
+     * Returns the right-hand integer expression.
+     *
+     * @return the right-hand integer expression
+     */
     @NotNull IntExpr getRight();
 }

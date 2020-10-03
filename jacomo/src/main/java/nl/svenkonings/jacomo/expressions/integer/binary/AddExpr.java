@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Addition expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class AddExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Addition integer expression.
+     *
+     * @param left  the left-hand side of the Addition expression
+     * @param right the right-hand side of the Addition expression
+     */
     public AddExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

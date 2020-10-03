@@ -7,12 +7,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents a Lesser-than expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class LtExpr implements ReBoolExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Lesser-than boolean expression.
+     *
+     * @param left  the left-hand side of the Lesser-than expression
+     * @param right the right-hand side of the Lesser-than expression
+     */
     public LtExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

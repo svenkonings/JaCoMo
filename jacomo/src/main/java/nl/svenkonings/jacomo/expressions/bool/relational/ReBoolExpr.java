@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Represents a relational boolean expression between to integer expressions.
+ */
 public interface ReBoolExpr extends BoolExpr {
     @Override
     default @NotNull List<IntExpr> getChildren() {
@@ -19,7 +22,17 @@ public interface ReBoolExpr extends BoolExpr {
         return Type.ReBoolExpr;
     }
 
+    /**
+     * Returns the left-hand integer expression.
+     *
+     * @return the left-hand integer expression
+     */
     @NotNull IntExpr getLeft();
 
+    /**
+     * Returns the right-hand integer expression.
+     *
+     * @return the right-hand integer expression
+     */
     @NotNull IntExpr getRight();
 }

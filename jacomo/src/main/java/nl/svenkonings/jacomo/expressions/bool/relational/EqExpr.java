@@ -7,11 +7,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an Equals expression.
+ */
 public class EqExpr implements ReBoolExpr {
 
     private final @NotNull IntExpr left;
     private final @NotNull IntExpr right;
 
+    /**
+     * Create a new Equals boolean expression.
+     *
+     * @param left  the left-hand side of the Equals expression
+     * @param right the right-hand side of the Equals expression
+     */
     public EqExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;

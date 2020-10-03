@@ -7,11 +7,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represent an And boolean expression.
+ */
 @SuppressWarnings("ConstantConditions")
 public class AndExpr implements BiBoolExpr {
     private final @NotNull BoolExpr left;
     private final @NotNull BoolExpr right;
 
+    /**
+     * Create a new And boolean expression.
+     *
+     * @param left  the left-hand side of the And expression
+     * @param right the right-hand side of the And expression
+     */
     public AndExpr(@NotNull BoolExpr left, @NotNull BoolExpr right) {
         this.left = left;
         this.right = right;
