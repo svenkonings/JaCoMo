@@ -9,7 +9,7 @@ satisfaction problems in the integer domain.
 ## Progress
 The current version is a work-in-progress. The progress for the v0.1 minimum
 viable product release is as follows:
-- [ ] Basic model containing variables and constraints
+- [x] Basic model containing variables and constraints
   - [x] Basic variables
     - [x] Boolean
     - [x] Integer
@@ -20,7 +20,7 @@ viable product release is as follows:
     - [x] Boolean logic
       - [x] And
       - [x] Or
-      - [ ] Not
+      - [x] Not
     - [x] Relational expressions
       - [x] Equals
       - [x] Not equals

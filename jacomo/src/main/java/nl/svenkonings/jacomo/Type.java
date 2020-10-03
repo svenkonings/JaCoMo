@@ -13,6 +13,9 @@ public enum Type {
     // Bool expressions
     BoolExpr,
     ConstantBoolExpr,
+    // Unary bool expressions
+    UnBoolExpr,
+    NotExpr,
     // Binary bool expressions
     BiBoolExpr,
     AndExpr,

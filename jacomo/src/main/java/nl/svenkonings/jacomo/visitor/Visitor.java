@@ -12,6 +12,8 @@ import nl.svenkonings.jacomo.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.expressions.bool.relational.*;
+import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
+import nl.svenkonings.jacomo.expressions.bool.unary.UnBoolExpr;
 import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.expressions.integer.binary.*;
@@ -46,6 +48,15 @@ public interface Visitor<T> {
 
     default T visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
         return visitBoolExpr(constantBoolExpr);
+    }
+
+    // Unary bool expressions
+    default T visitUnBoolExpr(UnBoolExpr unBoolExpr) {
+        return visitBoolExpr(unBoolExpr);
+    }
+
+    default T visitNotExpr(NotExpr notExpr) {
+        return visitUnBoolExpr(notExpr);
     }
 
     // Binary bool expressions
@@ -197,6 +208,11 @@ public interface Visitor<T> {
             // Bool expressions
             case BoolExpr:
                 return visitBoolExpr((BoolExpr) elem);
+            // Unary bool expressions
+            case UnBoolExpr:
+                return visitUnBoolExpr((UnBoolExpr) elem);
+            case NotExpr:
+                return visitNotExpr((NotExpr) elem);
             case ConstantBoolExpr:
                 return visitConstantBoolExpr((ConstantBoolExpr) elem);
             // Binary bool expressions

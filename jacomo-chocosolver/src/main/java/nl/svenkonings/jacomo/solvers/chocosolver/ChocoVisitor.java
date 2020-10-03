@@ -5,6 +5,7 @@ import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
+import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
 import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
 import nl.svenkonings.jacomo.expressions.integer.binary.BiIntExpr;
 import nl.svenkonings.jacomo.variables.bool.ExpressionBoolVar;
@@ -70,6 +71,16 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     public ChocoType visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
         BoolVar boolVar = model.boolVar(constantBoolExpr.getValue());
         return ChocoType.reExpression(boolVar);
+    }
+
+    @Override
+    public ChocoType visitNotExpr(NotExpr notExpr) {
+        ChocoType result = visit(notExpr.getExpr());
+        if (result.isArExpression()) {
+            throw new UnexpectedTypeException(notExpr.getExpr());
+        }
+        ReExpression expr = result.isReExpression() ? result.getReExpression() : result.getConstraint().reify();
+        return ChocoType.reExpression(expr.not());
     }
 
     @Override

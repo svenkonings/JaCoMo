@@ -4,6 +4,7 @@ import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.OrExpr;
+import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +30,17 @@ public interface BoolExpr extends Expr {
      * @return the value of this expression, or {@code null} if it is uninstantiated
      */
     @Nullable Boolean getValue();
+
+    // Unary bool expressions
+
+    /**
+     * Creates a Not expression that negates this expression.
+     *
+     * @return the created Not expression
+     */
+    default NotExpr not() {
+        return new NotExpr(this);
+    }
 
     // Binary bool expressions
 
