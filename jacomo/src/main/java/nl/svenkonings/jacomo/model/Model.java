@@ -5,6 +5,7 @@ import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.ReservedNameException;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.solvers.Solver;
+import nl.svenkonings.jacomo.util.ListUtil;
 import nl.svenkonings.jacomo.variables.Var;
 import nl.svenkonings.jacomo.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.variables.bool.ConstantBoolVar;
@@ -175,7 +176,7 @@ public class Model {
      * @return the list of constraints of this model
      */
     public @NotNull List<Constraint> getConstraints() {
-        return constraints.stream().collect(Collectors.toUnmodifiableList());
+        return ListUtil.copyOf(constraints);
     }
 
     /**

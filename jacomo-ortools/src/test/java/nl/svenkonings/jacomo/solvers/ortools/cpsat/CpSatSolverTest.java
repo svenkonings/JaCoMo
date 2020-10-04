@@ -1,11 +1,10 @@
-package nl.svenkonings.jacomo.solver.chocosolver;
+package nl.svenkonings.jacomo.solvers.ortools.cpsat;
 
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.checked.SolveException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
 import nl.svenkonings.jacomo.solvers.Solver;
-import nl.svenkonings.jacomo.solvers.chocosolver.ChocoSolver;
 import nl.svenkonings.jacomo.variables.integer.IntVar;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("ConstantConditions")
-public class ChocoSolverTest {
+public class CpSatSolverTest {
 
     @Test
     void basicSolve() throws SolveException {
@@ -22,7 +21,7 @@ public class ChocoSolverTest {
         IntVar var2 = model.intVar("var2", 1, 10);
         Constraint constraint = model.constraint(var1.lt(var2));
 
-        Solver solver = new ChocoSolver();
+        Solver solver = new CpSatSolver();
         VarMap result = solver.solve(model);
 
         var1 = (IntVar) result.getVar("var1");

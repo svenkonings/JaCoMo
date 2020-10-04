@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation project(':jacomo')
+    implementation 'org.jetbrains:annotations:19.0.0'
+    implementation 'com.google.protobuf:protobuf-java:3.12.2'
+    implementation 'com.skaggsm.ortools:ortools-natives-all:7.8.7960'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+}

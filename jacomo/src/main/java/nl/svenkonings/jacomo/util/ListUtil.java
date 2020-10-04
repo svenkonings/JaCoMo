@@ -2,9 +2,7 @@ package nl.svenkonings.jacomo.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ListUtil {
     /**
@@ -38,5 +36,16 @@ public class ListUtil {
     @SafeVarargs
     public static <E> @NotNull List<E> of(@NotNull E... elems) {
         return Collections.unmodifiableList(Arrays.asList(elems));
+    }
+
+    /**
+     * Returns an unmodifiable list view of the specified collection.
+     *
+     * @param coll the specified collection
+     * @param <E>  the element type
+     * @return the unmodifiable list
+     */
+    public static <E> @NotNull List<E> copyOf(Collection<? extends E> coll) {
+        return Collections.unmodifiableList(new ArrayList<>(coll));
     }
 }

@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.model;
 
+import nl.svenkonings.jacomo.util.ListUtil;
 import nl.svenkonings.jacomo.variables.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +65,7 @@ public class VarMap extends AbstractCollection<Var> {
      * @return an unmodifiable list view of the vars in this map
      */
     public @NotNull List<Var> listVars() {
-        return stream().collect(Collectors.toUnmodifiableList());
+        return ListUtil.copyOf(vars.values());
     }
 
     /**
