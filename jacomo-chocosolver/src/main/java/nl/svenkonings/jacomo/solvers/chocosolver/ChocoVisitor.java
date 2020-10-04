@@ -19,14 +19,14 @@ import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Visitor which builds a ChocoSolver model from the visited elements
  */
 @SuppressWarnings("ConstantConditions")
-public class ChocoVisitor implements Visitor<ChocoType> {
+public class ChocoVisitor extends Visitor<ChocoType> {
     private final @NotNull Model model;
     private final @NotNull Map<String, Variable> vars;
 
@@ -34,8 +34,9 @@ public class ChocoVisitor implements Visitor<ChocoType> {
      * Create a new ChocoSolver visitor.
      */
     public ChocoVisitor() {
+        super();
         model = new Model();
-        vars = new HashMap<>();
+        vars = new LinkedHashMap<>();
     }
 
     /**

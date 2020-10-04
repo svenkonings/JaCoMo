@@ -6,6 +6,8 @@ import org.chocosolver.solver.expression.discrete.relational.ReExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Represents the return value of visited elements using the {@link ChocoVisitor}.
  * The return value can be empty, an {@link ArExpression}, a {@link ReExpression}
@@ -113,5 +115,33 @@ public class ChocoType {
      */
     public @Nullable Constraint getConstraint() {
         return constraint;
+    }
+
+    @Override
+    public String toString() {
+        if (isArExpression()) {
+            return "ArExpression: " + arExpression;
+        } else if (isReExpression()) {
+            return "ReExpression: " + reExpression;
+        } else if (isConstraint()) {
+            return "Constraint: " + constraint;
+        } else {
+            return "None";
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChocoType chocoType = (ChocoType) o;
+        return Objects.equals(arExpression, chocoType.arExpression) &&
+                Objects.equals(reExpression, chocoType.reExpression) &&
+                Objects.equals(constraint, chocoType.constraint);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(arExpression, reExpression, constraint);
     }
 }
