@@ -1,6 +1,7 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
@@ -23,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Visitor which builds a ChocoSolver model from the visited elements
+ * Visitor which builds a ChocoSolver model from the visited elements.
  */
 @SuppressWarnings("ConstantConditions")
 public class ChocoVisitor extends Visitor<ChocoType> {
@@ -57,8 +58,15 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         return vars;
     }
 
+    private void addVar(String name, Variable var) {
+        if (vars.containsKey(name)) {
+            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, vars.get(name), var);
+        }
+        vars.put(name, var);
+    }
+
     @Override
-    public ChocoType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
+    protected ChocoType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
         ChocoType result = visit(boolExprConstraint.getExpr());
         if (result.isArExpression()) {
             throw new UnexpectedTypeException(boolExprConstraint.getExpr());
@@ -69,13 +77,13 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
+    protected ChocoType visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
         BoolVar boolVar = model.boolVar(constantBoolExpr.getValue());
         return ChocoType.reExpression(boolVar);
     }
 
     @Override
-    public ChocoType visitNotExpr(NotExpr notExpr) {
+    protected ChocoType visitNotExpr(NotExpr notExpr) {
         ChocoType result = visit(notExpr.getExpr());
         if (result.isArExpression()) {
             throw new UnexpectedTypeException(notExpr.getExpr());
@@ -85,7 +93,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
+    protected ChocoType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
         ChocoType left = visit(biBoolExpr.getLeft());
         ChocoType right = visit(biBoolExpr.getRight());
         if (left.isArExpression()) {
@@ -106,7 +114,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitReBoolExpr(ReBoolExpr reBoolExpr) {
+    protected ChocoType visitReBoolExpr(ReBoolExpr reBoolExpr) {
         ChocoType left = visit(reBoolExpr.getLeft());
         ChocoType right = visit(reBoolExpr.getRight());
         if (!left.isArExpression()) {
@@ -133,13 +141,13 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
+    protected ChocoType visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
         IntVar var = model.intVar(constantIntExpr.getValue());
         return ChocoType.arExpression(var);
     }
 
     @Override
-    public ChocoType visitBiIntExpr(BiIntExpr biIntExpr) {
+    protected ChocoType visitBiIntExpr(BiIntExpr biIntExpr) {
         ChocoType left = visit(biIntExpr.getLeft());
         ChocoType right = visit(biIntExpr.getRight());
         if (!left.isArExpression()) {
@@ -166,7 +174,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitBoolVar(nl.svenkonings.jacomo.variables.bool.BoolVar boolVar) {
+    protected ChocoType visitBoolVar(nl.svenkonings.jacomo.variables.bool.BoolVar boolVar) {
         String name = boolVar.getName();
         BoolVar var;
         if (boolVar.hasValue()) {
@@ -174,12 +182,12 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         } else {
             var = model.boolVar(name);
         }
-        vars.put(name, var);
+        addVar(name, var);
         return ChocoType.reExpression(var);
     }
 
     @Override
-    public ChocoType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
+    protected ChocoType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
         BoolVar var;
         ChocoType result = visit(expressionBoolVar.getExpression());
@@ -192,12 +200,12 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         } else {
             throw new UnexpectedTypeException(expressionBoolVar.getExpression());
         }
-        vars.put(name, var);
+        addVar(name, var);
         return ChocoType.reExpression(var);
     }
 
     @Override
-    public ChocoType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
+    protected ChocoType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
         String name = intVar.getName();
         IntVar var;
         if (intVar.hasValue()) {
@@ -207,19 +215,19 @@ public class ChocoVisitor extends Visitor<ChocoType> {
             int ub = intVar.hasUpperBound() ? intVar.getUpperBound() : IntVar.MAX_INT_BOUND;
             var = model.intVar(name, lb, ub);
         }
-        vars.put(name, var);
+        addVar(name, var);
         return ChocoType.arExpression(var);
     }
 
     @Override
-    public ChocoType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
+    protected ChocoType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
         String name = expressionIntVar.getName();
         ChocoType result = visit(expressionIntVar.getExpression());
         if (!result.isArExpression()) {
             throw new UnexpectedTypeException(expressionIntVar.getExpression());
         }
         IntVar var = result.getArExpression().intVar();
-        vars.put(name, var);
+        addVar(name, var);
         return ChocoType.arExpression(var);
     }
 }
