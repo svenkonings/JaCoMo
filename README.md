@@ -38,9 +38,9 @@ viable product release is as follows:
   - [x] Boolean constraints
 - [x] Model factory methods for creating variables
 - [x] Visitor pattern for traversing the model
-- [ ] Solver implementations
+- [x] Solver implementations
   - [x] ChocoSolver
-  - [ ] OR-tools
+  - [x] OR-tools
 - [ ] Unit-test for non-trivial classes and system tests
 - [ ] Getting started documentation with examples
 - [X] JavaDoc documentation

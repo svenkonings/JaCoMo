@@ -1,4 +1,4 @@
-package nl.svenkonings.jacomo.solvers.ortools.cpsat;
+package nl.svenkonings.jacomo.solvers.ortools;
 
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.checked.SolveException;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("ConstantConditions")
-public class CpSatSolverTest {
+public class OrToolsSolverTest {
 
     @Test
     void basicSolve() throws SolveException {
@@ -21,7 +21,7 @@ public class CpSatSolverTest {
         IntVar var2 = model.intVar("var2", 1, 10);
         Constraint constraint = model.constraint(var1.lt(var2));
 
-        Solver solver = new CpSatSolver();
+        Solver solver = new OrToolsSolver();
         VarMap result = solver.solve(model);
 
         var1 = (IntVar) result.getVar("var1");

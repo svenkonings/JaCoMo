@@ -1,11 +1,10 @@
-package nl.svenkonings.jacomo.solvers.ortools.cpsat;
+package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
 import com.google.ortools.sat.LinearExpr;
 import com.google.ortools.sat.Literal;
 import com.google.ortools.util.Domain;
-import com.skaggsm.ortools.OrToolsHelper;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
@@ -25,13 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Visitor which builds a CP-SAT model from the visited elements.
+ * Visitor which builds a OR-Tools CP-SAT model from the visited elements.
  */
 @SuppressWarnings("ConstantConditions")
-public class CpSatVisitor extends Visitor<CpSatType> {
-    static {
-        OrToolsHelper.loadLibrary();
-    }
+public class OrToolsVisitor extends Visitor<OrToolsType> {
 
     private final @NotNull CpModel model;
     private final @NotNull Map<String, IntVar> boolVars;
@@ -39,10 +35,11 @@ public class CpSatVisitor extends Visitor<CpSatType> {
     private int genNameCounter;
 
     /**
-     * Create a new CP-SAT visitor.
+     * Create a new OR-Tools visitor.
      */
-    public CpSatVisitor() {
+    public OrToolsVisitor() {
         super();
+        OrToolsLoader.loadLibrary();
         model = new CpModel();
         boolVars = new LinkedHashMap<>();
         intVars = new LinkedHashMap<>();
@@ -50,27 +47,27 @@ public class CpSatVisitor extends Visitor<CpSatType> {
     }
 
     /**
-     * Returns the CP-SAT model.
+     * Returns the OR-Tools CP-SAT model.
      *
-     * @return the CP-SAT model
+     * @return the OR-Tools CP-SAT model
      */
     public @NotNull CpModel getModel() {
         return model;
     }
 
     /**
-     * Returns the mapping of boolean variable names to CP-SAT variables.
+     * Returns the mapping of boolean variable names to OR-Tools CP-SAT variables.
      *
-     * @return the mapping of boolean variable names to CP-SAT variables
+     * @return the mapping of boolean variable names to OR-Tools CP-SAT variables
      */
     public @NotNull Map<String, IntVar> getBoolVars() {
         return boolVars;
     }
 
     /**
-     * Returns the mapping of integer variable names to CP-SAT variables.
+     * Returns the mapping of integer variable names to OR-Tools CP-SAT variables.
      *
-     * @return the mapping of integer variable names to CP-SAT variables
+     * @return the mapping of integer variable names to OR-Tools CP-SAT variables
      */
     public @NotNull Map<String, IntVar> getIntVars() {
         return intVars;
@@ -107,20 +104,20 @@ public class CpSatVisitor extends Visitor<CpSatType> {
     }
 
     @Override
-    public CpSatType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
+    public OrToolsType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
         visit(boolExprConstraint.getExpr());
-        return CpSatType.none();
+        return OrToolsType.none();
     }
 
     @Override
-    public CpSatType visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
+    public OrToolsType visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
         int value = constantBoolExpr.getValue() ? 1 : 0;
-        return CpSatType.intVar(model.newConstant(value));
+        return OrToolsType.intVar(model.newConstant(value));
     }
 
     @Override
-    public CpSatType visitNotExpr(NotExpr notExpr) {
-        CpSatType result = visit(notExpr.getExpr());
+    public OrToolsType visitNotExpr(NotExpr notExpr) {
+        OrToolsType result = visit(notExpr.getExpr());
         IntVar var;
         if (result.isConstraint()) {
             var = genBoolVar();
@@ -136,13 +133,13 @@ public class CpSatVisitor extends Visitor<CpSatType> {
         } catch (CpModel.MismatchedArrayLengths e) {
             throw new UnsupportedOperationException(e);
         }
-        return CpSatType.intVar(inverseVar);
+        return OrToolsType.intVar(inverseVar);
     }
 
     @Override
-    public CpSatType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
-        CpSatType left = visit(biBoolExpr.getLeft());
-        CpSatType right = visit(biBoolExpr.getRight());
+    public OrToolsType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
+        OrToolsType left = visit(biBoolExpr.getLeft());
+        OrToolsType right = visit(biBoolExpr.getRight());
         IntVar leftVar;
         IntVar rightVar;
         if (left.isConstraint()) {
@@ -163,18 +160,18 @@ public class CpSatVisitor extends Visitor<CpSatType> {
         }
         switch (biBoolExpr.getType()) {
             case AndExpr:
-                return CpSatType.constraint(model.addBoolAnd(new Literal[]{leftVar, rightVar}));
+                return OrToolsType.constraint(model.addBoolAnd(new Literal[]{leftVar, rightVar}));
             case OrExpr:
-                return CpSatType.constraint(model.addBoolOr(new Literal[]{leftVar, rightVar}));
+                return OrToolsType.constraint(model.addBoolOr(new Literal[]{leftVar, rightVar}));
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
         }
     }
 
     @Override
-    public CpSatType visitReBoolExpr(ReBoolExpr reBoolExpr) {
-        CpSatType left = visit(reBoolExpr.getLeft());
-        CpSatType right = visit(reBoolExpr.getRight());
+    public OrToolsType visitReBoolExpr(ReBoolExpr reBoolExpr) {
+        OrToolsType left = visit(reBoolExpr.getLeft());
+        OrToolsType right = visit(reBoolExpr.getRight());
         if (!left.isIntVar()) {
             throw new UnexpectedTypeException(reBoolExpr.getLeft());
         } else if (!right.isIntVar()) {
@@ -182,31 +179,31 @@ public class CpSatVisitor extends Visitor<CpSatType> {
         }
         switch (reBoolExpr.getType()) {
             case EqExpr:
-                return CpSatType.constraint(model.addEquality(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addEquality(left.getIntVar(), right.getIntVar()));
             case NeExpr:
-                return CpSatType.constraint(model.addDifferent(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addDifferent(left.getIntVar(), right.getIntVar()));
             case GtExpr:
-                return CpSatType.constraint(model.addGreaterThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterThan(left.getIntVar(), right.getIntVar()));
             case GeExpr:
-                return CpSatType.constraint(model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()));
             case LtExpr:
-                return CpSatType.constraint(model.addLessThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessThan(left.getIntVar(), right.getIntVar()));
             case LeExpr:
-                return CpSatType.constraint(model.addLessOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessOrEqual(left.getIntVar(), right.getIntVar()));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
         }
     }
 
     @Override
-    public CpSatType visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
-        return CpSatType.intVar(model.newConstant(constantIntExpr.getValue()));
+    public OrToolsType visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
+        return OrToolsType.intVar(model.newConstant(constantIntExpr.getValue()));
     }
 
     @Override
-    public CpSatType visitBiIntExpr(BiIntExpr biIntExpr) {
-        CpSatType left = visit(biIntExpr.getLeft());
-        CpSatType right = visit(biIntExpr.getRight());
+    public OrToolsType visitBiIntExpr(BiIntExpr biIntExpr) {
+        OrToolsType left = visit(biIntExpr.getLeft());
+        OrToolsType right = visit(biIntExpr.getRight());
         if (!left.isIntVar()) {
             throw new UnexpectedTypeException(biIntExpr.getLeft());
         } else if (!right.isIntVar()) {
@@ -216,29 +213,29 @@ public class CpSatVisitor extends Visitor<CpSatType> {
         switch (biIntExpr.getType()) {
             case AddExpr:
                 model.addEquality(var, LinearExpr.sum(new IntVar[]{left.getIntVar(), right.getIntVar()}));
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             case SubExpr:
                 model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left.getIntVar(), right.getIntVar()}, new int[]{1, -1}));
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             case MulExpr:
                 model.addProductEquality(var, new IntVar[]{left.getIntVar(), right.getIntVar()});
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             case DivExpr:
                 model.addDivisionEquality(var, left.getIntVar(), right.getIntVar());
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             case MinExpr:
                 model.addMinEquality(var, new IntVar[]{left.getIntVar(), right.getIntVar()});
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             case MaxExpr:
                 model.addMaxEquality(var, new IntVar[]{left.getIntVar(), right.getIntVar()});
-                return CpSatType.intVar(var);
+                return OrToolsType.intVar(var);
             default:
                 throw new UnexpectedTypeException(biIntExpr);
         }
     }
 
     @Override
-    public CpSatType visitBoolVar(BoolVar boolVar) {
+    public OrToolsType visitBoolVar(BoolVar boolVar) {
         String name = boolVar.getName();
         IntVar var;
         if (boolVar.hasValue()) {
@@ -248,13 +245,13 @@ public class CpSatVisitor extends Visitor<CpSatType> {
             var = model.newBoolVar(name);
         }
         addBoolVar(name, var);
-        return CpSatType.intVar(var);
+        return OrToolsType.intVar(var);
     }
 
     @Override
-    public CpSatType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
+    public OrToolsType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
-        CpSatType result = visit(expressionBoolVar.getExpression());
+        OrToolsType result = visit(expressionBoolVar.getExpression());
         IntVar var;
         if (result.isConstraint()) {
             var = model.newBoolVar(name);
@@ -265,11 +262,11 @@ public class CpSatVisitor extends Visitor<CpSatType> {
             throw new UnexpectedTypeException(expressionBoolVar.getExpression());
         }
         addBoolVar(name, var);
-        return CpSatType.intVar(var);
+        return OrToolsType.intVar(var);
     }
 
     @Override
-    public CpSatType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
+    public OrToolsType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
         String name = intVar.getName();
         IntVar var;
         if (intVar.hasValue()) {
@@ -280,18 +277,18 @@ public class CpSatVisitor extends Visitor<CpSatType> {
             var = model.newIntVar(lb, ub, name);
         }
         addIntVar(name, var);
-        return CpSatType.intVar(var);
+        return OrToolsType.intVar(var);
     }
 
     @Override
-    public CpSatType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
+    public OrToolsType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
         String name = expressionIntVar.getName();
-        CpSatType result = visit(expressionIntVar.getExpression());
+        OrToolsType result = visit(expressionIntVar.getExpression());
         if (!result.isIntVar()) {
             throw new UnexpectedTypeException(expressionIntVar.getExpression());
         }
         IntVar var = result.getIntVar();
         addIntVar(name, var);
-        return CpSatType.intVar(var);
+        return OrToolsType.intVar(var);
     }
 }

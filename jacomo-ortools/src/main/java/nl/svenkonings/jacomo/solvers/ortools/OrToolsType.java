@@ -1,4 +1,4 @@
-package nl.svenkonings.jacomo.solvers.ortools.cpsat;
+package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.sat.Constraint;
 import com.google.ortools.sat.IntVar;
@@ -8,10 +8,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Represents the return value of visited elements using the {@link CpSatVisitor}.
+ * Represents the return value of visited elements using the {@link OrToolsVisitor}.
  * The return value can be empty, an {@link IntVar} or a {@link Constraint}.
  */
-public class CpSatType {
+public class OrToolsType {
     private final @Nullable IntVar intVar;
     private final @Nullable Constraint constraint;
 
@@ -20,8 +20,8 @@ public class CpSatType {
      *
      * @return the created return value
      */
-    public static CpSatType none() {
-        return new CpSatType(null, null);
+    public static OrToolsType none() {
+        return new OrToolsType(null, null);
     }
 
     /**
@@ -30,8 +30,8 @@ public class CpSatType {
      * @param intVar the value to encapsulate
      * @return the created return value
      */
-    public static CpSatType intVar(@NotNull IntVar intVar) {
-        return new CpSatType(intVar, null);
+    public static OrToolsType intVar(@NotNull IntVar intVar) {
+        return new OrToolsType(intVar, null);
     }
 
     /**
@@ -40,11 +40,11 @@ public class CpSatType {
      * @param constraint the value to encapsulate
      * @return the created return value
      */
-    public static CpSatType constraint(@NotNull Constraint constraint) {
-        return new CpSatType(null, constraint);
+    public static OrToolsType constraint(@NotNull Constraint constraint) {
+        return new OrToolsType(null, constraint);
     }
 
-    private CpSatType(@Nullable IntVar intVar, @Nullable Constraint constraint) {
+    private OrToolsType(@Nullable IntVar intVar, @Nullable Constraint constraint) {
         this.intVar = intVar;
         this.constraint = constraint;
     }
@@ -100,9 +100,9 @@ public class CpSatType {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CpSatType cpSatType = (CpSatType) o;
-        return Objects.equals(intVar, cpSatType.intVar) &&
-                Objects.equals(constraint, cpSatType.constraint);
+        OrToolsType orToolsType = (OrToolsType) o;
+        return Objects.equals(intVar, orToolsType.intVar) &&
+                Objects.equals(constraint, orToolsType.constraint);
     }
 
     @Override

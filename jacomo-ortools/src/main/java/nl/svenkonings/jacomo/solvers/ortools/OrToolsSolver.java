@@ -1,4 +1,4 @@
-package nl.svenkonings.jacomo.solvers.ortools.cpsat;
+package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
@@ -16,17 +16,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Solver implementation using the CP-SAT solver from OR-Tools.
  */
-public class CpSatSolver implements Solver {
+public class OrToolsSolver implements Solver {
 
     /**
-     * Create a new CP-SAT solver.
+     * Create a new OR-Tools solver.
      */
-    public CpSatSolver() {
+    public OrToolsSolver() {
     }
 
     @Override
     public @NotNull VarMap solve(@NotNull Model model) throws SolveException {
-        CpSatVisitor visitor = new CpSatVisitor();
+        OrToolsVisitor visitor = new OrToolsVisitor();
         model.visitAll(visitor);
         CpSolver solver = new CpSolver();
         CpSolverStatus status = solver.solve(visitor.getModel());
