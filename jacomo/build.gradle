@@ -1,5 +1,12 @@
 plugins {
-    id 'java'
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
 }
 
 test {
@@ -8,6 +15,18 @@ test {
 
 dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            pom {
+                name = 'JaCoMo'
+                description = 'A high-level, solver-independent, Java constraint model for constraint satisfaction problems in the integer domain.'
+            }
+        }
+    }
 }

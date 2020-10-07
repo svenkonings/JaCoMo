@@ -1,5 +1,12 @@
 plugins {
-    id 'java'
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
 }
 
 test {
@@ -11,6 +18,18 @@ dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'com.google.protobuf:protobuf-java:3.12.2'
     implementation 'com.skaggsm.ortools:ortools-natives-all:7.8.7960'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            pom {
+                name = 'JaCoMo OR-Tools solver'
+                description = 'JaCoMo solver implementation using OR-Tools CP-SAT solver.'
+            }
+        }
+    }
 }

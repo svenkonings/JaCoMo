@@ -1,5 +1,12 @@
 plugins {
-    id 'java'
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
 }
 
 test {
@@ -10,6 +17,18 @@ dependencies {
     implementation project(':jacomo')
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'org.choco-solver:choco-solver:4.10.5'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            pom {
+                name = 'JaCoMo Choco-solver solver'
+                description = 'JaCoMo solver implementation using Choco-solver.'
+            }
+        }
+    }
 }

@@ -1,8 +1,58 @@
 allprojects {
-    group 'nl.svenkonings'
+    group 'nl.svenkonings.jacomo'
     version '0.1-SNAPSHOT'
     repositories {
         mavenCentral()
         jcenter()
+    }
+}
+
+subprojects {
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                pom {
+                    url = 'https://jacomo.svenkonings.nl'
+                    licenses {
+                        license {
+                            name = 'Mozilla Public License Version 2.0'
+                            url = 'https://www.mozilla.org/en-US/MPL/2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'svenkonings'
+                            name = 'Sven Konings'
+                            email = 'jacomo@svenkonings.nl'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/svenkonings/JaCoMo.git'
+                        developerConnection = 'scm:git:https://github.com/svenkonings/JaCoMo.git'
+                        url = 'https://github.com/svenkonings/JaCoMo'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = 'OSSRH'
+                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username = findProperty("ossrhUsername")
+                    password = findProperty("ossrhPassword")
+                }
+            }
+        }
+    }
+    signing {
+        def signingKey = findProperty("signingKey")
+        def signingPassword = findProperty("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.maven
     }
 }
