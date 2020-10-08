@@ -58,6 +58,18 @@ public interface IntExpr extends Expr {
      */
     @Nullable Integer getUpperBound();
 
+    // Factory methods
+
+    /**
+     * Creates a new integer constant with the specified value.
+     *
+     * @param value the specified value
+     * @return the created integer constant
+     */
+    static ConstantIntExpr constant(int value) {
+        return new ConstantIntExpr(value);
+    }
+
     // Binary int expressions
 
     /**

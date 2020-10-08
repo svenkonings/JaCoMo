@@ -4,14 +4,17 @@ import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.ReservedNameException;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.util.ListUtil;
 import nl.svenkonings.jacomo.variables.Var;
 import nl.svenkonings.jacomo.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.variables.bool.ConstantBoolVar;
+import nl.svenkonings.jacomo.variables.bool.ExpressionBoolVar;
 import nl.svenkonings.jacomo.variables.bool.InstantiatableBoolVar;
 import nl.svenkonings.jacomo.variables.integer.BoundedIntVar;
 import nl.svenkonings.jacomo.variables.integer.ConstantIntVar;
+import nl.svenkonings.jacomo.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.variables.integer.IntVar;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
@@ -292,6 +295,35 @@ public class Model {
         return var;
     }
 
+
+    /**
+     * Create a boolean variable with the specified expression and a generated name,
+     * and add it to this model.
+     *
+     * @param expr the specified expression
+     * @return the resulting variable
+     */
+    public BoolVar boolVar(BoolExpr expr) {
+        String name = genVarName(GEN_BOOL_PREFIX);
+        BoolVar var = new ExpressionBoolVar(name, expr);
+        addVarUnchecked(var);
+        return var;
+    }
+
+    /**
+     * Create a boolean variable with the specified name and expression,
+     * and add it to this model.
+     *
+     * @param name the specified name
+     * @param expr the specified expression
+     * @return the resulting variable
+     */
+    public BoolVar boolVar(String name, BoolExpr expr) {
+        BoolVar var = new ExpressionBoolVar(name, expr);
+        addVar(var);
+        return var;
+    }
+
     /**
      * Create an uninstantiated integer variable with a generated name
      * and add it to this model.
@@ -347,6 +379,34 @@ public class Model {
      */
     public IntVar intVar(String name, int value) {
         IntVar var = new ConstantIntVar(name, value);
+        addVar(var);
+        return var;
+    }
+
+    /**
+     * Create a integer variable with the specified expression and a generated name,
+     * and add it to this model.
+     *
+     * @param expr the specified expression
+     * @return the resulting variable
+     */
+    public IntVar intVar(IntExpr expr) {
+        String name = genVarName(GEN_INT_PREFIX);
+        IntVar var = new ExpressionIntVar(name, expr);
+        addVarUnchecked(var);
+        return var;
+    }
+
+    /**
+     * Create a integer variable with the specified name and expression,
+     * and add it to this model.
+     *
+     * @param name the specified name
+     * @param expr the specified expression
+     * @return the resulting variable
+     */
+    public IntVar intVar(String name, IntExpr expr) {
+        IntVar var = new ExpressionIntVar(name, expr);
         addVar(var);
         return var;
     }

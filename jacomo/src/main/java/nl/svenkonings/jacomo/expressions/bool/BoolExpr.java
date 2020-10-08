@@ -31,6 +31,19 @@ public interface BoolExpr extends Expr {
      */
     @Nullable Boolean getValue();
 
+
+    // Factory methods
+
+    /**
+     * Creates a new boolean constant with the specified value.
+     *
+     * @param value the specified value
+     * @return the created boolean constant
+     */
+    static ConstantBoolExpr constant(boolean value) {
+        return new ConstantBoolExpr(value);
+    }
+
     // Unary bool expressions
 
     /**
