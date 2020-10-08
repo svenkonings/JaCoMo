@@ -1,7 +1,6 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
 import nl.svenkonings.jacomo.exceptions.checked.SolveException;
-import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
 import nl.svenkonings.jacomo.solvers.Solver;
@@ -10,7 +9,6 @@ import nl.svenkonings.jacomo.variables.bool.ConstantBoolVar;
 import nl.svenkonings.jacomo.variables.integer.ConstantIntVar;
 import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
-import org.chocosolver.solver.variables.Variable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,20 +30,17 @@ public class ChocoSolver implements Solver {
             throw new SolveException("Could not find a solution");
         }
         VarMap result = new VarMap();
-        visitor.getVars().forEach((name, variable) -> result.addVar(chocoToJaCoMo(name, variable)));
+        visitor.getBoolVars().forEach((name, var) -> result.addVar(toJaCoMoBoolVar(name, var)));
+        visitor.getIntVars().forEach((name, var) -> result.addVar(toJaCoMoIntVar(name, var)));
         return result;
     }
 
-    private Var chocoToJaCoMo(String name, Variable variable) {
-        if (variable instanceof BoolVar) {
-            BoolVar boolVar = (BoolVar) variable;
-            boolean result = boolVar.getValue() == 1;
-            return new ConstantBoolVar(name, result);
-        } else if (variable instanceof IntVar) {
-            IntVar intVar = (IntVar) variable;
-            return new ConstantIntVar(name, intVar.getValue());
-        } else {
-            throw new UnknownTypeException("Unknown type: %s", variable.getClass().getCanonicalName());
-        }
+    private Var toJaCoMoBoolVar(String name, BoolVar var) {
+        boolean result = var.getValue() == 1;
+        return new ConstantBoolVar(name, result);
+    }
+
+    private Var toJaCoMoIntVar(String name, IntVar var) {
+        return new ConstantIntVar(name, var.getValue());
     }
 }

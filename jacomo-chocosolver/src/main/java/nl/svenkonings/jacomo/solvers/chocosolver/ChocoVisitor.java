@@ -17,7 +17,6 @@ import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.expression.discrete.relational.ReExpression;
 import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
-import org.chocosolver.solver.variables.Variable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -29,7 +28,8 @@ import java.util.Map;
 @SuppressWarnings("ConstantConditions")
 public class ChocoVisitor extends Visitor<ChocoType> {
     private final @NotNull Model model;
-    private final @NotNull Map<String, Variable> vars;
+    private final @NotNull Map<String, BoolVar> boolVars;
+    private final @NotNull Map<String, IntVar> intVars;
 
     /**
      * Create a new ChocoSolver visitor.
@@ -37,7 +37,8 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     public ChocoVisitor() {
         super();
         model = new Model();
-        vars = new LinkedHashMap<>();
+        boolVars = new LinkedHashMap<>();
+        intVars = new LinkedHashMap<>();
     }
 
     /**
@@ -50,19 +51,39 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     /**
-     * Returns the mapping of element variable names to ChocoSolver variables.
+     * Returns the mapping of boolean variable names to ChocoSolver variables.
      *
-     * @return the mapping of element variable names to ChocoSolver variables
+     * @return the mapping of boolean variable names to ChocoSolver variables
      */
-    public @NotNull Map<String, Variable> getVars() {
-        return vars;
+    public @NotNull Map<String, BoolVar> getBoolVars() {
+        return boolVars;
     }
 
-    private void addVar(String name, Variable var) {
-        if (vars.containsKey(name)) {
-            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, vars.get(name), var);
+    /**
+     * Returns the mapping of integer variable names to ChocoSolver variables.
+     *
+     * @return the mapping of integer variable names to ChocoSolver variables
+     */
+    public @NotNull Map<String, IntVar> getIntVars() {
+        return intVars;
+    }
+
+    private void addBoolVar(String name, BoolVar var) {
+        if (boolVars.containsKey(name)) {
+            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, boolVars.get(name), var);
+        } else if (intVars.containsKey(name)) {
+            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, intVars.get(name), var);
         }
-        vars.put(name, var);
+        boolVars.put(name, var);
+    }
+
+    private void addIntVar(String name, IntVar var) {
+        if (intVars.containsKey(name)) {
+            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, intVars.get(name), var);
+        } else if (boolVars.containsKey(name)) {
+            throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, boolVars.get(name), var);
+        }
+        intVars.put(name, var);
     }
 
     @Override
@@ -71,7 +92,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         if (result.isArExpression()) {
             throw new UnexpectedTypeException(boolExprConstraint.getExpr());
         }
-        Constraint constraint = result.isConstraint() ? result.getConstraint() : result.getReExpression().decompose();
+        Constraint constraint = result.isConstraint() ? result.getConstraint() : result.getReExpression().extension();
         constraint.post();
         return ChocoType.none();
     }
@@ -101,8 +122,8 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         } else if (right.isArExpression()) {
             throw new UnexpectedTypeException(biBoolExpr.getRight());
         }
-        Constraint leftConstraint = left.isConstraint() ? left.getConstraint() : left.getReExpression().decompose();
-        Constraint rightConstraint = right.isConstraint() ? right.getConstraint() : right.getReExpression().decompose();
+        Constraint leftConstraint = left.isConstraint() ? left.getConstraint() : left.getReExpression().extension();
+        Constraint rightConstraint = right.isConstraint() ? right.getConstraint() : right.getReExpression().extension();
         switch (biBoolExpr.getType()) {
             case AndExpr:
                 return ChocoType.constraint(model.and(leftConstraint, rightConstraint));
@@ -182,7 +203,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         } else {
             var = model.boolVar(name);
         }
-        addVar(name, var);
+        addBoolVar(name, var);
         return ChocoType.reExpression(var);
     }
 
@@ -200,7 +221,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         } else {
             throw new UnexpectedTypeException(expressionBoolVar.getExpression());
         }
-        addVar(name, var);
+        addBoolVar(name, var);
         return ChocoType.reExpression(var);
     }
 
@@ -215,7 +236,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
             int ub = intVar.hasUpperBound() ? intVar.getUpperBound() : IntVar.MAX_INT_BOUND;
             var = model.intVar(name, lb, ub);
         }
-        addVar(name, var);
+        addIntVar(name, var);
         return ChocoType.arExpression(var);
     }
 
@@ -227,7 +248,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
             throw new UnexpectedTypeException(expressionIntVar.getExpression());
         }
         IntVar var = result.getArExpression().intVar();
-        addVar(name, var);
+        addIntVar(name, var);
         return ChocoType.arExpression(var);
     }
 }
