@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Represents the return value of visited elements using the {@link OrToolsVisitor}.
@@ -14,6 +15,8 @@ import java.util.Objects;
 public class OrToolsType {
     private final @Nullable IntVar intVar;
     private final @Nullable Constraint constraint;
+    private final @Nullable Supplier<Constraint> inverseSupplier;
+    private @Nullable Constraint inverseConstraint;
 
     /**
      * Create an empty return value.
@@ -21,7 +24,7 @@ public class OrToolsType {
      * @return the created return value
      */
     public static OrToolsType none() {
-        return new OrToolsType(null, null);
+        return new OrToolsType(null, null, null);
     }
 
     /**
@@ -31,22 +34,27 @@ public class OrToolsType {
      * @return the created return value
      */
     public static OrToolsType intVar(@NotNull IntVar intVar) {
-        return new OrToolsType(intVar, null);
+        return new OrToolsType(intVar, null, null);
     }
 
     /**
      * Create an {@link Constraint} return value.
+     * A supplier to create the inverse constraint is required.
      *
-     * @param constraint the value to encapsulate
+     * @param constraint      the value to encapsulate
+     * @param inverseSupplier the supplier to create the inverse constraint
      * @return the created return value
      */
-    public static OrToolsType constraint(@NotNull Constraint constraint) {
-        return new OrToolsType(null, constraint);
+    public static OrToolsType constraint(@NotNull Constraint constraint, @NotNull Supplier<Constraint> inverseSupplier) {
+        return new OrToolsType(null, constraint, inverseSupplier);
     }
 
-    private OrToolsType(@Nullable IntVar intVar, @Nullable Constraint constraint) {
+    private OrToolsType(@Nullable IntVar intVar, @Nullable Constraint constraint, @Nullable Supplier<Constraint> inverseSupplier) {
+        assert constraint == null || inverseSupplier != null;
         this.intVar = intVar;
         this.constraint = constraint;
+        this.inverseSupplier = inverseSupplier;
+        this.inverseConstraint = null;
     }
 
     /**
@@ -61,7 +69,7 @@ public class OrToolsType {
     /**
      * Returns the inner {@link IntVar}.
      *
-     * @return the inner {@link IntVar} if it exists, {@code null} otherwise.
+     * @return the inner {@link IntVar} if it exists, {@code null} otherwise
      */
     public @Nullable IntVar getIntVar() {
         return intVar;
@@ -79,10 +87,28 @@ public class OrToolsType {
     /**
      * Returns the inner {@link Constraint}.
      *
-     * @return the inner {@link Constraint} if it exists, {@code null} otherwise.
+     * @return the inner {@link Constraint} if it exists, {@code null} otherwise
      */
     public @Nullable Constraint getConstraint() {
         return constraint;
+    }
+
+    /**
+     * Returns the inverse {@link Constraint}.
+     * The first time this method is called the inverse constraint will be created
+     * using the provided supplier.
+     *
+     * @return the inverse {@link Constraint} if it exists, {@code null} otherwise.
+     */
+    public @Nullable Constraint getInverseConstraint() {
+        if (inverseConstraint != null) {
+            return inverseConstraint;
+        } else if (inverseSupplier != null) {
+            inverseConstraint = inverseSupplier.get();
+            return inverseConstraint;
+        } else {
+            return null;
+        }
     }
 
     @Override

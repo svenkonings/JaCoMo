@@ -4,7 +4,6 @@ import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
 import com.google.ortools.sat.LinearExpr;
 import com.google.ortools.sat.Literal;
-import com.google.ortools.util.Domain;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
@@ -100,12 +99,56 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     }
 
     private IntVar genIntVar() {
-        return model.newIntVarFromDomain(Domain.allValues(), genName());
+        return model.newIntVar(Integer.MIN_VALUE, Integer.MAX_VALUE, genName());
     }
 
+    static private class ConstraintVar {
+        private final @NotNull IntVar var;
+        private final @NotNull IntVar inverseVar;
+
+        public ConstraintVar(@NotNull IntVar var, @NotNull IntVar inverseVar) {
+            this.var = var;
+            this.inverseVar = inverseVar;
+        }
+
+        public @NotNull IntVar getVar() {
+            return var;
+        }
+
+        public @NotNull IntVar getInverseVar() {
+            return inverseVar;
+        }
+    }
+
+    private ConstraintVar constraintToVar(OrToolsType result) {
+        if (!result.isConstraint()) {
+            throw new UnexpectedTypeException("Expected constraint value, received: %s", result);
+        }
+        IntVar var = genBoolVar();
+        result.getConstraint().onlyEnforceIf(var);
+        IntVar inverseVar = getInverse(var);
+        result.getInverseConstraint().onlyEnforceIf(inverseVar);
+        return new ConstraintVar(var, inverseVar);
+    }
+
+    private IntVar getInverse(IntVar boolVar) {
+        IntVar var = genBoolVar();
+        model.addDifferent(boolVar, var);
+        return var;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public OrToolsType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
-        visit(boolExprConstraint.getExpr());
+        OrToolsType result = visit(boolExprConstraint.getExpr());
+        if (result.isConstraint()) {
+            // Do nothing
+        } else if (result.isIntVar()) {
+            // Assume the variable is a boolean and should be true (1)
+            model.addEquality(result.getIntVar(), 1);
+        } else {
+            throw new UnexpectedTypeException(boolExprConstraint.getExpr());
+        }
         return OrToolsType.none();
     }
 
@@ -120,20 +163,13 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         OrToolsType result = visit(notExpr.getExpr());
         IntVar var;
         if (result.isConstraint()) {
-            var = genBoolVar();
-            result.getConstraint().onlyEnforceIf(var);
+            var = constraintToVar(result).getInverseVar();
         } else if (result.isIntVar()) {
-            var = result.getIntVar();
+            var = getInverse(result.getIntVar());
         } else {
             throw new UnexpectedTypeException(notExpr.getExpr());
         }
-        IntVar inverseVar = genIntVar();
-        try {
-            model.addInverse(new IntVar[]{var}, new IntVar[]{inverseVar});
-        } catch (CpModel.MismatchedArrayLengths e) {
-            throw new UnsupportedOperationException(e);
-        }
-        return OrToolsType.intVar(inverseVar);
+        return OrToolsType.intVar(var);
     }
 
     @Override
@@ -143,16 +179,14 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         IntVar leftVar;
         IntVar rightVar;
         if (left.isConstraint()) {
-            leftVar = genBoolVar();
-            left.getConstraint().onlyEnforceIf(leftVar);
+            leftVar = constraintToVar(left).getVar();
         } else if (left.isIntVar()) {
             leftVar = left.getIntVar();
         } else {
             throw new UnexpectedTypeException(biBoolExpr.getLeft());
         }
         if (right.isConstraint()) {
-            rightVar = genBoolVar();
-            right.getConstraint().onlyEnforceIf(rightVar);
+            rightVar = constraintToVar(right).getVar();
         } else if (right.isIntVar()) {
             rightVar = right.getIntVar();
         } else {
@@ -160,9 +194,11 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         }
         switch (biBoolExpr.getType()) {
             case AndExpr:
-                return OrToolsType.constraint(model.addBoolAnd(new Literal[]{leftVar, rightVar}));
+                return OrToolsType.constraint(model.addBoolAnd(new Literal[]{leftVar, rightVar}),
+                        () -> model.addBoolOr(new Literal[]{getInverse(leftVar), getInverse(rightVar)}));
             case OrExpr:
-                return OrToolsType.constraint(model.addBoolOr(new Literal[]{leftVar, rightVar}));
+                return OrToolsType.constraint(model.addBoolOr(new Literal[]{leftVar, rightVar}),
+                        () -> model.addBoolAnd(new Literal[]{getInverse(leftVar), getInverse(rightVar)}));
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
         }
@@ -179,17 +215,23 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         }
         switch (reBoolExpr.getType()) {
             case EqExpr:
-                return OrToolsType.constraint(model.addEquality(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addEquality(left.getIntVar(), right.getIntVar()),
+                        () -> model.addDifferent(left.getIntVar(), right.getIntVar()));
             case NeExpr:
-                return OrToolsType.constraint(model.addDifferent(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addDifferent(left.getIntVar(), right.getIntVar()),
+                        () -> model.addEquality(left.getIntVar(), right.getIntVar()));
             case GtExpr:
-                return OrToolsType.constraint(model.addGreaterThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterThan(left.getIntVar(), right.getIntVar()),
+                        () -> model.addLessOrEqual(left.getIntVar(), right.getIntVar()));
             case GeExpr:
-                return OrToolsType.constraint(model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()),
+                        () -> model.addLessThan(left.getIntVar(), right.getIntVar()));
             case LtExpr:
-                return OrToolsType.constraint(model.addLessThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessThan(left.getIntVar(), right.getIntVar()),
+                        () -> model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()));
             case LeExpr:
-                return OrToolsType.constraint(model.addLessOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessOrEqual(left.getIntVar(), right.getIntVar()),
+                        () -> model.addGreaterThan(left.getIntVar(), right.getIntVar()));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
         }
@@ -254,8 +296,7 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         OrToolsType result = visit(expressionBoolVar.getExpression());
         IntVar var;
         if (result.isConstraint()) {
-            var = model.newBoolVar(name);
-            result.getConstraint().onlyEnforceIf(var);
+            var = constraintToVar(result).getVar();
         } else if (result.isIntVar()) {
             var = result.getIntVar();
         } else {
