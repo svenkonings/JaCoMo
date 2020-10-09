@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * Represents a Not-equals expression.
  */
+@SuppressWarnings("ConstantConditions")
 public class NeExpr implements ReBoolExpr {
 
     private final @NotNull IntExpr left;
@@ -43,13 +44,19 @@ public class NeExpr implements ReBoolExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasValue() && right.hasValue();
+        return (left.hasValue() && right.hasValue()) ||
+                (left.hasLowerBound() && right.hasUpperBound() && left.getLowerBound() > right.getUpperBound()) ||
+                (left.hasUpperBound() && right.hasLowerBound() && left.getUpperBound() < right.getLowerBound());
     }
 
     @Override
     public @Nullable Boolean getValue() {
-        if (hasValue()) {
-            return !Objects.equals(left.getValue(), right.getValue());
+        if (left.hasValue() && right.hasValue()) {
+            return Objects.equals(left.getValue(), right.getValue());
+        } else if (left.hasLowerBound() && right.hasUpperBound() && left.getLowerBound() > right.getUpperBound()) {
+            return true;
+        } else if (left.hasUpperBound() && right.hasLowerBound() && left.getUpperBound() < right.getLowerBound()) {
+            return true;
         } else {
             return null;
         }
