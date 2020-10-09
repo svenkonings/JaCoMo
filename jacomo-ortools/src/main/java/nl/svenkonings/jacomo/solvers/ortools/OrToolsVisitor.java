@@ -231,25 +231,27 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         } else if (!right.isIntVar()) {
             throw new UnexpectedTypeException(reBoolExpr.getRight());
         }
+        IntVar leftVar = left.getIntVar();
+        IntVar rightVar = right.getIntVar();
         switch (reBoolExpr.getType()) {
             case EqExpr:
-                return OrToolsType.constraint(model.addEquality(left.getIntVar(), right.getIntVar()),
-                        () -> model.addDifferent(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addEquality(leftVar, rightVar),
+                        () -> model.addDifferent(leftVar, rightVar));
             case NeExpr:
-                return OrToolsType.constraint(model.addDifferent(left.getIntVar(), right.getIntVar()),
-                        () -> model.addEquality(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addDifferent(leftVar, rightVar),
+                        () -> model.addEquality(leftVar, rightVar));
             case GtExpr:
-                return OrToolsType.constraint(model.addGreaterThan(left.getIntVar(), right.getIntVar()),
-                        () -> model.addLessOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterThan(leftVar, rightVar),
+                        () -> model.addLessOrEqual(leftVar, rightVar));
             case GeExpr:
-                return OrToolsType.constraint(model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()),
-                        () -> model.addLessThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addGreaterOrEqual(leftVar, rightVar),
+                        () -> model.addLessThan(leftVar, rightVar));
             case LtExpr:
-                return OrToolsType.constraint(model.addLessThan(left.getIntVar(), right.getIntVar()),
-                        () -> model.addGreaterOrEqual(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessThan(leftVar, rightVar),
+                        () -> model.addGreaterOrEqual(leftVar, rightVar));
             case LeExpr:
-                return OrToolsType.constraint(model.addLessOrEqual(left.getIntVar(), right.getIntVar()),
-                        () -> model.addGreaterThan(left.getIntVar(), right.getIntVar()));
+                return OrToolsType.constraint(model.addLessOrEqual(leftVar, rightVar),
+                        () -> model.addGreaterThan(leftVar, rightVar));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
         }
@@ -284,18 +286,30 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         } else if (!right.isIntVar()) {
             throw new UnexpectedTypeException(biIntExpr.getRight());
         }
-
         IntVar var = genIntVar();
+        IntVar leftVar = left.getIntVar();
+        IntVar rightVar = right.getIntVar();
         switch (biIntExpr.getType()) {
             case SubExpr:
                 // OPTIMIZATION: Combine multiple subtraction scalar expressions
-                model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left.getIntVar(), right.getIntVar()}, new int[]{1, -1}));
+                model.addEquality(var, LinearExpr.scalProd(new IntVar[]{leftVar, rightVar}, new int[]{1, -1}));
                 return OrToolsType.intVar(var);
             case MulExpr:
-                model.addProductEquality(var, new IntVar[]{left.getIntVar(), right.getIntVar()});
+                model.addProductEquality(var, new IntVar[]{leftVar, rightVar});
                 return OrToolsType.intVar(var);
             case DivExpr:
-                model.addDivisionEquality(var, left.getIntVar(), right.getIntVar());
+                // OR-Tools does not support negative integer division
+                if (leftVar.getDomain().min() < 0) {
+                    IntVar oldLeftVar = leftVar;
+                    leftVar = model.newIntVar(0, Integer.MAX_VALUE, genName());
+                    model.addEquality(oldLeftVar, leftVar);
+                }
+                if (rightVar.getDomain().min() < 1) {
+                    IntVar oldRightVar = rightVar;
+                    rightVar = model.newIntVar(1, Integer.MAX_VALUE, genName());
+                    model.addEquality(oldRightVar, rightVar);
+                }
+                model.addDivisionEquality(var, leftVar, rightVar);
                 return OrToolsType.intVar(var);
             default:
                 throw new UnexpectedTypeException(biIntExpr);
