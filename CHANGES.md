@@ -46,5 +46,7 @@ Version 0.1 is a minimal viable product. It contains the following:
 After the MVP is done the goals are to:
 
 - Expand the model with more operations
+- Factory methods for automatically nesting binary expressions
 - Add more solver implementations
+  - MiniZinc
 - Enable Continuous Integration
