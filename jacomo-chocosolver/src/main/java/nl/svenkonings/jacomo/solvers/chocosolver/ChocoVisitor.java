@@ -3,6 +3,7 @@ package nl.svenkonings.jacomo.solvers.chocosolver;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
+import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
@@ -19,7 +20,9 @@ import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -89,7 +92,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     @Override
     protected ChocoType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
         ChocoType result = visit(boolExprConstraint.getExpr());
-        if (result.isArExpression()) {
+        if (!(result.isConstraint() || result.isReExpression())) {
             throw new UnexpectedTypeException(boolExprConstraint.getExpr());
         }
         Constraint constraint = result.isConstraint() ? result.getConstraint() : result.getReExpression().extension();
@@ -106,7 +109,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     @Override
     protected ChocoType visitNotExpr(NotExpr notExpr) {
         ChocoType result = visit(notExpr.getExpr());
-        if (result.isArExpression()) {
+        if (!(result.isConstraint() || result.isReExpression())) {
             throw new UnexpectedTypeException(notExpr.getExpr());
         }
         ReExpression expr = result.isReExpression() ? result.getReExpression() : result.getConstraint().reify();
@@ -115,22 +118,39 @@ public class ChocoVisitor extends Visitor<ChocoType> {
 
     @Override
     protected ChocoType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
-        ChocoType left = visit(biBoolExpr.getLeft());
-        ChocoType right = visit(biBoolExpr.getRight());
-        if (left.isArExpression()) {
-            throw new UnexpectedTypeException(biBoolExpr.getLeft());
-        } else if (right.isArExpression()) {
-            throw new UnexpectedTypeException(biBoolExpr.getRight());
-        }
-        Constraint leftConstraint = left.isConstraint() ? left.getConstraint() : left.getReExpression().extension();
-        Constraint rightConstraint = right.isConstraint() ? right.getConstraint() : right.getReExpression().extension();
+        BoolVar[] vars = collectAll(biBoolExpr).toArray(new BoolVar[0]);
         switch (biBoolExpr.getType()) {
             case AndExpr:
-                return ChocoType.constraint(model.and(leftConstraint, rightConstraint));
+                return ChocoType.constraint(model.and(vars));
             case OrExpr:
-                return ChocoType.constraint(model.or(leftConstraint, rightConstraint));
+                return ChocoType.constraint(model.or(vars));
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
+        }
+    }
+
+    // Collects all children of chained binary boolean expressions with the same type
+    private List<BoolVar> collectAll(BiBoolExpr expr) {
+        List<BoolVar> vars = new ArrayList<>();
+        collectAll(expr, vars);
+        return vars;
+    }
+
+    private void collectAll(BiBoolExpr expr, List<BoolVar> vars) {
+        collectAll(expr, expr.getLeft(), vars);
+        collectAll(expr, expr.getRight(), vars);
+    }
+
+    private void collectAll(BiBoolExpr expr, BoolExpr child, List<BoolVar> vars) {
+        if (expr.getType() == child.getType()) {
+            vars.addAll(collectAll((BiBoolExpr) child));
+        } else {
+            ChocoType result = visit(child);
+            if (!(result.isConstraint() || result.isReExpression())) {
+                throw new UnexpectedTypeException(child);
+            }
+            BoolVar var = result.isReExpression() ? result.getReExpression().boolVar() : result.getConstraint().reify();
+            vars.add(var);
         }
     }
 
@@ -210,17 +230,11 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     @Override
     protected ChocoType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
-        BoolVar var;
         ChocoType result = visit(expressionBoolVar.getExpression());
-        if (result.isConstraint()) {
-            Constraint constraint = result.getConstraint();
-            var = constraint.reify();
-        } else if (result.isReExpression()) {
-            ReExpression reExpression = result.getReExpression();
-            var = reExpression.boolVar();
-        } else {
+        if (!(result.isConstraint() || result.isReExpression())) {
             throw new UnexpectedTypeException(expressionBoolVar.getExpression());
         }
+        BoolVar var = result.isReExpression() ? result.getReExpression().boolVar() : result.getConstraint().reify();
         addBoolVar(name, var);
         return ChocoType.reExpression(var);
     }
