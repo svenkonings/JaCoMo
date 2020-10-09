@@ -264,10 +264,10 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     protected OrToolsType visitBiIntExpr(BiIntExpr biIntExpr) {
         switch (biIntExpr.getType()) {
             case SubExpr:
+            case MulExpr: // Although multiplication is associative, OR-Tools does not yet support flattening them
             case DivExpr:
                 return nonAssociativeBiIntExpr(biIntExpr);
             case AddExpr:
-            case MulExpr:
             case MinExpr:
             case MaxExpr:
                 return associativeBiIntExpr(biIntExpr);
@@ -291,6 +291,9 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
                 // OPTIMIZATION: Combine multiple subtraction scalar expressions
                 model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left.getIntVar(), right.getIntVar()}, new int[]{1, -1}));
                 return OrToolsType.intVar(var);
+            case MulExpr:
+                model.addProductEquality(var, new IntVar[]{left.getIntVar(), right.getIntVar()});
+                return OrToolsType.intVar(var);
             case DivExpr:
                 model.addDivisionEquality(var, left.getIntVar(), right.getIntVar());
                 return OrToolsType.intVar(var);
@@ -305,9 +308,6 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         switch (biIntExpr.getType()) {
             case AddExpr:
                 model.addEquality(var, LinearExpr.sum(vars));
-                return OrToolsType.intVar(var);
-            case MulExpr:
-                model.addProductEquality(var, vars);
                 return OrToolsType.intVar(var);
             case MinExpr:
                 model.addMinEquality(var, vars);

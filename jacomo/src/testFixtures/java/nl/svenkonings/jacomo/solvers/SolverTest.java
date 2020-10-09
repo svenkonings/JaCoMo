@@ -1,9 +1,11 @@
 package nl.svenkonings.jacomo.solvers;
 
 import nl.svenkonings.jacomo.exceptions.checked.SolveException;
+import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
+import nl.svenkonings.jacomo.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.variables.integer.IntVar;
 import org.junit.jupiter.api.Test;
 
@@ -162,5 +164,119 @@ public interface SolverTest {
         assertTrue(0 <= var3.getValue() && var3.getValue() <= 10);
         assertFalse(var1.getValue() > var2.getValue());
         assertFalse(var3.getValue() > var1.getValue() || var3.getValue() > var2.getValue());
+    }
+
+    @Test
+    default void solveBoolConstant() throws SolveException {
+        Model model = new Model();
+        BoolVar var1 = model.boolVar();
+        BoolVar var2 = model.boolVar(IntExpr.constant(5).gt(IntExpr.constant(4)));
+        BoolVar var3 = model.boolVar(false);
+        model.constraint(var1.and(var3.or(BoolExpr.constant(true))));
+        model.constraint(var1.or(BoolExpr.constant(false)));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (BoolVar) result.getVar(var1.getName());
+        var2 = (BoolVar) result.getVar(var2.getName());
+        var3 = (BoolVar) result.getVar(var3.getName());
+        assertTrue(var1.getValue());
+        assertTrue(var2.getValue());
+        assertFalse(var3.getValue());
+    }
+
+    @Test
+    default void solveAdd() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(5).add(IntExpr.constant(4).add(IntExpr.constant(3))));
+        IntVar var2 = model.intVar(3);
+        IntVar var3 = model.intVar(var1.add(var2).add(var2));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 12);
+        assertEquals(var2.getValue(), 3);
+        assertEquals(var3.getValue(), 18);
+    }
+
+    @Test
+    default void solveSub() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(5).sub(IntExpr.constant(4).sub(IntExpr.constant(3))));
+        IntVar var2 = model.intVar(3);
+        IntVar var3 = model.intVar(var1.sub(var2).sub(var2));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 4);
+        assertEquals(var2.getValue(), 3);
+        assertEquals(var3.getValue(), -2);
+    }
+
+    @Test
+    default void solveMul() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(5).mul(IntExpr.constant(4).mul(IntExpr.constant(3))));
+        IntVar var2 = model.intVar(3);
+        IntVar var3 = model.intVar(var1.mul(var2).mul(var2));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 60);
+        assertEquals(var2.getValue(), 3);
+        assertEquals(var3.getValue(), 540);
+    }
+
+    @Test
+    default void solveDiv() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(100).div(IntExpr.constant(4)).div(IntExpr.constant(5)));
+        IntVar var2 = model.intVar(25);
+        IntVar var3 = model.intVar(var2.div(var1.div(var1)));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 5);
+        assertEquals(var2.getValue(), 25);
+        assertEquals(var3.getValue(), 25);
+    }
+
+    @Test
+    default void solveMax() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(5).max(IntExpr.constant(4).max(IntExpr.constant(3))));
+        IntVar var2 = model.intVar(3);
+        IntVar var3 = model.intVar(var1.max(var2).max(var2));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 5);
+        assertEquals(var2.getValue(), 3);
+        assertEquals(var3.getValue(), 5);
+    }
+
+    @Test
+    default void solveMin() throws SolveException {
+        Model model = new Model();
+        IntVar var1 = model.intVar(IntExpr.constant(5).min(IntExpr.constant(4).min(IntExpr.constant(6))));
+        IntVar var2 = model.intVar(3);
+        IntVar var3 = model.intVar(var1.min(var2).min(var2));
+        VarMap result = getSolver().solve(model);
+
+        var1 = (IntVar) result.getVar(var1.getName());
+        var2 = (IntVar) result.getVar(var2.getName());
+        var3 = (IntVar) result.getVar(var3.getName());
+        assertEquals(var1.getValue(), 4);
+        assertEquals(var2.getValue(), 3);
+        assertEquals(var3.getValue(), 3);
     }
 }
