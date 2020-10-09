@@ -9,12 +9,15 @@ import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
 import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
+import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.expressions.integer.binary.BiIntExpr;
 import nl.svenkonings.jacomo.variables.bool.ExpressionBoolVar;
 import nl.svenkonings.jacomo.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
+import org.chocosolver.solver.expression.discrete.arithmetic.ArExpression;
+import org.chocosolver.solver.expression.discrete.arithmetic.NaArExpression;
 import org.chocosolver.solver.expression.discrete.relational.ReExpression;
 import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
@@ -143,7 +146,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
 
     private void collectAll(BiBoolExpr expr, BoolExpr child, List<BoolVar> vars) {
         if (expr.getType() == child.getType()) {
-            vars.addAll(collectAll((BiBoolExpr) child));
+            collectAll((BiBoolExpr) child, vars);
         } else {
             ChocoType result = visit(child);
             if (!(result.isConstraint() || result.isReExpression())) {
@@ -189,6 +192,21 @@ public class ChocoVisitor extends Visitor<ChocoType> {
 
     @Override
     protected ChocoType visitBiIntExpr(BiIntExpr biIntExpr) {
+        switch (biIntExpr.getType()) {
+            case SubExpr:
+            case DivExpr:
+                return nonAssociativeBiIntExpr(biIntExpr);
+            case AddExpr:
+            case MulExpr:
+            case MinExpr:
+            case MaxExpr:
+                return associativeBiIntExpr(biIntExpr);
+            default:
+                throw new UnexpectedTypeException(biIntExpr);
+        }
+    }
+
+    private ChocoType nonAssociativeBiIntExpr(BiIntExpr biIntExpr) {
         ChocoType left = visit(biIntExpr.getLeft());
         ChocoType right = visit(biIntExpr.getRight());
         if (!left.isArExpression()) {
@@ -197,20 +215,58 @@ public class ChocoVisitor extends Visitor<ChocoType> {
             throw new UnexpectedTypeException(biIntExpr.getRight());
         }
         switch (biIntExpr.getType()) {
-            case AddExpr:
-                return ChocoType.arExpression(left.getArExpression().add(right.getArExpression()));
             case SubExpr:
                 return ChocoType.arExpression(left.getArExpression().sub(right.getArExpression()));
-            case MulExpr:
-                return ChocoType.arExpression(left.getArExpression().mul(right.getArExpression()));
             case DivExpr:
                 return ChocoType.arExpression(left.getArExpression().div(right.getArExpression()));
-            case MinExpr:
-                return ChocoType.arExpression(left.getArExpression().min(right.getArExpression()));
-            case MaxExpr:
-                return ChocoType.arExpression(left.getArExpression().max(right.getArExpression()));
             default:
                 throw new UnexpectedTypeException(biIntExpr);
+        }
+    }
+
+    private ChocoType associativeBiIntExpr(BiIntExpr biIntExpr) {
+        ArExpression[] children = collectAll(biIntExpr).toArray(new ArExpression[0]);
+        ArExpression.Operator operator;
+        switch (biIntExpr.getType()) {
+            case AddExpr:
+                operator = ArExpression.Operator.ADD;
+                break;
+            case MulExpr:
+                operator = ArExpression.Operator.MUL;
+                break;
+            case MinExpr:
+                operator = ArExpression.Operator.MIN;
+                break;
+            case MaxExpr:
+                operator = ArExpression.Operator.MAX;
+                break;
+            default:
+                throw new UnexpectedTypeException(biIntExpr);
+        }
+        return ChocoType.arExpression(new NaArExpression(operator, children));
+    }
+
+    // Collects all children of chained binary integer expressions with the same type
+    private List<ArExpression> collectAll(BiIntExpr expr) {
+        List<ArExpression> results = new ArrayList<>();
+        collectAll(expr, results);
+        return results;
+    }
+
+    private void collectAll(BiIntExpr expr, List<ArExpression> results) {
+        collectAll(expr, expr.getLeft(), results);
+        collectAll(expr, expr.getRight(), results);
+    }
+
+    private void collectAll(BiIntExpr expr, IntExpr child, List<ArExpression> results) {
+        if (expr.getType() == child.getType()) {
+            collectAll((BiIntExpr) child, results);
+        } else {
+            ChocoType result = visit(child);
+            if (!result.isArExpression()) {
+                throw new UnexpectedTypeException(child);
+            }
+            results.add(result.getArExpression());
         }
     }
 
