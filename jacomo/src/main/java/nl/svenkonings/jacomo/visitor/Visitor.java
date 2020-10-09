@@ -1,6 +1,7 @@
 package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.NotImplementedException;
@@ -30,6 +31,7 @@ import java.util.Map;
  *
  * @param <T> The return type of this visitor
  */
+@SuppressWarnings("ConstantConditions")
 public abstract class Visitor<T> {
     protected final Map<Elem, T> visited;
 
@@ -203,9 +205,14 @@ public abstract class Visitor<T> {
 
     /**
      * Visits the specified element. This method will select which visit method
-     * to use based on the result of {@link Elem#getType()}. The results of each
-     * visit are cached. If an element has already been visited before the cached
-     * result is used.
+     * to use based on the result of {@link Elem#getType()}.
+     * <p>
+     * The results of each visit are cached. If an element has already been
+     * visited before the cached result is used.
+     * <p>
+     * If the specified element is a expression and the value of the expression
+     * can already be determined without solving, the expression is treated as
+     * a constant value.
      *
      * @param elem the specified element
      * @return the result of the selected visit method
@@ -216,136 +223,114 @@ public abstract class Visitor<T> {
             return visited.get(elem);
         }
         T result;
-        switch (elem.getType()) {
-            case Elem:
-                result = visitElem(elem);
-                break;
-            // Constraints
-            case Constraint:
-                result = visitConstraint((Constraint) elem);
-                break;
-            case BoolExprConstraint:
-                result = visitBoolExprConstraint((BoolExprConstraint) elem);
-                break;
-            // Expressions
-            case Expr:
-                result = visitExpr((Expr) elem);
-                break;
-            // Bool expressions
-            case BoolExpr:
-                result = visitBoolExpr((BoolExpr) elem);
-                break;
-            // Unary bool expressions
-            case UnBoolExpr:
-                result = visitUnBoolExpr((UnBoolExpr) elem);
-                break;
-            case NotExpr:
-                result = visitNotExpr((NotExpr) elem);
-                break;
-            case ConstantBoolExpr:
-                result = visitConstantBoolExpr((ConstantBoolExpr) elem);
-                break;
-            // Binary bool expressions
-            case BiBoolExpr:
-                result = visitBiBoolExpr((BiBoolExpr) elem);
-                break;
-            case AndExpr:
-                result = visitAndExpr((AndExpr) elem);
-                break;
-            case OrExpr:
-                result = visitOrExpr((OrExpr) elem);
-                break;
-            // Relational bool expressions
-            case ReBoolExpr:
-                result = visitReBoolExpr((ReBoolExpr) elem);
-                break;
-            case EqExpr:
-                result = visitEqExpr((EqExpr) elem);
-                break;
-            case NeExpr:
-                result = visitNeExpr((NeExpr) elem);
-                break;
-            case GtExpr:
-                result = visitGtExpr((GtExpr) elem);
-                break;
-            case GeExpr:
-                result = visitGeExpr((GeExpr) elem);
-                break;
-            case LtExpr:
-                result = visitLtExpr((LtExpr) elem);
-                break;
-            case LeExpr:
-                result = visitLeExpr((LeExpr) elem);
-                break;
-            // Int expressions
-            case IntExpr:
-                result = visitIntExpr((IntExpr) elem);
-                break;
-            case ConstantIntExpr:
-                result = visitConstantIntExpr((ConstantIntExpr) elem);
-                break;
-            // Binary int expressions
-            case BiIntExpr:
-                result = visitBiIntExpr((BiIntExpr) elem);
-                break;
-            case AddExpr:
-                result = visitAddExpr((AddExpr) elem);
-                break;
-            case SubExpr:
-                result = visitSubExpr((SubExpr) elem);
-                break;
-            case MulExpr:
-                result = visitMulExpr((MulExpr) elem);
-                break;
-            case DivExpr:
-                result = visitDivExpr((DivExpr) elem);
-                break;
-            case MinExpr:
-                result = visitMinExpr((MinExpr) elem);
-                break;
-            case MaxExpr:
-                result = visitMaxExpr((MaxExpr) elem);
-                break;
-            // Variables
-            case Var:
-                result = visitVar((Var) elem);
-                break;
-            // Bool variables
-            case BoolVar:
-                result = visitBoolVar((BoolVar) elem);
-                break;
-            case ConstantBoolVar:
-                result = visitConstantBoolVar((ConstantBoolVar) elem);
-                break;
-            case ExpressionBoolVar:
-                result = visitExpressionBoolVar((ExpressionBoolVar) elem);
-                break;
-            case UpdatableBoolVar:
-                result = visitUpdatableBoolVar((UpdatableBoolVar) elem);
-                break;
-            case InstantiatableBoolVar:
-                result = visitInstantiatableBoolVar((InstantiatableBoolVar) elem);
-                break;
-            // Int variables
-            case IntVar:
-                result = visitIntVar((IntVar) elem);
-                break;
-            case ConstantIntVar:
-                result = visitConstantIntVar((ConstantIntVar) elem);
-                break;
-            case ExpressionIntVar:
-                result = visitExpressionIntVar((ExpressionIntVar) elem);
-                break;
-            case UpdatableIntVar:
-                result = visitUpdatableIntVar((UpdatableIntVar) elem);
-                break;
-            case BoundedIntVar:
-                result = visitBoundedIntVar((BoundedIntVar) elem);
-                break;
-            default:
-                throw new UnknownTypeException("Unknown type: %s", elem.getType());
+        if ((elem instanceof BoolExpr) &&
+                !(elem instanceof Var) &&
+                elem.getType() != Type.ConstantBoolExpr &&
+                ((BoolExpr) elem).hasValue()) {
+            result = visit(BoolExpr.constant(((BoolExpr) elem).getValue()));
+        } else if (elem instanceof IntExpr &&
+                !(elem instanceof Var) &&
+                elem.getType() != Type.ConstantIntExpr &&
+                ((IntExpr) elem).hasValue()) {
+            result = visit(IntExpr.constant(((IntExpr) elem).getValue()));
+        } else {
+            result = typeVisit(elem);
         }
         visited.put(elem, result);
         return result;
+    }
+
+    protected T typeVisit(Elem elem) {
+        switch (elem.getType()) {
+            case Elem:
+                return visitElem(elem);
+            // Constraints
+            case Constraint:
+                return visitConstraint((Constraint) elem);
+            case BoolExprConstraint:
+                return visitBoolExprConstraint((BoolExprConstraint) elem);
+            // Expressions
+            case Expr:
+                return visitExpr((Expr) elem);
+            // Bool expressions
+            case BoolExpr:
+                return visitBoolExpr((BoolExpr) elem);
+            // Unary bool expressions
+            case UnBoolExpr:
+                return visitUnBoolExpr((UnBoolExpr) elem);
+            case NotExpr:
+                return visitNotExpr((NotExpr) elem);
+            case ConstantBoolExpr:
+                return visitConstantBoolExpr((ConstantBoolExpr) elem);
+            // Binary bool expressions
+            case BiBoolExpr:
+                return visitBiBoolExpr((BiBoolExpr) elem);
+            case AndExpr:
+                return visitAndExpr((AndExpr) elem);
+            case OrExpr:
+                return visitOrExpr((OrExpr) elem);
+            // Relational bool expressions
+            case ReBoolExpr:
+                return visitReBoolExpr((ReBoolExpr) elem);
+            case EqExpr:
+                return visitEqExpr((EqExpr) elem);
+            case NeExpr:
+                return visitNeExpr((NeExpr) elem);
+            case GtExpr:
+                return visitGtExpr((GtExpr) elem);
+            case GeExpr:
+                return visitGeExpr((GeExpr) elem);
+            case LtExpr:
+                return visitLtExpr((LtExpr) elem);
+            case LeExpr:
+                return visitLeExpr((LeExpr) elem);
+            // Int expressions
+            case IntExpr:
+                return visitIntExpr((IntExpr) elem);
+            case ConstantIntExpr:
+                return visitConstantIntExpr((ConstantIntExpr) elem);
+            // Binary int expressions
+            case BiIntExpr:
+                return visitBiIntExpr((BiIntExpr) elem);
+            case AddExpr:
+                return visitAddExpr((AddExpr) elem);
+            case SubExpr:
+                return visitSubExpr((SubExpr) elem);
+            case MulExpr:
+                return visitMulExpr((MulExpr) elem);
+            case DivExpr:
+                return visitDivExpr((DivExpr) elem);
+            case MinExpr:
+                return visitMinExpr((MinExpr) elem);
+            case MaxExpr:
+                return visitMaxExpr((MaxExpr) elem);
+            // Variables
+            case Var:
+                return visitVar((Var) elem);
+            // Bool variables
+            case BoolVar:
+                return visitBoolVar((BoolVar) elem);
+            case ConstantBoolVar:
+                return visitConstantBoolVar((ConstantBoolVar) elem);
+            case ExpressionBoolVar:
+                return visitExpressionBoolVar((ExpressionBoolVar) elem);
+            case UpdatableBoolVar:
+                return visitUpdatableBoolVar((UpdatableBoolVar) elem);
+            case InstantiatableBoolVar:
+                return visitInstantiatableBoolVar((InstantiatableBoolVar) elem);
+            // Int variables
+            case IntVar:
+                return visitIntVar((IntVar) elem);
+            case ConstantIntVar:
+                return visitConstantIntVar((ConstantIntVar) elem);
+            case ExpressionIntVar:
+                return visitExpressionIntVar((ExpressionIntVar) elem);
+            case UpdatableIntVar:
+                return visitUpdatableIntVar((UpdatableIntVar) elem);
+            case BoundedIntVar:
+                return visitBoundedIntVar((BoundedIntVar) elem);
+            default:
+                throw new UnknownTypeException("Unknown type: %s", elem.getType());
+        }
     }
 }
