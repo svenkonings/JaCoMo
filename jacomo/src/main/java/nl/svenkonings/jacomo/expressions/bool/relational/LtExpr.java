@@ -44,13 +44,19 @@ public class LtExpr implements ReBoolExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasUpperBound() && right.hasLowerBound();
+        return (left.hasValue() && right.hasValue()) ||
+                (left.hasUpperBound() && right.hasLowerBound() && left.getUpperBound() < right.getLowerBound()) ||
+                (left.hasLowerBound() && right.hasUpperBound() && !(left.getLowerBound() < right.getUpperBound()));
     }
 
     @Override
     public @Nullable Boolean getValue() {
-        if (hasValue()) {
-            return left.getUpperBound() < right.getLowerBound();
+        if (left.hasValue() && right.hasValue()) {
+            return left.getValue() < right.getValue();
+        } else if (left.hasUpperBound() && right.hasLowerBound() && left.getUpperBound() < right.getLowerBound()) {
+            return true;
+        } else if (left.hasLowerBound() && right.hasUpperBound() && !(left.getLowerBound() < right.getUpperBound())) {
+            return false;
         } else {
             return null;
         }

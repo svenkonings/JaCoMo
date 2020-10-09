@@ -44,13 +44,19 @@ public class GeExpr implements ReBoolExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasLowerBound() && right.hasUpperBound();
+        return (left.hasValue() && right.hasValue()) ||
+                (left.hasLowerBound() && right.hasUpperBound() && left.getLowerBound() >= right.getUpperBound()) ||
+                (left.hasUpperBound() && right.hasLowerBound() && !(left.getUpperBound() >= right.getLowerBound()));
     }
 
     @Override
     public @Nullable Boolean getValue() {
-        if (hasValue()) {
-            return left.getLowerBound() >= right.getUpperBound();
+        if (left.hasValue() && right.hasValue()) {
+            return left.getValue() > right.getValue();
+        } else if (left.hasLowerBound() && right.hasUpperBound() && left.getLowerBound() >= right.getUpperBound()) {
+            return true;
+        } else if (left.hasUpperBound() && right.hasLowerBound() && !(left.getUpperBound() >= right.getLowerBound())) {
+            return false;
         } else {
             return null;
         }

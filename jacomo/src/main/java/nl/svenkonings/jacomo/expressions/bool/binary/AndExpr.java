@@ -43,13 +43,19 @@ public class AndExpr implements BiBoolExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasValue() && right.hasValue();
+        return (left.hasValue() && right.hasValue()) ||
+                (left.hasValue() && !left.getValue()) ||
+                (right.hasValue() && !right.getValue());
     }
 
     @Override
     public @Nullable Boolean getValue() {
-        if (hasValue()) {
+        if (left.hasValue() && right.hasValue()) {
             return left.getValue() && right.getValue();
+        } else if (left.hasValue() && !left.getValue()) {
+            return false;
+        } else if (right.hasValue() && !right.getValue()) {
+            return false;
         } else {
             return null;
         }

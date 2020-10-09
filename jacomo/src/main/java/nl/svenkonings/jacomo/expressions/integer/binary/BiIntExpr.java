@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.expressions.integer.binary;
 
+import nl.svenkonings.jacomo.Type;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,11 @@ public interface BiIntExpr extends IntExpr {
     @Override
     default @NotNull List<IntExpr> getChildren() {
         return ListUtil.of(getLeft(), getRight());
+    }
+
+    @Override
+    default @NotNull Type getType() {
+        return Type.BiIntExpr;
     }
 
     /**
