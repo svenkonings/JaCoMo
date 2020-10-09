@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * and solved using a {@link Solver} implementation.
  */
 public class Model {
+    private static final String GEN_CONST_PREFIX = "_const_";
     private static final String GEN_BOOL_PREFIX = "_bool";
     private static final String GEN_INT_PREFIX = "_int";
 
@@ -271,7 +272,7 @@ public class Model {
      * @return the resulting constant
      */
     public BoolVar boolVar(boolean value) {
-        String name = GEN_BOOL_PREFIX + value;
+        String name = GEN_CONST_PREFIX + value;
         if (containsVar(name)) {
             return (BoolVar) getVar(name);
         } else {
@@ -359,7 +360,7 @@ public class Model {
      * @return the resulting constant
      */
     public IntVar intVar(int value) {
-        String name = GEN_INT_PREFIX + value;
+        String name = GEN_CONST_PREFIX + value;
         if (containsVar(name)) {
             return (IntVar) getVar(name);
         } else {
