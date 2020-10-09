@@ -279,4 +279,13 @@ public interface SolverTest {
         assertTrue(1 <= var2.getValue() && var2.getValue() <= 3);
         assertTrue(1 <= var3.getValue() && var3.getValue() <= 3);
     }
+
+    @Test
+    default void solveZeroDiv() {
+        Model model = new Model();
+        IntVar var1 = model.intVar(model.intVar(5).div(model.intVar(0)));
+        assertThrows(SolveException.class, () -> {
+            getSolver().solve(model);
+        });
+    }
 }

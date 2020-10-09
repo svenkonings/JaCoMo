@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Represents an Division expression.
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "UnnecessaryUnboxing"})
 public class DivExpr implements BiIntExpr {
 
     private final @NotNull IntExpr left;
@@ -44,7 +44,7 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasValue() && right.hasValue();
+        return left.hasValue() && right.hasValue() && right.getValue().intValue() != 0;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public boolean hasLowerBound() {
-        return left.hasLowerBound() && right.hasUpperBound();
+        return left.hasLowerBound() && right.hasUpperBound() && right.getUpperBound().intValue() != 0;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public boolean hasUpperBound() {
-        return left.hasUpperBound() && right.hasLowerBound();
+        return left.hasUpperBound() && right.hasLowerBound() && right.getLowerBound().intValue() != 0;
     }
 
     @Override

@@ -52,7 +52,7 @@ public class EqExpr implements ReBoolExpr {
     @Override
     public @Nullable Boolean getValue() {
         if (left.hasValue() && right.hasValue()) {
-            return Objects.equals(left.getValue(), right.getValue());
+            return left.getValue().intValue() == right.getValue().intValue();
         } else if (left.hasLowerBound() && right.hasUpperBound() && left.getLowerBound() > right.getUpperBound()) {
             return false;
         } else if (left.hasUpperBound() && right.hasLowerBound() && left.getUpperBound() < right.getLowerBound()) {
