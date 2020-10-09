@@ -4,6 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Contains utility functions for lists.
+ * Used as replacement for Java 11 List interface static methods.
+ */
 public class ListUtil {
     /**
      * Returns an empty unmodifiable list.
@@ -45,7 +49,7 @@ public class ListUtil {
      * @param <E>  the element type
      * @return the unmodifiable list
      */
-    public static <E> @NotNull List<E> copyOf(Collection<? extends E> coll) {
+    public static <E> @NotNull List<E> copyOf(@NotNull Collection<? extends E> coll) {
         return Collections.unmodifiableList(new ArrayList<>(coll));
     }
 }

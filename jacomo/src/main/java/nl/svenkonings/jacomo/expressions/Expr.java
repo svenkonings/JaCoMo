@@ -12,4 +12,11 @@ public interface Expr extends Elem {
     default @NotNull Type getType() {
         return Type.Expr;
     }
+
+    /**
+     * Returns whether this expression has a (instantiated) value.
+     *
+     * @return {@code true} if this expression has a value
+     */
+    boolean hasValue();
 }

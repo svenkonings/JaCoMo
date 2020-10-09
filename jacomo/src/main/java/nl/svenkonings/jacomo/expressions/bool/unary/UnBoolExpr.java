@@ -1,6 +1,7 @@
 package nl.svenkonings.jacomo.expressions.bool.unary;
 
 import nl.svenkonings.jacomo.Type;
+import nl.svenkonings.jacomo.expressions.UnExpr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Represent a unary boolean expression applied to a boolean sub-expression.
  */
-public interface UnBoolExpr extends BoolExpr {
+public interface UnBoolExpr extends BoolExpr, UnExpr {
     @Override
     default @NotNull List<BoolExpr> getChildren() {
         return ListUtil.of(getExpr());
@@ -26,5 +27,6 @@ public interface UnBoolExpr extends BoolExpr {
      *
      * @return the boolean sub-expression
      */
+    @Override
     @NotNull BoolExpr getExpr();
 }

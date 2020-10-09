@@ -6,6 +6,7 @@ import com.google.ortools.sat.LinearExpr;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
+import nl.svenkonings.jacomo.expressions.BiExpr;
 import nl.svenkonings.jacomo.expressions.Expr;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
@@ -139,29 +140,20 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     }
 
     // Collects all children of chained binary expressions with the same type
-    private List<IntVar> collectAll(Expr expr) {
+    private List<IntVar> collectAll(BiExpr expr) {
         List<IntVar> vars = new ArrayList<>();
         collectAll(expr, vars);
         return vars;
     }
 
-    private void collectAll(Expr expr, List<IntVar> vars) {
-        if (expr instanceof BiIntExpr) {
-            BiIntExpr intExpr = (BiIntExpr) expr;
-            collectAll(expr, intExpr.getLeft(), vars);
-            collectAll(expr, intExpr.getRight(), vars);
-        } else if (expr instanceof BiBoolExpr) {
-            BiBoolExpr boolExpr = (BiBoolExpr) expr;
-            collectAll(expr, boolExpr.getLeft(), vars);
-            collectAll(expr, boolExpr.getRight(), vars);
-        } else {
-            throw new UnexpectedTypeException(expr);
-        }
+    private void collectAll(BiExpr expr, List<IntVar> vars) {
+        collectAll(expr, expr.getLeft(), vars);
+        collectAll(expr, expr.getRight(), vars);
     }
 
-    private void collectAll(Expr expr, Expr child, List<IntVar> vars) {
+    private void collectAll(BiExpr expr, Expr child, List<IntVar> vars) {
         if (expr.getType() == child.getType()) {
-            collectAll(child, vars);
+            collectAll((BiExpr) child, vars);
         } else {
             OrToolsType result = visit(child);
             if (!(result.isConstraint() || result.isIntVar())) {

@@ -6,7 +6,9 @@ import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.constraints.Constraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.NotImplementedException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
+import nl.svenkonings.jacomo.expressions.BiExpr;
 import nl.svenkonings.jacomo.expressions.Expr;
+import nl.svenkonings.jacomo.expressions.UnExpr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.expressions.bool.binary.AndExpr;
@@ -56,6 +58,14 @@ public abstract class Visitor<T> {
     // Expressions
     protected T visitExpr(Expr expr) {
         return visitElem(expr);
+    }
+
+    protected T visitUnExpr(UnExpr unExpr) {
+        return visitExpr(unExpr);
+    }
+
+    protected T visitBiExpr(BiExpr biExpr) {
+        return visitExpr(biExpr);
     }
 
     // Bool expressions
@@ -223,15 +233,15 @@ public abstract class Visitor<T> {
             return visited.get(elem);
         }
         T result;
-        if ((elem instanceof BoolExpr) &&
-                !(elem instanceof Var) &&
-                elem.getType() != Type.ConstantBoolExpr &&
-                ((BoolExpr) elem).hasValue()) {
+        if (elem.getType() != Type.ConstantBoolExpr &&
+                (elem instanceof BoolExpr) &&
+                ((BoolExpr) elem).hasValue() &&
+                !(elem instanceof Var)) {
             result = visit(BoolExpr.constant(((BoolExpr) elem).getValue()));
-        } else if (elem instanceof IntExpr &&
-                !(elem instanceof Var) &&
-                elem.getType() != Type.ConstantIntExpr &&
-                ((IntExpr) elem).hasValue()) {
+        } else if (elem.getType() != Type.ConstantIntExpr &&
+                elem instanceof IntExpr &&
+                ((IntExpr) elem).hasValue() &&
+                !(elem instanceof Var)) {
             result = visit(IntExpr.constant(((IntExpr) elem).getValue()));
         } else {
             result = typeVisit(elem);
@@ -252,6 +262,10 @@ public abstract class Visitor<T> {
             // Expressions
             case Expr:
                 return visitExpr((Expr) elem);
+            case UnExpr:
+                return visitUnExpr((UnExpr) elem);
+            case BiExpr:
+                return visitBiExpr((BiExpr) elem);
             // Bool expressions
             case BoolExpr:
                 return visitBoolExpr((BoolExpr) elem);

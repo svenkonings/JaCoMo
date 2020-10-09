@@ -18,19 +18,11 @@ public interface BoolExpr extends Expr {
     }
 
     /**
-     * Returns whether this boolean expression has a (instantiated) value.
-     *
-     * @return {@code true} if this expression has a value
-     */
-    boolean hasValue();
-
-    /**
      * Returns the value of this expression
      *
      * @return the value of this expression, or {@code null} if it is uninstantiated
      */
     @Nullable Boolean getValue();
-
 
     // Factory methods
 

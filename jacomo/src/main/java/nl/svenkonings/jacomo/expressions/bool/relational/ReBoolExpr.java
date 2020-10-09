@@ -1,6 +1,7 @@
 package nl.svenkonings.jacomo.expressions.bool.relational;
 
 import nl.svenkonings.jacomo.Type;
+import nl.svenkonings.jacomo.expressions.BiExpr;
 import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Represents a relational boolean expression between to integer expressions.
  */
-public interface ReBoolExpr extends BoolExpr {
+public interface ReBoolExpr extends BoolExpr, BiExpr {
     @Override
     default @NotNull List<IntExpr> getChildren() {
         return ListUtil.of(getLeft(), getRight());
@@ -27,6 +28,7 @@ public interface ReBoolExpr extends BoolExpr {
      *
      * @return the left-hand integer expression
      */
+    @Override
     @NotNull IntExpr getLeft();
 
     /**
@@ -34,5 +36,6 @@ public interface ReBoolExpr extends BoolExpr {
      *
      * @return the right-hand integer expression
      */
+    @Override
     @NotNull IntExpr getRight();
 }

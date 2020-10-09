@@ -1,6 +1,7 @@
 package nl.svenkonings.jacomo.expressions.integer.binary;
 
 import nl.svenkonings.jacomo.Type;
+import nl.svenkonings.jacomo.expressions.BiExpr;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Represent a binary integer expression between two integer expressions.
  */
-public interface BiIntExpr extends IntExpr {
+public interface BiIntExpr extends IntExpr, BiExpr {
     @Override
     default @NotNull List<IntExpr> getChildren() {
         return ListUtil.of(getLeft(), getRight());
@@ -26,6 +27,7 @@ public interface BiIntExpr extends IntExpr {
      *
      * @return the left-hand integer expression
      */
+    @Override
     @NotNull IntExpr getLeft();
 
     /**
@@ -33,5 +35,6 @@ public interface BiIntExpr extends IntExpr {
      *
      * @return the right-hand integer expression
      */
+    @Override
     @NotNull IntExpr getRight();
 }

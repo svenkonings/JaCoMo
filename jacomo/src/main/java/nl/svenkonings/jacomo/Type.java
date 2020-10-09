@@ -10,6 +10,8 @@ public enum Type {
     BoolExprConstraint,
     // Expressions
     Expr,
+    UnExpr,
+    BiExpr,
     // Bool expressions
     BoolExpr,
     ConstantBoolExpr,
