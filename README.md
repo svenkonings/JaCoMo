@@ -1,10 +1,14 @@
 <p align="center">
-  <img width="25%" src="https://github.com/svenkonings/JaCoMo/raw/master/img/JaCoMo.svg?sanitize=true" />
+  <img width="25%" src="https://github.com/svenkonings/JaCoMo/raw/master/img/JaCoMo.svg?sanitize=true" alt="JaCoMo"/>
 </p>
 
 # JaCoMo
 JaCoMo is a high-level, solver-independent, Java constraint model for constraint
 satisfaction problems in the integer domain.
+
+[![Build](https://github.com/svenkonings/JaCoMo/workflows/build/badge.svg)](https://github.com/svenkonings/JaCoMo/actions)
+[![Maven Central](https://img.shields.io/maven-central/v/nl.svenkonings.jacomo/jacomo.svg?label=Maven%20Central&color=%234c1)](https://search.maven.org/search?q=g:%22nl.svenkonings.jacomo%22)
+[![Javadoc](https://javadoc.io/badge2/nl.svenkonings.jacomo/jacomo/javadoc.svg)](https://javadoc.io/doc/nl.svenkonings.jacomo)
 
 ## Progress
 The current version is a work-in-progress. The progress for the v0.1 minimum
