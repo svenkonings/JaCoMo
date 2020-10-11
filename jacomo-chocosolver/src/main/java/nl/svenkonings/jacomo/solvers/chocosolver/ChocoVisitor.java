@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
+import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
@@ -31,7 +32,7 @@ import java.util.Map;
 /**
  * Visitor which builds a ChocoSolver model from the visited elements.
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "SuspiciousNameCombination"})
 public class ChocoVisitor extends Visitor<ChocoType> {
     private final @NotNull Model model;
     private final @NotNull Map<String, BoolVar> boolVars;
@@ -92,13 +93,45 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         intVars.put(name, var);
     }
 
+    private Constraint constraint(Elem elem) {
+        ChocoType result = visit(elem);
+        if (result.isConstraint()) {
+            return result.getConstraint();
+        } else if (result.isReExpression()) {
+            ReExpression expr = result.getReExpression();
+            try {
+                return expr.decompose();
+            } catch (UnsupportedOperationException e) {
+                return expr.extension();
+            }
+        } else {
+            throw new UnexpectedTypeException(elem);
+        }
+    }
+
+    private ReExpression reExpression(Elem elem) {
+        ChocoType result = visit(elem);
+        if (result.isReExpression()) {
+            return result.getReExpression();
+        } else if (result.isConstraint()) {
+            return result.getConstraint().reify();
+        } else {
+            throw new UnexpectedTypeException(elem);
+        }
+    }
+
+    private ArExpression arExpression(Elem elem) {
+        ChocoType result = visit(elem);
+        if (result.isArExpression()) {
+            return result.getArExpression();
+        } else {
+            throw new UnexpectedTypeException(elem);
+        }
+    }
+
     @Override
     protected ChocoType visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
-        ChocoType result = visit(boolExprConstraint.getExpr());
-        if (!(result.isConstraint() || result.isReExpression())) {
-            throw new UnexpectedTypeException(boolExprConstraint.getExpr());
-        }
-        Constraint constraint = result.isConstraint() ? result.getConstraint() : result.getReExpression().extension();
+        Constraint constraint = constraint(boolExprConstraint.getExpr());
         constraint.post();
         return ChocoType.none();
     }
@@ -111,11 +144,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
 
     @Override
     protected ChocoType visitNotExpr(NotExpr notExpr) {
-        ChocoType result = visit(notExpr.getExpr());
-        if (!(result.isConstraint() || result.isReExpression())) {
-            throw new UnexpectedTypeException(notExpr.getExpr());
-        }
-        ReExpression expr = result.isReExpression() ? result.getReExpression() : result.getConstraint().reify();
+        ReExpression expr = reExpression(notExpr.getExpr());
         return ChocoType.reExpression(expr.not());
     }
 
@@ -148,37 +177,27 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         if (expr.getType() == child.getType()) {
             collectAll((BiBoolExpr) child, vars);
         } else {
-            ChocoType result = visit(child);
-            if (!(result.isConstraint() || result.isReExpression())) {
-                throw new UnexpectedTypeException(child);
-            }
-            BoolVar var = result.isReExpression() ? result.getReExpression().boolVar() : result.getConstraint().reify();
-            vars.add(var);
+            vars.add(reExpression(child).boolVar());
         }
     }
 
     @Override
     protected ChocoType visitReBoolExpr(ReBoolExpr reBoolExpr) {
-        ChocoType left = visit(reBoolExpr.getLeft());
-        ChocoType right = visit(reBoolExpr.getRight());
-        if (!left.isArExpression()) {
-            throw new UnexpectedTypeException(reBoolExpr.getLeft());
-        } else if (!right.isArExpression()) {
-            throw new UnexpectedTypeException(reBoolExpr.getRight());
-        }
+        ArExpression left = arExpression(reBoolExpr.getLeft());
+        ArExpression right = arExpression(reBoolExpr.getRight());
         switch (reBoolExpr.getType()) {
             case EqExpr:
-                return ChocoType.reExpression(left.getArExpression().eq(right.getArExpression()));
+                return ChocoType.reExpression(left.eq(right));
             case NeExpr:
-                return ChocoType.reExpression(left.getArExpression().ne(right.getArExpression()));
+                return ChocoType.reExpression(left.ne(right));
             case GtExpr:
-                return ChocoType.reExpression(left.getArExpression().gt(right.getArExpression()));
+                return ChocoType.reExpression(left.gt(right));
             case GeExpr:
-                return ChocoType.reExpression(left.getArExpression().ge(right.getArExpression()));
+                return ChocoType.reExpression(left.ge(right));
             case LtExpr:
-                return ChocoType.reExpression(left.getArExpression().lt(right.getArExpression()));
+                return ChocoType.reExpression(left.lt(right));
             case LeExpr:
-                return ChocoType.reExpression(left.getArExpression().le(right.getArExpression()));
+                return ChocoType.reExpression(left.le(right));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
         }
@@ -207,18 +226,13 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     }
 
     private ChocoType nonAssociativeBiIntExpr(BiIntExpr biIntExpr) {
-        ChocoType left = visit(biIntExpr.getLeft());
-        ChocoType right = visit(biIntExpr.getRight());
-        if (!left.isArExpression()) {
-            throw new UnexpectedTypeException(biIntExpr.getLeft());
-        } else if (!right.isArExpression()) {
-            throw new UnexpectedTypeException(biIntExpr.getRight());
-        }
+        ArExpression left = arExpression(biIntExpr.getLeft());
+        ArExpression right = arExpression(biIntExpr.getRight());
         switch (biIntExpr.getType()) {
             case SubExpr:
-                return ChocoType.arExpression(left.getArExpression().sub(right.getArExpression()));
+                return ChocoType.arExpression(left.sub(right));
             case DivExpr:
-                return ChocoType.arExpression(left.getArExpression().div(right.getArExpression()));
+                return ChocoType.arExpression(left.div(right));
             default:
                 throw new UnexpectedTypeException(biIntExpr);
         }
@@ -262,11 +276,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
         if (expr.getType() == child.getType()) {
             collectAll((BiIntExpr) child, results);
         } else {
-            ChocoType result = visit(child);
-            if (!result.isArExpression()) {
-                throw new UnexpectedTypeException(child);
-            }
-            results.add(result.getArExpression());
+            results.add(arExpression(child));
         }
     }
 
@@ -286,11 +296,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     @Override
     protected ChocoType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
-        ChocoType result = visit(expressionBoolVar.getExpression());
-        if (!(result.isConstraint() || result.isReExpression())) {
-            throw new UnexpectedTypeException(expressionBoolVar.getExpression());
-        }
-        BoolVar var = result.isReExpression() ? result.getReExpression().boolVar() : result.getConstraint().reify();
+        BoolVar var = reExpression(expressionBoolVar.getExpression()).boolVar();
         addBoolVar(name, var);
         return ChocoType.reExpression(var);
     }
@@ -313,11 +319,7 @@ public class ChocoVisitor extends Visitor<ChocoType> {
     @Override
     protected ChocoType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
         String name = expressionIntVar.getName();
-        ChocoType result = visit(expressionIntVar.getExpression());
-        if (!result.isArExpression()) {
-            throw new UnexpectedTypeException(expressionIntVar.getExpression());
-        }
-        IntVar var = result.getArExpression().intVar();
+        IntVar var = arExpression(expressionIntVar.getExpression()).intVar();
         addIntVar(name, var);
         return ChocoType.arExpression(var);
     }
