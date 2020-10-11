@@ -3,6 +3,7 @@ package nl.svenkonings.jacomo.solvers.ortools;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
 import com.google.ortools.sat.LinearExpr;
+import nl.svenkonings.jacomo.Elem;
 import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
@@ -128,15 +129,19 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         inverseVars.set(index, boolVar);
     }
 
-    private IntVar constraintToVar(OrToolsType result) {
-        if (!result.isConstraint()) {
-            throw new UnexpectedTypeException("Expected constraint value, received: %s", result);
+    private IntVar intVar(Elem elem, boolean convertConstraint) {
+        OrToolsType result = visit(elem);
+        if (result.isIntVar()) {
+            return result.getIntVar();
+        } else if (convertConstraint && result.isConstraint()) {
+            IntVar var = genBoolVar();
+            result.getConstraint().onlyEnforceIf(var);
+            IntVar inverseVar = getInverse(var);
+            result.getInverseConstraint().onlyEnforceIf(inverseVar);
+            return var;
+        } else {
+            throw new UnexpectedTypeException(elem);
         }
-        IntVar var = genBoolVar();
-        result.getConstraint().onlyEnforceIf(var);
-        IntVar inverseVar = getInverse(var);
-        result.getInverseConstraint().onlyEnforceIf(inverseVar);
-        return var;
     }
 
     // Collects all children of chained binary expressions with the same type
@@ -155,12 +160,7 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
         if (expr.getType() == child.getType()) {
             collectAll((BiExpr) child, vars);
         } else {
-            OrToolsType result = visit(child);
-            if (!(result.isConstraint() || result.isIntVar())) {
-                throw new UnexpectedTypeException(child);
-            }
-            IntVar var = result.isIntVar() ? result.getIntVar() : constraintToVar(result);
-            vars.add(var);
+            vars.add(intVar(child, true));
         }
     }
 
@@ -187,15 +187,7 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
 
     @Override
     protected OrToolsType visitNotExpr(NotExpr notExpr) {
-        OrToolsType result = visit(notExpr.getExpr());
-        IntVar var;
-        if (result.isConstraint()) {
-            var = getInverse(constraintToVar(result));
-        } else if (result.isIntVar()) {
-            var = getInverse(result.getIntVar());
-        } else {
-            throw new UnexpectedTypeException(notExpr.getExpr());
-        }
+        IntVar var = getInverse(intVar(notExpr.getExpr(), true));
         return OrToolsType.intVar(var);
     }
 
@@ -216,34 +208,27 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
 
     @Override
     protected OrToolsType visitReBoolExpr(ReBoolExpr reBoolExpr) {
-        OrToolsType left = visit(reBoolExpr.getLeft());
-        OrToolsType right = visit(reBoolExpr.getRight());
-        if (!left.isIntVar()) {
-            throw new UnexpectedTypeException(reBoolExpr.getLeft());
-        } else if (!right.isIntVar()) {
-            throw new UnexpectedTypeException(reBoolExpr.getRight());
-        }
-        IntVar leftVar = left.getIntVar();
-        IntVar rightVar = right.getIntVar();
+        IntVar left = intVar(reBoolExpr.getLeft(), false);
+        IntVar right = intVar(reBoolExpr.getRight(), false);
         switch (reBoolExpr.getType()) {
             case EqExpr:
-                return OrToolsType.constraint(model.addEquality(leftVar, rightVar),
-                        () -> model.addDifferent(leftVar, rightVar));
+                return OrToolsType.constraint(model.addEquality(left, right),
+                        () -> model.addDifferent(left, right));
             case NeExpr:
-                return OrToolsType.constraint(model.addDifferent(leftVar, rightVar),
-                        () -> model.addEquality(leftVar, rightVar));
+                return OrToolsType.constraint(model.addDifferent(left, right),
+                        () -> model.addEquality(left, right));
             case GtExpr:
-                return OrToolsType.constraint(model.addGreaterThan(leftVar, rightVar),
-                        () -> model.addLessOrEqual(leftVar, rightVar));
+                return OrToolsType.constraint(model.addGreaterThan(left, right),
+                        () -> model.addLessOrEqual(left, right));
             case GeExpr:
-                return OrToolsType.constraint(model.addGreaterOrEqual(leftVar, rightVar),
-                        () -> model.addLessThan(leftVar, rightVar));
+                return OrToolsType.constraint(model.addGreaterOrEqual(left, right),
+                        () -> model.addLessThan(left, right));
             case LtExpr:
-                return OrToolsType.constraint(model.addLessThan(leftVar, rightVar),
-                        () -> model.addGreaterOrEqual(leftVar, rightVar));
+                return OrToolsType.constraint(model.addLessThan(left, right),
+                        () -> model.addGreaterOrEqual(left, right));
             case LeExpr:
-                return OrToolsType.constraint(model.addLessOrEqual(leftVar, rightVar),
-                        () -> model.addGreaterThan(leftVar, rightVar));
+                return OrToolsType.constraint(model.addLessOrEqual(left, right),
+                        () -> model.addGreaterThan(left, right));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
         }
@@ -271,37 +256,30 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     }
 
     private OrToolsType nonAssociativeBiIntExpr(BiIntExpr biIntExpr) {
-        OrToolsType left = visit(biIntExpr.getLeft());
-        OrToolsType right = visit(biIntExpr.getRight());
-        if (!left.isIntVar()) {
-            throw new UnexpectedTypeException(biIntExpr.getLeft());
-        } else if (!right.isIntVar()) {
-            throw new UnexpectedTypeException(biIntExpr.getRight());
-        }
+        IntVar left = intVar(biIntExpr.getLeft(), false);
+        IntVar right = intVar(biIntExpr.getRight(), false);
         IntVar var = genIntVar();
-        IntVar leftVar = left.getIntVar();
-        IntVar rightVar = right.getIntVar();
         switch (biIntExpr.getType()) {
             case SubExpr:
                 // OPTIMIZATION: Combine multiple subtraction scalar expressions
-                model.addEquality(var, LinearExpr.scalProd(new IntVar[]{leftVar, rightVar}, new int[]{1, -1}));
+                model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left, right}, new int[]{1, -1}));
                 return OrToolsType.intVar(var);
             case MulExpr:
-                model.addProductEquality(var, new IntVar[]{leftVar, rightVar});
+                model.addProductEquality(var, new IntVar[]{left, right});
                 return OrToolsType.intVar(var);
             case DivExpr:
                 // OR-Tools does not support negative integer division
-                if (leftVar.getDomain().min() < 0) {
-                    IntVar oldLeftVar = leftVar;
-                    leftVar = model.newIntVar(0, Integer.MAX_VALUE, genName());
-                    model.addEquality(oldLeftVar, leftVar);
+                if (left.getDomain().min() < 0) {
+                    IntVar oldLeftVar = left;
+                    left = model.newIntVar(0, Integer.MAX_VALUE, genName());
+                    model.addEquality(oldLeftVar, left);
                 }
-                if (rightVar.getDomain().min() < 1) {
-                    IntVar oldRightVar = rightVar;
-                    rightVar = model.newIntVar(1, Integer.MAX_VALUE, genName());
-                    model.addEquality(oldRightVar, rightVar);
+                if (right.getDomain().min() < 1) {
+                    IntVar oldRightVar = right;
+                    right = model.newIntVar(1, Integer.MAX_VALUE, genName());
+                    model.addEquality(oldRightVar, right);
                 }
-                model.addDivisionEquality(var, leftVar, rightVar);
+                model.addDivisionEquality(var, left, right);
                 return OrToolsType.intVar(var);
             default:
                 throw new UnexpectedTypeException(biIntExpr);
@@ -343,15 +321,7 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     @Override
     protected OrToolsType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
-        OrToolsType result = visit(expressionBoolVar.getExpression());
-        IntVar var;
-        if (result.isConstraint()) {
-            var = constraintToVar(result);
-        } else if (result.isIntVar()) {
-            var = result.getIntVar();
-        } else {
-            throw new UnexpectedTypeException(expressionBoolVar.getExpression());
-        }
+        IntVar var = intVar(expressionBoolVar.getExpression(), true);
         addBoolVar(name, var);
         return OrToolsType.intVar(var);
     }
@@ -374,11 +344,7 @@ public class OrToolsVisitor extends Visitor<OrToolsType> {
     @Override
     protected OrToolsType visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
         String name = expressionIntVar.getName();
-        OrToolsType result = visit(expressionIntVar.getExpression());
-        if (!result.isIntVar()) {
-            throw new UnexpectedTypeException(expressionIntVar.getExpression());
-        }
-        IntVar var = result.getIntVar();
+        IntVar var = intVar(expressionIntVar.getExpression(), false);
         addIntVar(name, var);
         return OrToolsType.intVar(var);
     }
