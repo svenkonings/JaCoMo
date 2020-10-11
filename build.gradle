@@ -1,6 +1,6 @@
 allprojects {
     group 'nl.svenkonings.jacomo'
-    version '0.1-SNAPSHOT'
+    version '0.1-RC1'
     repositories {
         mavenCentral()
         jcenter()
@@ -34,6 +34,8 @@ subprojects {
                         url = 'https://github.com/svenkonings/JaCoMo'
                     }
                 }
+                suppressPomMetadataWarningsFor('testFixturesApiElements')
+                suppressPomMetadataWarningsFor('testFixturesRuntimeElements')
             }
         }
         repositories {
@@ -45,6 +47,14 @@ subprojects {
                 credentials {
                     username = findProperty("ossrhUsername")
                     password = findProperty("ossrhPassword")
+                }
+            }
+            maven {
+                name = "GitHub"
+                url = "https://maven.pkg.github.com/svenkonings/jacomo"
+                credentials {
+                    username = findProperty("githubUsername")
+                    password = findProperty("githubToken")
                 }
             }
         }
