@@ -80,7 +80,7 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     @Override
     public boolean hasValue() {
-        return Objects.equals(lowerBound, upperBound);
+        return lowerBound != null && lowerBound.equals(upperBound);
     }
 
     @Override
