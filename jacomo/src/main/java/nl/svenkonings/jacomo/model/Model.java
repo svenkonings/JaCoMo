@@ -105,7 +105,7 @@ public class Model {
         return addVarUnchecked(var);
     }
 
-    private Var addVarUnchecked(@NotNull Var var) {
+    Var addVarUnchecked(@NotNull Var var) {
         return vars.addVar(var);
     }
 
@@ -126,7 +126,7 @@ public class Model {
         return addVarsUnchecked(vars);
     }
 
-    private List<Var> addVarsUnchecked(@NotNull Collection<? extends Var> vars) {
+    List<Var> addVarsUnchecked(@NotNull Collection<? extends Var> vars) {
         return this.vars.addVars(vars);
     }
 

@@ -259,4 +259,19 @@ public interface SolverTest {
 
         assertFalse(result);
     }
+
+    @Test
+    default void solveReusedConstraint() {
+        Model model = new Model();
+        BoolVar var1 = model.boolVar();
+        BoolVar var2 = model.boolVar();
+        BoolVar var3 = model.boolVar(var1.and(var2));
+        model.constraint(var1.and(var2));
+        boolean result = getSolver().solve(model);
+
+        assertTrue(result);
+        assertTrue(var1.getValue());
+        assertTrue(var2.getValue());
+        assertTrue(var3.getValue());
+    }
 }

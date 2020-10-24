@@ -22,7 +22,7 @@ public class OrToolsSolver implements Solver {
     }
 
     @Override
-    public boolean solve(@NotNull Model model) {
+    public boolean solveModel(@NotNull Model model) {
         OrToolsVisitor visitor = new OrToolsVisitor();
         model.visitAll(visitor);
         CpSolver solver = new CpSolver();

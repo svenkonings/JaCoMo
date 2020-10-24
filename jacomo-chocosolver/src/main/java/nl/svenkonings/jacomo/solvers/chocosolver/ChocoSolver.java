@@ -19,7 +19,7 @@ public class ChocoSolver implements Solver {
     }
 
     @Override
-    public boolean solve(@NotNull Model model) {
+    public boolean solveModel(@NotNull Model model) {
         ChocoVisitor visitor = new ChocoVisitor();
         model.visitAll(visitor);
         if (!visitor.getModel().getSolver().solve()) {
