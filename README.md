@@ -47,5 +47,5 @@ viable product release is as follows:
   - [x] OR-tools
 - [ ] Unit-test for non-trivial classes and system tests
 - [ ] Getting started documentation with examples
-- [X] JavaDoc documentation
-- [ ] Maven Central Repository release
+- [x] JavaDoc documentation
+- [x] Maven Central Repository release

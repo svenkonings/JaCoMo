@@ -1,6 +1,6 @@
 allprojects {
     group 'nl.svenkonings.jacomo'
-    version '0.1-RC1'
+    version '0.1-RC2'
     repositories {
         mavenCentral()
         jcenter()
