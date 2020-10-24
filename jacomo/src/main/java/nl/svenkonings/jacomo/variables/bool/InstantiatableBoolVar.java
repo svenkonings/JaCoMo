@@ -64,7 +64,7 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
 
     @Override
     public void instantiateValue(boolean value) throws ContradictionException {
-        if (this.value != null && !Objects.equals(this.value, value)) {
+        if (this.value != null && !this.value.equals(value)) {
             throw new ContradictionException("Value already instantiated");
         }
         this.value = value;

@@ -10,13 +10,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Solver {
     /**
-     * Attempt to solve the specified model. Returns a
-     * {@link VarMap} containing the resolved variables.
-     * All variables present in the model should be included in the map.
+     * Attempt to solve the specified model. Returns {@code true} if the model
+     * has been solved.
      *
      * @param model the specified model
-     * @return A {@link VarMap} containing the resolved variables
-     * @throws SolveException if the model could not be solved
+     * @return {@code true} if the model has been solved, {@code false} otherwise
      */
-    @NotNull VarMap solve(@NotNull Model model) throws SolveException;
+    boolean solve(@NotNull Model model);
 }
