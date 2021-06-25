@@ -5,10 +5,12 @@ This changelog gives a high-level overview of the (planned) changes per version.
 After the MVP is done the goals are to:
 
 - Expand the model with more operations
-- Factory methods for automatically nesting binary expressions
+  - Xor expression
+  - Factory methods for automatically nesting binary expressions
+  - Option to solve in-place or with map
+  - Copyable elements
 - Add more solver implementations
   - MiniZinc
-- Enable Continuous Integration
 
 ## v0.1 - MVP (In progress)
 Version 0.1 is a minimal viable product. It contains the following:
@@ -59,6 +61,7 @@ The second release candidate of version 0.2. The following has changed from RC1:
   map with new variables
 - Add Checker containing model checks and optimizations
 - Rework visitor caching to prevent posting reified constraints
+- Enable Continuous Integration
 
 ## v0.1-RC1
 The first release candidate of version 0.1. It contains the following:

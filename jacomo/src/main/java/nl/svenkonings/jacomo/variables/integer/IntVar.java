@@ -5,6 +5,7 @@ import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
 import nl.svenkonings.jacomo.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.variables.Var;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a named integer variable.
@@ -91,7 +92,7 @@ public interface IntVar extends Var, IntExpr {
      * @return the created integer variable
      * @throws ContradictionException if the lower bound is higher than the upper bound
      */
-    static BoundedIntVar bounds(@NotNull String name, int lowerBound, int upperBound) throws ContradictionException {
+    static BoundedIntVar bounds(@NotNull String name, @Nullable Integer lowerBound, @Nullable Integer upperBound) throws ContradictionException {
         return new BoundedIntVar(name, lowerBound, upperBound);
     }
 
