@@ -27,4 +27,38 @@ public interface BoolVar extends Var, BoolExpr {
             return String.format("bool %s", name);
         }
     }
+
+    // Factory methods
+
+    /**
+     * Creates a new boolean variable with the specified name and value.
+     *
+     * @param name  the specified name
+     * @param value the specified value
+     * @return the created boolean variable
+     */
+    static ConstantBoolVar constant(@NotNull String name, boolean value) {
+        return new ConstantBoolVar(name, value);
+    }
+
+    /**
+     * Creates a new boolean variable with the specified name.
+     *
+     * @param name the specified name
+     * @return the created boolean variable
+     */
+    static InstantiatableBoolVar variable(@NotNull String name) {
+        return new InstantiatableBoolVar(name);
+    }
+
+    /**
+     * Creates a new boolean variable with the specified name and expression.
+     *
+     * @param name the specified name
+     * @param expr the specified expression
+     * @return the created boolean variable
+     */
+    static ExpressionBoolVar expression(@NotNull String name, @NotNull BoolExpr expr) {
+        return new ExpressionBoolVar(name, expr);
+    }
 }

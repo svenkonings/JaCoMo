@@ -53,6 +53,7 @@ public class BoundedIntVar implements UpdatableIntVar {
      * @param name       the specified name
      * @param lowerBound the specified lower-bound
      * @param upperBound the specified upper-bound
+     * @throws ContradictionException if the lower bound is higher than the upper bound
      */
     public BoundedIntVar(@NotNull String name, @Nullable Integer lowerBound, @Nullable Integer upperBound) throws ContradictionException {
         this.name = name;
