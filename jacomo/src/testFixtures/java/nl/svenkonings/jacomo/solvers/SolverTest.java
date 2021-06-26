@@ -1,10 +1,10 @@
 package nl.svenkonings.jacomo.solvers;
 
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.model.Model;
-import nl.svenkonings.jacomo.variables.bool.BoolVar;
-import nl.svenkonings.jacomo.variables.integer.IntVar;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,6 +1,6 @@
 package nl.svenkonings.jacomo.exceptions.unchecked;
 
-import nl.svenkonings.jacomo.Elem;
+import nl.svenkonings.jacomo.elem.Elem;
 
 /**
  * Unchecked exception thrown when a visited element has an unexpected type.

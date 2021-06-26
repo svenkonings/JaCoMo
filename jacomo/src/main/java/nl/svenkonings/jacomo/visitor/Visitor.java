@@ -1,27 +1,27 @@
 package nl.svenkonings.jacomo.visitor;
 
-import nl.svenkonings.jacomo.Elem;
-import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
-import nl.svenkonings.jacomo.constraints.Constraint;
+import nl.svenkonings.jacomo.elem.Elem;
+import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.constraints.Constraint;
+import nl.svenkonings.jacomo.elem.expressions.BiExpr;
+import nl.svenkonings.jacomo.elem.expressions.Expr;
+import nl.svenkonings.jacomo.elem.expressions.UnExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.AndExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.OrExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.relational.*;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.UnBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.binary.*;
+import nl.svenkonings.jacomo.elem.variables.Var;
+import nl.svenkonings.jacomo.elem.variables.bool.*;
+import nl.svenkonings.jacomo.elem.variables.integer.*;
 import nl.svenkonings.jacomo.exceptions.unchecked.NotImplementedException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
-import nl.svenkonings.jacomo.expressions.BiExpr;
-import nl.svenkonings.jacomo.expressions.Expr;
-import nl.svenkonings.jacomo.expressions.UnExpr;
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.AndExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.OrExpr;
-import nl.svenkonings.jacomo.expressions.bool.relational.*;
-import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
-import nl.svenkonings.jacomo.expressions.bool.unary.UnBoolExpr;
-import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
-import nl.svenkonings.jacomo.expressions.integer.binary.*;
-import nl.svenkonings.jacomo.variables.Var;
-import nl.svenkonings.jacomo.variables.bool.*;
-import nl.svenkonings.jacomo.variables.integer.*;
 
 /**
  * A visitor to traverse elements in a model.

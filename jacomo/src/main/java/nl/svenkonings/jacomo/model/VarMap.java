@@ -1,7 +1,7 @@
 package nl.svenkonings.jacomo.model;
 
+import nl.svenkonings.jacomo.elem.variables.Var;
 import nl.svenkonings.jacomo.util.ListUtil;
-import nl.svenkonings.jacomo.variables.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

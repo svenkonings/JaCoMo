@@ -2,12 +2,12 @@ package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
+import nl.svenkonings.jacomo.elem.variables.Var;
+import nl.svenkonings.jacomo.elem.variables.bool.UpdatableBoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.UpdatableIntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.solvers.Solver;
-import nl.svenkonings.jacomo.variables.Var;
-import nl.svenkonings.jacomo.variables.bool.UpdatableBoolVar;
-import nl.svenkonings.jacomo.variables.integer.UpdatableIntVar;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,19 +1,19 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
-import nl.svenkonings.jacomo.Elem;
-import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.Elem;
+import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.binary.BiIntExpr;
+import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
-import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
-import nl.svenkonings.jacomo.expressions.integer.binary.BiIntExpr;
-import nl.svenkonings.jacomo.variables.bool.ExpressionBoolVar;
-import nl.svenkonings.jacomo.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
@@ -306,7 +306,7 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitBoolVar(nl.svenkonings.jacomo.variables.bool.BoolVar boolVar) {
+    public ChocoType visitBoolVar(nl.svenkonings.jacomo.elem.variables.bool.BoolVar boolVar) {
         String name = boolVar.getName();
         BoolVar var;
         if (boolVars.containsKey(name)) {
@@ -336,7 +336,7 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     }
 
     @Override
-    public ChocoType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
+    public ChocoType visitIntVar(nl.svenkonings.jacomo.elem.variables.integer.IntVar intVar) {
         String name = intVar.getName();
         IntVar var;
         if (intVars.containsKey(name)) {

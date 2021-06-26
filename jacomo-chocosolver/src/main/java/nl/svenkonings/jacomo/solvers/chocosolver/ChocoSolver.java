@@ -1,10 +1,10 @@
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
+import nl.svenkonings.jacomo.elem.variables.Var;
+import nl.svenkonings.jacomo.elem.variables.bool.UpdatableBoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.UpdatableIntVar;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.solvers.Solver;
-import nl.svenkonings.jacomo.variables.Var;
-import nl.svenkonings.jacomo.variables.bool.UpdatableBoolVar;
-import nl.svenkonings.jacomo.variables.integer.UpdatableIntVar;
 import org.jetbrains.annotations.NotNull;
 
 /**

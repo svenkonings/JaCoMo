@@ -5,21 +5,21 @@ import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
 import com.google.ortools.sat.LinearExpr;
 import com.google.ortools.util.Domain;
-import nl.svenkonings.jacomo.Elem;
-import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.Elem;
+import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.expressions.BiExpr;
+import nl.svenkonings.jacomo.elem.expressions.Expr;
+import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.binary.BiIntExpr;
+import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
+import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
-import nl.svenkonings.jacomo.expressions.BiExpr;
-import nl.svenkonings.jacomo.expressions.Expr;
-import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.unary.NotExpr;
-import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
-import nl.svenkonings.jacomo.expressions.integer.binary.BiIntExpr;
-import nl.svenkonings.jacomo.variables.bool.BoolVar;
-import nl.svenkonings.jacomo.variables.bool.ExpressionBoolVar;
-import nl.svenkonings.jacomo.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -365,7 +365,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     }
 
     @Override
-    public OrToolsType visitIntVar(nl.svenkonings.jacomo.variables.integer.IntVar intVar) {
+    public OrToolsType visitIntVar(nl.svenkonings.jacomo.elem.variables.integer.IntVar intVar) {
         String name = intVar.getName();
         IntVar var;
         if (intVars.containsKey(name)) {

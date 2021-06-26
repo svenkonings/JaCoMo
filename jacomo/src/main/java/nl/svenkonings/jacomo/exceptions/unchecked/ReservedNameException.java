@@ -1,7 +1,7 @@
 package nl.svenkonings.jacomo.exceptions.unchecked;
 
+import nl.svenkonings.jacomo.elem.variables.Var;
 import nl.svenkonings.jacomo.model.Model;
-import nl.svenkonings.jacomo.variables.Var;
 
 /**
  * Unchecked exception thrown when a {@link Model} receives a reserved name.

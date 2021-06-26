@@ -1,22 +1,21 @@
 package nl.svenkonings.jacomo.model;
 
-import nl.svenkonings.jacomo.Elem;
-import nl.svenkonings.jacomo.constraints.BoolExprConstraint;
-import nl.svenkonings.jacomo.constraints.Constraint;
+import nl.svenkonings.jacomo.elem.Elem;
+import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
+import nl.svenkonings.jacomo.elem.constraints.Constraint;
+import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.UnBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
+import nl.svenkonings.jacomo.elem.expressions.integer.binary.BiIntExpr;
+import nl.svenkonings.jacomo.elem.variables.Var;
+import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
-import nl.svenkonings.jacomo.expressions.bool.BoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.ConstantBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.binary.BiBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.relational.ReBoolExpr;
-import nl.svenkonings.jacomo.expressions.bool.unary.UnBoolExpr;
-import nl.svenkonings.jacomo.expressions.integer.ConstantIntExpr;
-import nl.svenkonings.jacomo.expressions.integer.IntExpr;
-import nl.svenkonings.jacomo.expressions.integer.binary.BiIntExpr;
-import nl.svenkonings.jacomo.model.Model;
-import nl.svenkonings.jacomo.variables.Var;
-import nl.svenkonings.jacomo.variables.bool.BoolVar;
-import nl.svenkonings.jacomo.variables.integer.IntVar;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
