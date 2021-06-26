@@ -41,7 +41,7 @@ public class ConstantBoolExpr implements BoolExpr {
     }
 
     @Override
-    public @Nullable Boolean getValue() {
+    public @NotNull Boolean getValue() {
         return value;
     }
 

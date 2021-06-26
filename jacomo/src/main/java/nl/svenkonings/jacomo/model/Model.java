@@ -16,6 +16,7 @@ import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.ReservedNameException;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.util.ListUtil;
+import nl.svenkonings.jacomo.visitor.ElemCopier;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,7 +106,14 @@ public class Model {
         return addVarUnchecked(var);
     }
 
-    Var addVarUnchecked(@NotNull Var var) {
+    /**
+     * Add the specified var to this model without checking for generated names.
+     *
+     * @param var the var to be added
+     * @return the previous var with the given name,
+     * or {@code null} if there was none
+     */
+    public Var addVarUnchecked(@NotNull Var var) {
         return vars.addVar(var);
     }
 
@@ -126,7 +134,14 @@ public class Model {
         return addVarsUnchecked(vars);
     }
 
-    List<Var> addVarsUnchecked(@NotNull Collection<? extends Var> vars) {
+    /**
+     * Add the specified collection of vars to this model without checking f00or generated names.
+     * All existing vars with the same names will be replaced.
+     *
+     * @param vars the specified collection of vars
+     * @return the list of replaced vars
+     */
+    public List<Var> addVarsUnchecked(@NotNull Collection<? extends Var> vars) {
         return this.vars.addVars(vars);
     }
 
@@ -544,6 +559,19 @@ public class Model {
         List<T> results = visitVars(visitor);
         results.addAll(visitConstraints(visitor));
         return results;
+    }
+
+    /**
+     * Create a copy of this model.
+     *
+     * @return the copy.
+     */
+    public Model copy() {
+        ElemCopier copier = new ElemCopier();
+        Model model = new Model();
+        vars.stream().map(var -> (Var) copier.visit(var)).forEachOrdered(model::addVarUnchecked);
+        constraints.stream().map(constraint -> (Constraint) copier.visit(constraint)).forEachOrdered(model::addConstraint);
+        return model;
     }
 
     @Override

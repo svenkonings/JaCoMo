@@ -1,4 +1,4 @@
-package nl.svenkonings.jacomo.model;
+package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
@@ -16,7 +16,7 @@ import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
-import nl.svenkonings.jacomo.visitor.Visitor;
+import nl.svenkonings.jacomo.model.Model;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

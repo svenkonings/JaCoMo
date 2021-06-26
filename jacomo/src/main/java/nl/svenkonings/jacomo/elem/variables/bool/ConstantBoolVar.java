@@ -48,7 +48,7 @@ public class ConstantBoolVar implements BoolVar {
     }
 
     @Override
-    public @Nullable Boolean getValue() {
+    public @NotNull Boolean getValue() {
         return value;
     }
 

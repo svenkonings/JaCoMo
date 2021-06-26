@@ -1,6 +1,6 @@
 package nl.svenkonings.jacomo.exceptions.unchecked;
 
-import nl.svenkonings.jacomo.model.Checker;
+import nl.svenkonings.jacomo.visitor.Checker;
 
 /**
  * Unchecked exception thrown when the check of a {@link Checker} fails.

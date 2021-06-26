@@ -41,7 +41,7 @@ public class ConstantIntExpr implements IntExpr {
     }
 
     @Override
-    public @Nullable Integer getValue() {
+    public @NotNull Integer getValue() {
         return value;
     }
 
@@ -51,7 +51,7 @@ public class ConstantIntExpr implements IntExpr {
     }
 
     @Override
-    public @Nullable Integer getLowerBound() {
+    public @NotNull Integer getLowerBound() {
         return value;
     }
 
@@ -61,7 +61,7 @@ public class ConstantIntExpr implements IntExpr {
     }
 
     @Override
-    public @Nullable Integer getUpperBound() {
+    public @NotNull Integer getUpperBound() {
         return value;
     }
 

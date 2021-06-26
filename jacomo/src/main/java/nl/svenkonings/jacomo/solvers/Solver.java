@@ -1,7 +1,7 @@
 package nl.svenkonings.jacomo.solvers;
 
 import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
-import nl.svenkonings.jacomo.model.Checker;
+import nl.svenkonings.jacomo.visitor.Checker;
 import nl.svenkonings.jacomo.model.Model;
 import org.jetbrains.annotations.NotNull;
 
