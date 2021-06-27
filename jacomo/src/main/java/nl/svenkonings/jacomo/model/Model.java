@@ -569,8 +569,8 @@ public class Model {
     public Model copy() {
         ElemCopier copier = new ElemCopier();
         Model model = new Model();
-        vars.stream().map(var -> (Var) copier.visit(var)).forEachOrdered(model::addVarUnchecked);
-        constraints.stream().map(constraint -> (Constraint) copier.visit(constraint)).forEachOrdered(model::addConstraint);
+        vars.stream().map(copier::copy).forEachOrdered(model::addVarUnchecked);
+        constraints.stream().map(copier::copy).forEachOrdered(model::addConstraint);
         return model;
     }
 

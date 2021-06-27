@@ -2,14 +2,12 @@ package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
-import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.*;
 import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
-import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.binary.*;
 import nl.svenkonings.jacomo.elem.variables.bool.ConstantBoolVar;
 import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
@@ -23,31 +21,50 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Visitor which copies elements.
+ * Copied elements are cached and reused when a duplicate element is encountered.
+ */
+@SuppressWarnings("unchecked")
 public class ElemCopier implements Visitor<Elem> {
     private final @NotNull Map<Elem, Elem> copyMap;
 
+    /**
+     * Creates a new ElemCopier.
+     */
     public ElemCopier() {
         copyMap = new HashMap<>();
     }
 
-    @Override
-    public Elem visit(Elem elem) throws UnknownTypeException {
+    /**
+     * Create a copy of the given element.
+     * The copy will be cached and used when duplicate elements are encountered.
+     *
+     * @param elem the given element.
+     * @param <T>  the type of the element.
+     * @return the copied element.
+     * @throws UnknownTypeException when the type of the element is not supported by this visitor.
+     */
+    public <T extends Elem> T copy(T elem) throws UnknownTypeException {
         if (copyMap.containsKey(elem)) {
-            return copyMap.get(elem);
+            return (T) copyMap.get(elem);
         } else {
-            Elem copy = Visitor.super.visit(elem);
+            T copy = (T) visit(elem);
             copyMap.put(elem, copy);
             return copy;
         }
     }
 
+    /**
+     * Reset the cache of copied elements.
+     */
     public void reset() {
         copyMap.clear();
     }
 
     @Override
     public Elem visitBoolExprConstraint(BoolExprConstraint boolExprConstraint) {
-        return new BoolExprConstraint((BoolExpr) visit(boolExprConstraint.getExpr()));
+        return new BoolExprConstraint(copy(boolExprConstraint.getExpr()));
     }
 
     @Override
@@ -57,47 +74,47 @@ public class ElemCopier implements Visitor<Elem> {
 
     @Override
     public Elem visitNotExpr(NotExpr notExpr) {
-        return new NotExpr((BoolExpr) visit(notExpr.getExpr()));
+        return new NotExpr(copy(notExpr.getExpr()));
     }
 
     @Override
     public Elem visitAndExpr(AndExpr andExpr) {
-        return new AndExpr((BoolExpr) visit(andExpr.getLeft()), (BoolExpr) visit(andExpr.getRight()));
+        return new AndExpr(copy(andExpr.getLeft()), copy(andExpr.getRight()));
     }
 
     @Override
     public Elem visitOrExpr(OrExpr orExpr) {
-        return new OrExpr((BoolExpr) visit(orExpr.getLeft()), (BoolExpr) visit(orExpr.getRight()));
+        return new OrExpr(copy(orExpr.getLeft()), copy(orExpr.getRight()));
     }
 
     @Override
     public Elem visitEqExpr(EqExpr eqExpr) {
-        return new EqExpr((IntExpr) visit(eqExpr.getLeft()), (IntExpr) visit(eqExpr.getRight()));
+        return new EqExpr(copy(eqExpr.getLeft()), copy(eqExpr.getRight()));
     }
 
     @Override
     public Elem visitNeExpr(NeExpr neExpr) {
-        return new NeExpr((IntExpr) visit(neExpr.getLeft()), (IntExpr) visit(neExpr.getRight()));
+        return new NeExpr(copy(neExpr.getLeft()), copy(neExpr.getRight()));
     }
 
     @Override
     public Elem visitGtExpr(GtExpr gtExpr) {
-        return new GtExpr((IntExpr) visit(gtExpr.getLeft()), (IntExpr) visit(gtExpr.getRight()));
+        return new GtExpr(copy(gtExpr.getLeft()), copy(gtExpr.getRight()));
     }
 
     @Override
     public Elem visitGeExpr(GeExpr geExpr) {
-        return new GeExpr((IntExpr) visit(geExpr.getLeft()), (IntExpr) visit(geExpr.getRight()));
+        return new GeExpr(copy(geExpr.getLeft()), copy(geExpr.getRight()));
     }
 
     @Override
     public Elem visitLtExpr(LtExpr ltExpr) {
-        return new LtExpr((IntExpr) visit(ltExpr.getLeft()), (IntExpr) visit(ltExpr.getRight()));
+        return new LtExpr(copy(ltExpr.getLeft()), copy(ltExpr.getRight()));
     }
 
     @Override
     public Elem visitLeExpr(LeExpr leExpr) {
-        return new LeExpr((IntExpr) visit(leExpr.getLeft()), (IntExpr) visit(leExpr.getRight()));
+        return new LeExpr(copy(leExpr.getLeft()), copy(leExpr.getRight()));
     }
 
     @Override
@@ -107,32 +124,32 @@ public class ElemCopier implements Visitor<Elem> {
 
     @Override
     public Elem visitAddExpr(AddExpr addExpr) {
-        return new AddExpr((IntExpr) visit(addExpr.getLeft()), (IntExpr) visit(addExpr.getRight()));
+        return new AddExpr(copy(addExpr.getLeft()), copy(addExpr.getRight()));
     }
 
     @Override
     public Elem visitSubExpr(SubExpr subExpr) {
-        return new SubExpr((IntExpr) visit(subExpr.getLeft()), (IntExpr) visit(subExpr.getRight()));
+        return new SubExpr(copy(subExpr.getLeft()), copy(subExpr.getRight()));
     }
 
     @Override
     public Elem visitMulExpr(MulExpr mulExpr) {
-        return new MulExpr((IntExpr) visit(mulExpr.getLeft()), (IntExpr) visit(mulExpr.getRight()));
+        return new MulExpr(copy(mulExpr.getLeft()), copy(mulExpr.getRight()));
     }
 
     @Override
     public Elem visitDivExpr(DivExpr divExpr) {
-        return new DivExpr((IntExpr) visit(divExpr.getLeft()), (IntExpr) visit(divExpr.getRight()));
+        return new DivExpr(copy(divExpr.getLeft()), copy(divExpr.getRight()));
     }
 
     @Override
     public Elem visitMinExpr(MinExpr minExpr) {
-        return new MinExpr((IntExpr) visit(minExpr.getLeft()), (IntExpr) visit(minExpr.getRight()));
+        return new MinExpr(copy(minExpr.getLeft()), copy(minExpr.getRight()));
     }
 
     @Override
     public Elem visitMaxExpr(MaxExpr maxExpr) {
-        return new MaxExpr((IntExpr) visit(maxExpr.getLeft()), (IntExpr) visit(maxExpr.getRight()));
+        return new MaxExpr(copy(maxExpr.getLeft()), copy(maxExpr.getRight()));
     }
 
     @Override
@@ -142,7 +159,7 @@ public class ElemCopier implements Visitor<Elem> {
 
     @Override
     public Elem visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
-        return new ExpressionBoolVar(expressionBoolVar.getName(), (BoolExpr) visit(expressionBoolVar.getExpression()));
+        return new ExpressionBoolVar(expressionBoolVar.getName(), copy(expressionBoolVar.getExpression()));
     }
 
     @Override
@@ -157,7 +174,7 @@ public class ElemCopier implements Visitor<Elem> {
 
     @Override
     public Elem visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
-        return new ExpressionIntVar(expressionIntVar.getName(), (IntExpr) visit(expressionIntVar.getExpression()));
+        return new ExpressionIntVar(expressionIntVar.getName(), copy(expressionIntVar.getExpression()));
     }
 
     @Override
