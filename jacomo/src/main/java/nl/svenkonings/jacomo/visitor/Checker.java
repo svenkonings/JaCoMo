@@ -16,6 +16,7 @@ import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
+import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
 import nl.svenkonings.jacomo.model.Model;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +40,7 @@ import java.util.*;
  */
 @SuppressWarnings({"ConstantConditions", "SwitchStatementWithTooFewBranches"})
 public class Checker implements Visitor<Elem> {
+    private final @NotNull Map<Elem, Elem> checkedElems;
     private final @NotNull Map<String, BoolVar> boolVars;
     private final @NotNull Map<String, IntVar> intVars;
 
@@ -46,6 +48,7 @@ public class Checker implements Visitor<Elem> {
      * Create a new Checker.
      */
     public Checker() {
+        checkedElems = new HashMap<>();
         boolVars = new HashMap<>();
         intVars = new HashMap<>();
     }
@@ -58,10 +61,11 @@ public class Checker implements Visitor<Elem> {
      * @throws CheckException if one of the checks fails
      */
     public @NotNull Model check(Model model) throws CheckException {
-        boolVars.clear();
-        intVars.clear();
         List<Elem> visitedVars = model.visitVars(this);
         List<Elem> visitedConstraints = model.visitConstraints(this);
+        checkedElems.clear();
+        boolVars.clear();
+        intVars.clear();
 
         Set<Var> vars = new HashSet<>();
         for (Elem elem : visitedVars) {
@@ -90,12 +94,23 @@ public class Checker implements Visitor<Elem> {
         return result;
     }
 
-    private static IntExpr intConst(IntExpr intExpr) {
-        return new ConstantIntExpr(intExpr.getValue());
+    @Override
+    public Elem visit(Elem elem) throws UnknownTypeException {
+        if (checkedElems.containsKey(elem)) {
+            return checkedElems.get(elem);
+        } else {
+            Elem checkedElem = Visitor.super.visit(elem);
+            checkedElems.put(elem, checkedElem);
+            return checkedElem;
+        }
     }
 
-    private static BoolExpr boolConst(BoolExpr boolExpr) {
-        return new ConstantBoolExpr(boolExpr.getValue());
+    private IntExpr intConst(IntExpr intExpr) {
+        return (IntExpr) visit(new ConstantIntExpr(intExpr.getValue()));
+    }
+
+    private BoolExpr boolConst(BoolExpr boolExpr) {
+        return (BoolExpr) visit(new ConstantBoolExpr(boolExpr.getValue()));
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -196,6 +211,11 @@ public class Checker implements Visitor<Elem> {
     }
 
     @Override
+    public Elem visitConstantBoolExpr(ConstantBoolExpr constantBoolExpr) {
+        return constantBoolExpr;
+    }
+
+    @Override
     public Elem visitIntExpr(IntExpr intExpr) {
         if (intExpr.hasValue()) {
             return intConst(intExpr);
@@ -227,6 +247,11 @@ public class Checker implements Visitor<Elem> {
             default:
                 throw new UnexpectedTypeException(biIntExpr);
         }
+    }
+
+    @Override
+    public Elem visitConstantIntExpr(ConstantIntExpr constantIntExpr) {
+        return constantIntExpr;
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface Solver {
      *
      * @param model the specified model
      * @return {@code true} if the model has been solved, {@code false} otherwise
-     * @throws CheckException if one og the checks fails
+     * @throws CheckException if one of the checks fails
      */
     default boolean solve(@NotNull Model model) throws CheckException {
         return solveModel(new Checker().check(model));
@@ -23,7 +23,7 @@ public interface Solver {
 
     /**
      * Attempt to solve the specified model. Returns {@code true} if the model
-     * has been solved.
+     * has been solved. Does not check or optimize the model.
      *
      * @param model the specified model
      * @return {@code true} if the model has been solved, {@code false} otherwise

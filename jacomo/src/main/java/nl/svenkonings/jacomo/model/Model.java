@@ -1,5 +1,6 @@
 package nl.svenkonings.jacomo.model;
 
+import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.elem.constraints.Constraint;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A constraint model containing a set of variables and constraints.
@@ -44,6 +46,8 @@ public class Model {
         vars = new VarMap();
         constraints = new LinkedHashSet<>();
     }
+
+    // Variable methods
 
     /**
      * Returns {@code true} if this model contains a var with the specified name,
@@ -88,6 +92,15 @@ public class Model {
      */
     public @NotNull List<Var> getVars() {
         return vars.listVars();
+    }
+
+    /**
+     * Returns a stream of the vars in this model.
+     *
+     * @return a stream of the vars in this model.
+     */
+    public @NotNull Stream<Var> varStream() {
+        return vars.stream();
     }
 
     /**
@@ -165,6 +178,8 @@ public class Model {
         return vars.removeVars(names);
     }
 
+    // Constraint methods
+
     /**
      * Returns {@code true} if this model contains the specified constraint,
      * {@code false} otherwise.
@@ -190,12 +205,21 @@ public class Model {
     }
 
     /**
-     * Returns the list of constraints of this model.
+     * Returns the list of constraints in this model.
      *
-     * @return the list of constraints of this model
+     * @return the list of constraints in this model
      */
     public @NotNull List<Constraint> getConstraints() {
         return ListUtil.copyOf(constraints);
+    }
+
+    /**
+     * Returns a stream of the constrains in this model.
+     *
+     * @return a stream of the constrains in this model.
+     */
+    public @NotNull Stream<Constraint> constraintStream() {
+        return constraints.stream();
     }
 
     /**
@@ -241,6 +265,33 @@ public class Model {
     public boolean removeConstraints(@NotNull Collection<? extends Constraint> constraints) {
         return this.constraints.removeAll(constraints);
     }
+
+    // Element methods
+
+    /**
+     * Returns a stream of the elements in this model.
+     * The variables come before the constraints.
+     *
+     * @return a stream of the elements in this model.
+     */
+    public @NotNull Stream<Elem> stream() {
+        return Stream.concat(varStream(), constraintStream());
+    }
+
+    /**
+     * Create a copy of this model.
+     *
+     * @return the copy.
+     */
+    public Model copy() {
+        ElemCopier copier = new ElemCopier();
+        Model model = new Model();
+        vars.stream().map(copier::copy).forEachOrdered(model::addVarUnchecked);
+        constraints.stream().map(copier::copy).forEachOrdered(model::addConstraint);
+        return model;
+    }
+
+    //Add to model methods
 
     private String genVarName(String prefix) {
         int i = 0;
@@ -526,6 +577,8 @@ public class Model {
         return constraint;
     }
 
+    // Visit methods
+
     /**
      * Visits all vars in this model with the specified visitor.
      *
@@ -555,24 +608,13 @@ public class Model {
      * @param <T>     the return type of the visitor
      * @return the list of results returned by the visitor
      */
-    public <T> List<T> visitAll(@NotNull Visitor<T> visitor) {
+    public <T> List<T> visit(@NotNull Visitor<T> visitor) {
         List<T> results = visitVars(visitor);
         results.addAll(visitConstraints(visitor));
         return results;
     }
 
-    /**
-     * Create a copy of this model.
-     *
-     * @return the copy.
-     */
-    public Model copy() {
-        ElemCopier copier = new ElemCopier();
-        Model model = new Model();
-        vars.stream().map(copier::copy).forEachOrdered(model::addVarUnchecked);
-        constraints.stream().map(copier::copy).forEachOrdered(model::addConstraint);
-        return model;
-    }
+    // General methods
 
     @Override
     public String toString() {

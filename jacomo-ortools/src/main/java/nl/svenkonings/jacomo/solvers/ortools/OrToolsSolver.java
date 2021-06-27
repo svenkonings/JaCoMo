@@ -24,7 +24,7 @@ public class OrToolsSolver implements Solver {
     @Override
     public boolean solveModel(@NotNull Model model) {
         OrToolsVisitor visitor = new OrToolsVisitor();
-        model.visitAll(visitor);
+        model.visit(visitor);
         CpSolver solver = new CpSolver();
         CpSolverStatus status = solver.solve(visitor.getModel());
         switch (status) {

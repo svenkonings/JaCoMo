@@ -46,13 +46,7 @@ public class ElemCopier implements Visitor<Elem> {
      * @throws UnknownTypeException when the type of the element is not supported by this visitor.
      */
     public <T extends Elem> T copy(T elem) throws UnknownTypeException {
-        if (copyMap.containsKey(elem)) {
-            return (T) copyMap.get(elem);
-        } else {
-            T copy = (T) visit(elem);
-            copyMap.put(elem, copy);
-            return copy;
-        }
+        return (T) visit(elem);
     }
 
     /**
@@ -60,6 +54,17 @@ public class ElemCopier implements Visitor<Elem> {
      */
     public void reset() {
         copyMap.clear();
+    }
+
+    @Override
+    public Elem visit(Elem elem) throws UnknownTypeException {
+        if (copyMap.containsKey(elem)) {
+            return copyMap.get(elem);
+        } else {
+            Elem copy = Visitor.super.visit(elem);
+            copyMap.put(elem, copy);
+            return copy;
+        }
     }
 
     @Override
