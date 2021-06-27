@@ -10,23 +10,23 @@ public class NotExprTest {
 
     @Test
     public void testFalse() {
-        testNotExpr(false, true, true);
+        testNotExpr(false, true);
     }
 
     @Test
     public void testTrue() {
-        testNotExpr(true, true, false);
+        testNotExpr(true, false);
     }
 
     @Test
     public void testVar() {
-        testNotExpr(null, false, null);
+        testNotExpr(null, null);
     }
 
-    public static void testNotExpr(Boolean value, boolean hasValue, Boolean getValue) {
+    public static void testNotExpr(Boolean value, Boolean result) {
         BoolExpr expr = value == null ? BoolVar.variable("value") : BoolExpr.constant(value);
         NotExpr notExpr = expr.not();
-        assertEquals(hasValue, notExpr.hasValue());
-        assertEquals(getValue, notExpr.getValue());
+        assertEquals(result != null, notExpr.hasValue());
+        assertEquals(result, notExpr.getValue());
     }
 }

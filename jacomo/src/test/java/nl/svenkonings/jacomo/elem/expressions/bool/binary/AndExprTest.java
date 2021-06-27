@@ -10,49 +10,49 @@ public class AndExprTest {
 
     @Test
     public void falseFalse() {
-        testAndExpr(false, false, true, false);
+        testAndExpr(false, false, false);
     }
 
     @Test
     public void trueFalse() {
-        testAndExpr(true, false, true, false);
+        testAndExpr(true, false, false);
     }
 
     @Test
     public void falseTrue() {
-        testAndExpr(false, true, true, false);
+        testAndExpr(false, true, false);
     }
 
     @Test
     public void trueTrue() {
-        testAndExpr(true, true, true, true);
+        testAndExpr(true, true, true);
     }
 
     @Test
     public void varFalse() {
-        testAndExpr(null, false, true, false);
+        testAndExpr(null, false, false);
     }
 
     @Test
     public void varTrue() {
-        testAndExpr(null, true, false, null);
+        testAndExpr(null, true, null);
     }
 
     @Test
     public void falseVar() {
-        testAndExpr(false, null, true, false);
+        testAndExpr(false, null, false);
     }
 
     @Test
     public void trueVar() {
-        testAndExpr(true, null, false, null);
+        testAndExpr(true, null, null);
     }
 
-    public static void testAndExpr(Boolean left, Boolean right, boolean hasValue, Boolean getValue) {
+    public static void testAndExpr(Boolean left, Boolean right, Boolean result) {
         BoolExpr leftExpr = left == null ? BoolVar.variable("left") : BoolExpr.constant(left);
         BoolExpr rightExpr = right == null ? BoolVar.variable("right") : BoolExpr.constant(right);
         AndExpr andExpr = leftExpr.and(rightExpr);
-        assertEquals(hasValue, andExpr.hasValue());
-        assertEquals(getValue, andExpr.getValue());
+        assertEquals(result != null, andExpr.hasValue());
+        assertEquals(result, andExpr.getValue());
     }
 }

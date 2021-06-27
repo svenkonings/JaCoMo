@@ -10,77 +10,77 @@ public class GeExprTest {
 
     @Test
     public void lowLow() {
-        testGeExpr(-1, -1, true, true);
+        testGeExpr(-1, -1, true);
     }
 
     @Test
     public void highLow() {
-        testGeExpr(1, -1, true, true);
+        testGeExpr(1, -1, true);
     }
 
     @Test
     public void lowHigh() {
-        testGeExpr(-1, 1, true, false);
+        testGeExpr(-1, 1, false);
     }
 
     @Test
     public void highHigh() {
-        testGeExpr(1, 1, true, true);
+        testGeExpr(1, 1, true);
     }
 
     @Test
     public void varLow() {
-        testGeExpr(null, -1, false, null);
+        testGeExpr(null, -1, null);
     }
 
     @Test
     public void varHigh() {
-        testGeExpr(null, 1, false, null);
+        testGeExpr(null, 1, null);
     }
 
     @Test
     public void lowVar() {
-        testGeExpr(-1, null, false, null);
+        testGeExpr(-1, null, null);
     }
 
     @Test
     public void highVar() {
-        testGeExpr(1, null, false, null);
+        testGeExpr(1, null, null);
     }
 
-    public static void testGeExpr(Integer left, Integer right, boolean hasValue, Boolean getValue) {
+    public static void testGeExpr(Integer left, Integer right, Boolean result) {
         IntExpr leftExpr = left == null ? IntVar.variable("left") : IntExpr.constant(left);
         IntExpr rightExpr = right == null ? IntVar.variable("right") : IntExpr.constant(right);
         GeExpr geExpr = leftExpr.ge(rightExpr);
-        assertEquals(hasValue, geExpr.hasValue());
-        assertEquals(getValue, geExpr.getValue());
+        assertEquals(result != null, geExpr.hasValue());
+        assertEquals(result, geExpr.getValue());
     }
 
     @Test
     public void ltBound() {
-        testBoundedGeExpr(null, -1, 1, null, true, false);
+        testBoundedGeExpr(null, -1, 1, null, false);
     }
 
     @Test
     public void leBound() {
-        testBoundedGeExpr(null, 0, 0, null, false, null);
+        testBoundedGeExpr(null, 0, 0, null, null);
     }
 
     @Test
     public void geBound() {
-        testBoundedGeExpr(0, null, null, 0, true, true);
+        testBoundedGeExpr(0, null, null, 0, true);
     }
 
     @Test
     public void gtBound() {
-        testBoundedGeExpr(1, null, null, -1, true, true);
+        testBoundedGeExpr(1, null, null, -1, true);
     }
 
-    public static void testBoundedGeExpr(Integer lLeft, Integer uLeft, Integer lRight, Integer uRight, boolean hasValue, Boolean getValue) {
+    public static void testBoundedGeExpr(Integer lLeft, Integer uLeft, Integer lRight, Integer uRight, Boolean result) {
         IntVar leftVar = IntVar.bounds("left", lLeft, uLeft);
         IntVar rightVar = IntVar.bounds("right", lRight, uRight);
         GeExpr geExpr = leftVar.ge(rightVar);
-        assertEquals(hasValue, geExpr.hasValue());
-        assertEquals(getValue, geExpr.getValue());
+        assertEquals(result != null, geExpr.hasValue());
+        assertEquals(result, geExpr.getValue());
     }
 }
