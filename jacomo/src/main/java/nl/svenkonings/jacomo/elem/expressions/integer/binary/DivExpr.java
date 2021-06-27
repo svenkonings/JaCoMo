@@ -44,12 +44,15 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public boolean hasValue() {
-        return left.hasValue() && right.hasValue() && right.getValue().intValue() != 0;
+        return (hasUpperBound() && getUpperBound().intValue() == 0) ||
+                (left.hasValue() && right.hasValue() && right.getValue().intValue() != 0);
     }
 
     @Override
     public @Nullable Integer getValue() {
-        if (hasValue()) {
+        if (hasUpperBound() && getUpperBound().intValue() == 0) {
+            return 0;
+        } else if (hasValue()) {
             return left.getValue() / right.getValue();
         } else {
             return null;
@@ -58,12 +61,15 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public boolean hasLowerBound() {
-        return left.hasLowerBound() && right.hasUpperBound() && right.getUpperBound().intValue() != 0;
+        return (hasUpperBound() && getUpperBound().intValue() == 0) ||
+                (left.hasLowerBound() && right.hasUpperBound() && right.getUpperBound().intValue() != 0);
     }
 
     @Override
     public @Nullable Integer getLowerBound() {
-        if (hasLowerBound()) {
+        if (hasUpperBound() && getUpperBound().intValue() == 0) {
+            return 0;
+        } else if (hasLowerBound()) {
             return left.getLowerBound() / right.getUpperBound();
         } else {
             return null;
