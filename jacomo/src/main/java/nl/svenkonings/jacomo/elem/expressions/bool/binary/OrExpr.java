@@ -83,6 +83,6 @@ public class OrExpr implements BiBoolExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("OrExpr", left, right);
     }
 }

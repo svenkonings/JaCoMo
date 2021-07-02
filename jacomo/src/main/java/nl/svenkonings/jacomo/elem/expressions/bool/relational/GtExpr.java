@@ -84,6 +84,6 @@ public class GtExpr implements ReBoolExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("GtExpr", left, right);
     }
 }

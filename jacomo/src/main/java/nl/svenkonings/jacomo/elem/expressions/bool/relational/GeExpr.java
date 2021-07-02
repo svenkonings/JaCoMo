@@ -84,6 +84,6 @@ public class GeExpr implements ReBoolExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("GeExpr", left, right);
     }
 }

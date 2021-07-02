@@ -106,6 +106,6 @@ public class MinExpr implements BiIntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("MinExpr", left, right);
     }
 }

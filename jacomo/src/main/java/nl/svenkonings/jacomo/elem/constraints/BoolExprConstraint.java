@@ -63,6 +63,6 @@ public class BoolExprConstraint implements Constraint {
 
     @Override
     public int hashCode() {
-        return Objects.hash(expr);
+        return Objects.hash("BoolExprConstraint", expr);
     }
 }

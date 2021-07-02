@@ -84,6 +84,6 @@ public class LtExpr implements ReBoolExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("LtExpr", left, right);
     }
 }

@@ -106,6 +106,6 @@ public class SubExpr implements BiIntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("SubExpr", left, right);
     }
 }

@@ -92,6 +92,6 @@ public class InstantiatableBoolVar implements UpdatableBoolVar {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash("InstantiatableBoolVar", name, value);
     }
 }

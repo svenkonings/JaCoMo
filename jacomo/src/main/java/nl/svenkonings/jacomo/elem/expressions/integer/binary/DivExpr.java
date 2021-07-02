@@ -112,6 +112,6 @@ public class DivExpr implements BiIntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("DivExpr", left, right);
     }
 }

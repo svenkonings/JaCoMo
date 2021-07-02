@@ -10,7 +10,6 @@ import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -86,6 +85,6 @@ public class ConstantIntExpr implements IntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash("ConstantIntExpr", value);
     }
 }

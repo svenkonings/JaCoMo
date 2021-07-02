@@ -94,6 +94,6 @@ public class ExpressionIntVar implements IntVar {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, expression);
+        return Objects.hash("ExpressionIntVar", name, expression);
     }
 }

@@ -170,6 +170,6 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, lowerBound, upperBound);
+        return Objects.hash("BoundedIntVar", name, lowerBound, upperBound);
     }
 }

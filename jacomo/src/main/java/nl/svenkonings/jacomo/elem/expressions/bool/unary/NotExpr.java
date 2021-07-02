@@ -11,6 +11,8 @@ import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Represents a Not boolean expression
  */
@@ -49,5 +51,23 @@ public class NotExpr implements UnBoolExpr {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "!" + expr;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NotExpr notExpr = (NotExpr) o;
+        return Objects.equals(expr, notExpr.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash("NotExpr", expr);
     }
 }

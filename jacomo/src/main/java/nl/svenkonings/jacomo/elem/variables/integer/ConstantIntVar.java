@@ -94,6 +94,6 @@ public class ConstantIntVar implements IntVar {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash("ConstantIntVar", name, value);
     }
 }

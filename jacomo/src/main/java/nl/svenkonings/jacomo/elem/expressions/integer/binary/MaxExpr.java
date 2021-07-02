@@ -106,6 +106,6 @@ public class MaxExpr implements BiIntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("MaxExpr", left, right);
     }
 }

@@ -106,6 +106,6 @@ public class MulExpr implements BiIntExpr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right);
+        return Objects.hash("MulExpr", left, right);
     }
 }

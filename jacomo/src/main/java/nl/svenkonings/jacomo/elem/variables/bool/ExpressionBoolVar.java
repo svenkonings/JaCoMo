@@ -78,6 +78,6 @@ public class ExpressionBoolVar implements BoolVar {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, expression);
+        return Objects.hash("ExpressionBoolVar", name, expression);
     }
 }
