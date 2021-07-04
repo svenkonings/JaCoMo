@@ -1,0 +1,177 @@
+@startuml
+
+interface Elem
+
+interface Expr
+Elem <|-- Expr
+
+interface Var
+Elem <|-- Var
+Expr <|.. Var
+
+interface UnExpr
+Expr <|-- UnExpr
+
+interface BiExpr
+Expr <|-- BiExpr
+
+together {
+  interface BoolExpr
+  class ConstantBoolExpr {
+  - boolean value
+  }
+  Expr <|-- BoolExpr
+  BoolExpr <|-- ConstantBoolExpr
+
+  interface BiBoolExpr
+  class AndExpr {
+  - BoolExpr left
+  - BoolExpr right
+  }
+  class OrExpr {
+  - BoolExpr left
+  - BoolExpr right
+  }
+  BoolExpr <|-- BiBoolExpr
+  BiExpr <|.. BiBoolExpr
+  BiBoolExpr <|-- AndExpr
+  BiBoolExpr <|-- OrExpr
+
+  interface ReBoolExpr
+  class EqExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class GeExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class GtExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class LeExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class LtExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class NeExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  BoolExpr <|-- ReBoolExpr
+  BiExpr <|.. ReBoolExpr
+  ReBoolExpr <|-- EqExpr
+  ReBoolExpr <|-- GeExpr
+  ReBoolExpr <|-- GtExpr
+  ReBoolExpr <|-- LeExpr
+  ReBoolExpr <|-- LtExpr
+  ReBoolExpr <|-- NeExpr
+
+  interface UnBoolExpr
+  class NotExpr {
+  - BoolExpr expr
+  }
+  BoolExpr <|-- UnBoolExpr
+  UnExpr <|.. UnBoolExpr
+  UnBoolExpr <|-- NotExpr
+
+  interface BoolVar
+  class ConstantBoolVar {
+  - String name
+  - boolean value
+  }
+  class ExpressionBoolVar {
+  - String name
+  - BoolExpr expression
+  }
+  interface UpdatableBoolVar
+  class InstantiatableBoolVar {
+  - String name
+  - Boolean value
+  }
+  Var <|-- BoolVar
+  BoolExpr <|.. BoolVar
+  BoolVar <|-- ConstantBoolVar
+  BoolVar <|-- ExpressionBoolVar
+  BoolVar <|-- UpdatableBoolVar
+  UpdatableBoolVar <|-- InstantiatableBoolVar
+}
+
+together {
+  interface IntExpr
+  class ConstantIntExpr {
+  - int value
+  }
+  Expr <|-- IntExpr
+  IntExpr <|-- ConstantIntExpr
+
+  interface BiIntExpr
+  class AddExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class DivExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class MaxExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class MinExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class MulExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  class SubExpr {
+  - IntExpr left
+  - IntExpr right
+  }
+  IntExpr <|-- BiIntExpr
+  BiExpr <|.. BiIntExpr
+  BiIntExpr <|-- AddExpr
+  BiIntExpr <|-- DivExpr
+  BiIntExpr <|-- MaxExpr
+  BiIntExpr <|-- MinExpr
+  BiIntExpr <|-- MulExpr
+  BiIntExpr <|-- SubExpr
+
+  interface IntVar
+  class ConstantIntVar {
+  - String name
+  - int value
+  }
+  class ExpressionIntVar {
+  - String name
+  - IntExpr expression
+  }
+  interface UpdatableIntVar
+  class BoundedIntVar {
+  - String name
+  - Integer lowerBound
+  - Integer upperBound
+  }
+  Var <|-- IntVar
+  IntExpr <|.. IntVar
+  IntVar <|-- ConstantIntVar
+  IntVar <|-- ExpressionIntVar
+  IntVar <|-- UpdatableIntVar
+  UpdatableIntVar <|-- BoundedIntVar
+}
+
+together {
+  interface Constraint
+  class BoolExprConstraint {
+  - BoolExpr expr
+  }
+  Elem <|-- Constraint
+  Constraint <|-- BoolExprConstraint
+}
+@enduml
