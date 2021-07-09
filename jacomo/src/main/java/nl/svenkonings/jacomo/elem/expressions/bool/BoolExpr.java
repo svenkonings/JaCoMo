@@ -11,8 +11,11 @@ import nl.svenkonings.jacomo.elem.expressions.Expr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
+import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
 
 /**
  * Represents a boolean expression.
@@ -66,6 +69,17 @@ public interface BoolExpr extends Expr {
     }
 
     /**
+     * Creates an And expression of the specified elements.
+     *
+     * @param exprs the specified elements
+     * @return the created And expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static AndExpr and(BoolExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, AndExpr::new);
+    }
+
+    /**
      * Creates a Or expression of this expression and the specified expression.
      *
      * @param other the specified expression
@@ -73,5 +87,16 @@ public interface BoolExpr extends Expr {
      */
     default OrExpr or(BoolExpr other) {
         return new OrExpr(this, other);
+    }
+
+    /**
+     * Creates an Or expression of the specified elements.
+     *
+     * @param exprs the specified elements
+     * @return the created Or expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static OrExpr or(BoolExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, OrExpr::new);
     }
 }

@@ -10,8 +10,11 @@ import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.Expr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.*;
 import nl.svenkonings.jacomo.elem.expressions.integer.binary.*;
+import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
 
 /**
  * Represents an integer expression.
@@ -82,6 +85,17 @@ public interface IntExpr extends Expr {
     }
 
     /**
+     * Creates a new integer expression adding the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Addition expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static AddExpr add(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, AddExpr::new);
+    }
+
+    /**
      * Creates a new integer expression subtracting the specified expression from this expression.
      *
      * @param other the specified expression
@@ -89,6 +103,17 @@ public interface IntExpr extends Expr {
      */
     default SubExpr sub(IntExpr other) {
         return new SubExpr(this, other);
+    }
+
+    /**
+     * Creates a new integer expression subtracting the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Subtraction expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static SubExpr sub(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, SubExpr::new);
     }
 
     /**
@@ -102,6 +127,17 @@ public interface IntExpr extends Expr {
     }
 
     /**
+     * Creates a new integer expression multiplying the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Multiplication expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static MulExpr mul(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, MulExpr::new);
+    }
+
+    /**
      * Creates a new integer expression dividing this expression by the specified expression.
      *
      * @param other the specified expression
@@ -109,6 +145,17 @@ public interface IntExpr extends Expr {
      */
     default DivExpr div(IntExpr other) {
         return new DivExpr(this, other);
+    }
+
+    /**
+     * Creates a new integer expression dividing the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Division expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static DivExpr div(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, DivExpr::new);
     }
 
     /**
@@ -122,6 +169,17 @@ public interface IntExpr extends Expr {
     }
 
     /**
+     * Creates a new integer expression taking the minimum of the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Minimum expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static MinExpr min(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, MinExpr::new);
+    }
+
+    /**
      * Creates a new integer expression representing the maximum of this expression and the specified expression.
      *
      * @param other the specified expression
@@ -129,6 +187,17 @@ public interface IntExpr extends Expr {
      */
     default MaxExpr max(IntExpr other) {
         return new MaxExpr(this, other);
+    }
+
+    /**
+     * Creates a new integer expression taking the maximum the specified elements from left to right.
+     *
+     * @param exprs the specified elements
+     * @return the created Maximum expression
+     * @throws InvalidInputException when less than two elements are specified
+     */
+    static MaxExpr max(IntExpr... exprs) throws InvalidInputException {
+        return foldLeft(exprs, MaxExpr::new);
     }
 
     // Relational bool expressions
