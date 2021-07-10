@@ -70,8 +70,17 @@ public class VarMap extends AbstractCollection<Var> {
      *
      * @return an unmodifiable list view of the vars in this map
      */
-    public @NotNull List<Var> listVars() {
+    public @NotNull List<Var> getVars() {
         return ListUtil.copyOf(vars.values());
+    }
+
+    /**
+     * Returns an unmodifiable set view of the var names in this map.
+     *
+     * @return an unmodifiable set view of the var names in this map
+     */
+    public @NotNull Set<String> getVarNames() {
+        return Collections.unmodifiableSet(vars.keySet());
     }
 
     /**

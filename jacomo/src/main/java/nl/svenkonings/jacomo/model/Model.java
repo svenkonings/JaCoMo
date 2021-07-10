@@ -97,7 +97,16 @@ public class Model {
      * @return an unmodifiable list view of the vars in this model
      */
     public @NotNull List<Var> getVars() {
-        return vars.listVars();
+        return vars.getVars();
+    }
+
+    /**
+     * Returns an unmodifiable set view of the var names in this model.
+     *
+     * @return an unmodifiable set view of the var names in this model
+     */
+    public @NotNull Set<String> getVarNames() {
+        return vars.getVarNames();
     }
 
     /**

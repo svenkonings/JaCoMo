@@ -25,11 +25,7 @@ public interface IntExpr extends Expr {
         return Type.IntExpr;
     }
 
-    /**
-     * Returns the value of this expression
-     *
-     * @return the value of this expression, or {@code null} if it is uninstantiated
-     */
+    @Override
     @Nullable Integer getValue();
 
     /**

@@ -6,12 +6,14 @@
 
 package nl.svenkonings.jacomo.solvers.chocosolver;
 
-import nl.svenkonings.jacomo.elem.variables.Var;
-import nl.svenkonings.jacomo.elem.variables.bool.UpdatableBoolVar;
-import nl.svenkonings.jacomo.elem.variables.integer.UpdatableIntVar;
+import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
+import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.model.Model;
+import nl.svenkonings.jacomo.model.VarMap;
 import nl.svenkonings.jacomo.solvers.Solver;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Solver implementation using ChocoSolver.
@@ -25,24 +27,20 @@ public class ChocoSolver implements Solver {
     }
 
     @Override
-    public boolean solveModel(@NotNull Model model) {
+    public @Nullable VarMap solveUnchecked(@NotNull Model model) {
         ChocoVisitor visitor = new ChocoVisitor();
         model.visit(visitor);
         if (!visitor.getModel().getSolver().solve()) {
-            return false;
+            return null;
         }
+        VarMap result = new VarMap();
         visitor.getBoolVars().forEach((name, var) -> {
-            Var original = model.getVar(name);
-            if (original instanceof UpdatableBoolVar) {
-                ((UpdatableBoolVar) original).instantiateValue(var.getValue() == 1);
+            if (var.getValue() != 0 && var.getValue() != 1) {
+                throw new UnexpectedTypeException("Invalid boolean value returned by: %s", name);
             }
+            result.add(BoolVar.constant(name, var.getValue() == 1));
         });
-        visitor.getIntVars().forEach((name, var) -> {
-            Var original = model.getVar(name);
-            if (original instanceof UpdatableIntVar) {
-                ((UpdatableIntVar) original).instantiateValue(var.getValue());
-            }
-        });
-        return true;
+        visitor.getIntVars().forEach((name, var) -> result.add(IntVar.constant(name, var.getValue())));
+        return result;
     }
 }

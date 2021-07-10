@@ -9,6 +9,7 @@ package nl.svenkonings.jacomo.elem.expressions;
 import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a expression.
@@ -25,4 +26,11 @@ public interface Expr extends Elem {
      * @return {@code true} if this expression has a value
      */
     boolean hasValue();
+
+    /**
+     * Returns the value of this expression
+     *
+     * @return the value of this expression, or {@code null} if it is uninstantiated
+     */
+    @Nullable Object getValue();
 }

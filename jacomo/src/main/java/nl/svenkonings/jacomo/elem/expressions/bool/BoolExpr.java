@@ -26,11 +26,7 @@ public interface BoolExpr extends Expr {
         return Type.BoolExpr;
     }
 
-    /**
-     * Returns the value of this expression
-     *
-     * @return the value of this expression, or {@code null} if it is uninstantiated
-     */
+    @Override
     @Nullable Boolean getValue();
 
     // Factory methods
