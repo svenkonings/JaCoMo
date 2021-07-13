@@ -74,7 +74,7 @@ public interface IntVar extends Var, IntExpr {
      * @param lowerBound the specified lower bound
      * @return the created integer variable
      */
-    static BoundedIntVar lowerBound(@NotNull String name, int lowerBound) {
+    static BoundedIntVar lowerBound(@NotNull String name, @Nullable Integer lowerBound) {
         return new BoundedIntVar(name, lowerBound, null);
     }
 
@@ -85,7 +85,7 @@ public interface IntVar extends Var, IntExpr {
      * @param upperBound the specified upper bound
      * @return the created integer variable
      */
-    static BoundedIntVar upperBound(@NotNull String name, int upperBound) {
+    static BoundedIntVar upperBound(@NotNull String name, @Nullable Integer upperBound) {
         return new BoundedIntVar(name, null, upperBound);
     }
 

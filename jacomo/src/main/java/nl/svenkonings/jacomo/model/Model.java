@@ -39,8 +39,8 @@ import java.util.stream.Stream;
  */
 public class Model {
     private static final String GEN_CONST_PREFIX = "_const_";
-    private static final String GEN_BOOL_PREFIX = "_bool";
-    private static final String GEN_INT_PREFIX = "_int";
+    private static final String GEN_BOOL_PREFIX = "_bool_";
+    private static final String GEN_INT_PREFIX = "_int_";
 
     private final @NotNull VarMap vars;
     private final @NotNull LinkedHashSet<Constraint> constraints;
@@ -308,7 +308,7 @@ public class Model {
 
     //Add to model methods
 
-    private String genVarName(String prefix) {
+    private String genVarName(@NotNull String prefix) {
         int i = 0;
         String name = prefix + i;
         while (containsVar(name)) {
@@ -324,9 +324,9 @@ public class Model {
      *
      * @return the resulting variable
      */
-    public BoolVar boolVar() {
+    public InstantiatableBoolVar boolVar() {
         String name = genVarName(GEN_BOOL_PREFIX);
-        BoolVar var = new InstantiatableBoolVar(name);
+        InstantiatableBoolVar var = new InstantiatableBoolVar(name);
         addVarUnchecked(var);
         return var;
     }
@@ -338,8 +338,8 @@ public class Model {
      * @param name the specified name
      * @return the resulting variable
      */
-    public BoolVar boolVar(String name) {
-        BoolVar var = new InstantiatableBoolVar(name);
+    public InstantiatableBoolVar boolVar(@NotNull String name) {
+        InstantiatableBoolVar var = new InstantiatableBoolVar(name);
         addVar(var);
         return var;
     }
@@ -352,12 +352,12 @@ public class Model {
      * @param value the specified value
      * @return the resulting constant
      */
-    public BoolVar boolVar(boolean value) {
+    public ConstantBoolVar boolVar(boolean value) {
         String name = GEN_CONST_PREFIX + value;
         if (containsVar(name)) {
-            return (BoolVar) getVar(name);
+            return (ConstantBoolVar) getVar(name);
         } else {
-            BoolVar var = new ConstantBoolVar(name, value);
+            ConstantBoolVar var = new ConstantBoolVar(name, value);
             addVarUnchecked(var);
             return var;
         }
@@ -371,8 +371,8 @@ public class Model {
      * @param value the specified value
      * @return the resulting variable
      */
-    public BoolVar boolVar(String name, boolean value) {
-        BoolVar var = new ConstantBoolVar(name, value);
+    public ConstantBoolVar boolVar(@NotNull String name, boolean value) {
+        ConstantBoolVar var = new ConstantBoolVar(name, value);
         addVar(var);
         return var;
     }
@@ -385,9 +385,9 @@ public class Model {
      * @param expr the specified expression
      * @return the resulting variable
      */
-    public BoolVar boolVar(BoolExpr expr) {
+    public ExpressionBoolVar boolVar(@NotNull BoolExpr expr) {
         String name = genVarName(GEN_BOOL_PREFIX);
-        BoolVar var = new ExpressionBoolVar(name, expr);
+        ExpressionBoolVar var = new ExpressionBoolVar(name, expr);
         addVarUnchecked(var);
         return var;
     }
@@ -400,8 +400,8 @@ public class Model {
      * @param expr the specified expression
      * @return the resulting variable
      */
-    public BoolVar boolVar(String name, BoolExpr expr) {
-        BoolVar var = new ExpressionBoolVar(name, expr);
+    public ExpressionBoolVar boolVar(@NotNull String name, @NotNull BoolExpr expr) {
+        ExpressionBoolVar var = new ExpressionBoolVar(name, expr);
         addVar(var);
         return var;
     }
@@ -412,9 +412,9 @@ public class Model {
      *
      * @return the resulting variable
      */
-    public IntVar intVar() {
+    public BoundedIntVar intVar() {
         String name = genVarName(GEN_INT_PREFIX);
-        IntVar var = new BoundedIntVar(name);
+        BoundedIntVar var = new BoundedIntVar(name);
         addVarUnchecked(var);
         return var;
     }
@@ -426,8 +426,8 @@ public class Model {
      * @param name the specified name
      * @return the resulting variable
      */
-    public IntVar intVar(String name) {
-        IntVar var = new BoundedIntVar(name);
+    public BoundedIntVar intVar(@NotNull String name) {
+        BoundedIntVar var = new BoundedIntVar(name);
         addVar(var);
         return var;
     }
@@ -440,12 +440,12 @@ public class Model {
      * @param value the specified value
      * @return the resulting constant
      */
-    public IntVar intVar(int value) {
+    public ConstantIntVar intVar(int value) {
         String name = GEN_CONST_PREFIX + value;
         if (containsVar(name)) {
-            return (IntVar) getVar(name);
+            return (ConstantIntVar) getVar(name);
         } else {
-            IntVar var = new ConstantIntVar(name, value);
+            ConstantIntVar var = new ConstantIntVar(name, value);
             addVarUnchecked(var);
             return var;
         }
@@ -459,8 +459,8 @@ public class Model {
      * @param value the specified value
      * @return the resulting variable
      */
-    public IntVar intVar(String name, int value) {
-        IntVar var = new ConstantIntVar(name, value);
+    public ConstantIntVar intVar(@NotNull String name, int value) {
+        ConstantIntVar var = new ConstantIntVar(name, value);
         addVar(var);
         return var;
     }
@@ -472,9 +472,9 @@ public class Model {
      * @param expr the specified expression
      * @return the resulting variable
      */
-    public IntVar intVar(IntExpr expr) {
+    public ExpressionIntVar intVar(@NotNull IntExpr expr) {
         String name = genVarName(GEN_INT_PREFIX);
-        IntVar var = new ExpressionIntVar(name, expr);
+        ExpressionIntVar var = new ExpressionIntVar(name, expr);
         addVarUnchecked(var);
         return var;
     }
@@ -487,8 +487,8 @@ public class Model {
      * @param expr the specified expression
      * @return the resulting variable
      */
-    public IntVar intVar(String name, IntExpr expr) {
-        IntVar var = new ExpressionIntVar(name, expr);
+    public ExpressionIntVar intVar(@NotNull String name, @NotNull IntExpr expr) {
+        ExpressionIntVar var = new ExpressionIntVar(name, expr);
         addVar(var);
         return var;
     }
@@ -501,9 +501,9 @@ public class Model {
      * @param ub the specified upper-bound
      * @return the resulting variable
      */
-    public IntVar intVar(int lb, int ub) {
+    public BoundedIntVar intVar(@Nullable Integer lb, @Nullable Integer ub) {
         String name = genVarName(GEN_INT_PREFIX);
-        IntVar var = new BoundedIntVar(name, lb, ub);
+        BoundedIntVar var = new BoundedIntVar(name, lb, ub);
         addVarUnchecked(var);
         return var;
     }
@@ -517,8 +517,8 @@ public class Model {
      * @param ub   the specified upper-bound
      * @return the resulting variable
      */
-    public IntVar intVar(String name, int lb, int ub) {
-        IntVar var = new BoundedIntVar(name, lb, ub);
+    public BoundedIntVar intVar(@NotNull String name, @Nullable Integer lb, @Nullable Integer ub) {
+        BoundedIntVar var = new BoundedIntVar(name, lb, ub);
         addVar(var);
         return var;
     }
@@ -530,9 +530,9 @@ public class Model {
      * @param lb the specified lower-bound
      * @return the resulting variable
      */
-    public IntVar intVarLb(int lb) {
+    public BoundedIntVar intVarLb(@Nullable Integer lb) {
         String name = genVarName(GEN_INT_PREFIX);
-        IntVar var = new BoundedIntVar(name, lb, null);
+        BoundedIntVar var = new BoundedIntVar(name, lb, null);
         addVarUnchecked(var);
         return var;
     }
@@ -545,8 +545,8 @@ public class Model {
      * @param lb   the specified lower-bound
      * @return the resulting variable
      */
-    public IntVar intVarLb(String name, int lb) {
-        IntVar var = new BoundedIntVar(name, lb, null);
+    public BoundedIntVar intVarLb(String name, @Nullable Integer lb) {
+        BoundedIntVar var = new BoundedIntVar(name, lb, null);
         addVar(var);
         return var;
     }
@@ -558,9 +558,9 @@ public class Model {
      * @param ub the specified upper-bound
      * @return the resulting variable
      */
-    public IntVar intVarUb(int ub) {
+    public BoundedIntVar intVarUb(@Nullable Integer ub) {
         String name = genVarName(GEN_INT_PREFIX);
-        IntVar var = new BoundedIntVar(name, null, ub);
+        BoundedIntVar var = new BoundedIntVar(name, null, ub);
         addVarUnchecked(var);
         return var;
     }
@@ -573,8 +573,8 @@ public class Model {
      * @param ub   the specified upper-bound
      * @return the resulting variable
      */
-    public IntVar intVarUb(String name, int ub) {
-        IntVar var = new BoundedIntVar(name, null, ub);
+    public BoundedIntVar intVarUb(String name, @Nullable Integer ub) {
+        BoundedIntVar var = new BoundedIntVar(name, null, ub);
         addVar(var);
         return var;
     }
@@ -586,7 +586,7 @@ public class Model {
      * @param expr the specified expression
      * @return the resulting constraint
      */
-    public Constraint constraint(BoolExpr expr) {
+    public Constraint constraint(@NotNull BoolExpr expr) {
         BoolExprConstraint constraint = new BoolExprConstraint(expr);
         addConstraint(constraint);
         return constraint;
