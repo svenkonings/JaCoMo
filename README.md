@@ -10,23 +10,22 @@ satisfaction problems in the integer domain.
 [![Maven Central](https://img.shields.io/maven-central/v/nl.svenkonings.jacomo/jacomo.svg?label=Maven%20Central&color=%234c1)](https://search.maven.org/search?q=g:%22nl.svenkonings.jacomo%22)
 [![Javadoc](https://javadoc.io/badge2/nl.svenkonings.jacomo/jacomo/javadoc.svg)](https://javadoc.io/doc/nl.svenkonings.jacomo)
 
-## 1. Element overview
-[![Elements](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg?sanitize=true)](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg)
+**Note: the OR-Tools solver has instability issues when doing multiple solves in the same Java process: [github.com/google/or-tools/issues/2091](https://github.com/google/or-tools/issues/2091)**
 
-## 2. Getting started
+## 1. Getting started
 
-### 2.1 Creating a model
+### 1.1 Creating a model
 The model stores the variables and constraints to solve.
 ```java
 Model model = new Model();
 ```
 
-### 2.2 Declaring variables
+### 1.2 Declaring variables
 The recommended method to declare variables is by using the model as demonstrated below. These variables are automatically added to the model itself when they are declared.
 
 It is also possible to create variables using the factory methods from the `BoolVar` or `Intvar` interfaces or the class constructors. Those variables have to be added to the model manually using the `addVar` method.
 
-#### 2.2.1 Boolean variables
+#### 1.2.1 Boolean variables
 ```java
 BoolVar b1 = model.boolVar();               // Boolean variable with generated name (_bool_0, _bool_1, etc.)
 BoolVar b2 = model.boolVar("x");            // Boolean variable with given name
@@ -35,7 +34,7 @@ BoolVar b4 = model.boolVar("y", true);      // Boolean variable with given name 
 BoolVar b5 = model.boolVar(b1.and(b2));     // Boolean variable with generated name and given expression
 BoolVar b6 = model.boolVar("z", b3.or(b4)); // Boolean variable with given name and given expression
 ```
-#### 2.2.2 Integer variables
+#### 1.2.2 Integer variables
 ```java
 IntVar i1  = model.intVar();                // Integer variable with generated name
 IntVar i2  = model.intVar("u");             // Integer variable with given name
@@ -51,10 +50,10 @@ IntVar i11 = model.intVarUb(11);            // Integer variable with generated n
 IntVar i12 = model.intVarUb("z", 12);       // Integer variable with given name and given upper bound
 ```
 
-### 2.3 Using expressions
+### 1.3 Using expressions
 Expressions can be used to define variables or to create constraints.
 
-#### 2.3.1 Boolean expressions
+#### 1.3.1 Boolean expressions
 ```java
 BoolExpr b7  = BoolExpr.constant(true); // Create constant
 BoolExpr b8  = b1.not();                // Not expression: !b1
@@ -67,7 +66,7 @@ BoolExpr b11 = BoolExpr.and(b7, b8, b9);     // And expression: b7 && b8 && b9
 BoolExpr b12 = BoolExpr.or(b7, b8, b9, b10); // Or expression:  b7 || b8 || b9 || b10
 ```
 
-#### 2.3.2 Integer expressions
+#### 1.3.2 Integer expressions
 ```java
 IntExpr i13 = IntExpr.constant(1); // Create constant
 IntExpr i14 = i10.add(i13);        // Add expr: i10 + i13
@@ -87,7 +86,7 @@ IntExpr i24 = IntExpr.max(i15, i16, i17, i18, i19); // Max expr: max(i15, i16, i
 IntExpr i25 = IntExpr.min(i14, i15, i16, i17, i18); // Min expr: min(i14, i15, i16, i17, i18)
 ```
 
-#### 2.3.3 Relational expressions
+#### 1.3.3 Relational expressions
 Relational expressions are expressions that compare two integers and result in a boolean expression.
 ```java
 BoolExpr b13 = i10.eq(i20); // Eq expr: i10 == i20
@@ -98,9 +97,54 @@ BoolExpr b17 = i17.le(i19); // Le expr: i17 <= i19
 BoolExpr b18 = i18.lt(i22); // Lt expr: i18 <  i22
 ```
 
-## 2.4 Adding constraints
+### 1.4 Adding constraints
+#### 1.4.1 Boolean expression constraints
+Boolean expression constraints receive a boolean expression that should always hold.
+```java
+model.constraint(i1.gt(i2)); // i1 should always be greater than i2
+model.constraint(b1.or(b2)); // b1 should hold or b2 should hold
+```
 
-## 2.5 Solving a model
+### 1.5 Solving a model
+Models can be solved using a Solver. The Solver returns a map of variables and their solved values. Solvers can also update the variables of the model directly.
+```java
+Model model = new Model();
+IntVar x = model.intVarLb("x", 2); // x > 2
+Intvar y = model.intVarUb("y", 10); // y < 10
+model.constraint(x.add(IntExpr.constant(2).mul(y)).eq(IntExpr.constant(7))); // x + 2 * y == 7
+
+Solver solver = new ChocoSolver() // Pick solver implementation
+VarMap vars = solver.solve(model); // Solves the model and returns variable map with resulting values
+IntVar x2 = vars.getVar("x"); // Get the solved variable x
+x2.getValue() // 3, the solved variable x has value 3
+x.getValue(); // null, the model has not been updated thus x only has not been instantiated
+vars.getVar("y").getValue() // 2, the solved variable y has value 2
+
+boolean solved = solver.solveAndUpdate(model) // Solves the model and updates the variables directly
+x.getValue() // 3, the variable x has been updated
+```
+When there is no solution the solver behaves as follows:
+```java
+Model model = new Model();
+BoolVar z = model.boolVar("z");
+model.constraint(z);
+model.constraint(z.not());
+Solver solver = new ChocoSolver()
+VarMap vars = solver.solve(model); // Returns null since there is no viable solution
+boolean solved = solver.solveAndUpdate(model) // Solved is false since there is no viable solution,
+                                              // the model has not been updated
+
+```
+
+## 2. Extending functionality
+### 2.1 Element overview
+[![Elements](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg?sanitize=true)](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg)
+
+### 2.2 Custom visitors
+
+
+### 2.3 Custom elements
+
 
 ## 3. Progress
 The current version is a work-in-progress. The progress for the v0.1 minimum
@@ -138,6 +182,10 @@ viable product release is as follows:
   - [x] ChocoSolver
   - [x] OR-tools
 - [ ] Unit-test for non-trivial classes and system tests
-- [ ] Getting started documentation with examples
+  - [x] System tests (for all solvers)
+  - [x] Expressions
+  - [ ] Variables
+  - [ ] Helper objects (Model, VarMap, Checker, ElemCopier)
+- [x] Getting started documentation with examples
 - [x] JavaDoc documentation
 - [x] Maven Central Repository release
