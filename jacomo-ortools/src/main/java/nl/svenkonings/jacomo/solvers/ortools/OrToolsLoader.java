@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Responsible for loading the native component of the OR-Tools library.
  */
 public class OrToolsLoader {
-    private static boolean LIBRARY_LOADED = false;
+    private static volatile boolean LIBRARY_LOADED = false;
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     /**

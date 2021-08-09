@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package nl.svenkonings.jacomo.solvers.ortools;
+package nl.svenkonings.jacomo.solvers.ortools.cpsolver;
 
 import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
@@ -20,17 +20,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Solver implementation using the CP-SAT solver from OR-Tools.
  */
-public class OrToolsSolver implements Solver {
+public class OrToolsCpSolver implements Solver {
 
     /**
      * Create a new OR-Tools solver.
      */
-    public OrToolsSolver() {
+    public OrToolsCpSolver() {
     }
 
     @Override
     public @Nullable VarMap solveUnchecked(@NotNull Model model) {
-        OrToolsVisitor visitor = new OrToolsVisitor();
+        OrToolsCpVisitor visitor = new OrToolsCpVisitor();
         model.visit(visitor);
         CpSolver solver = new CpSolver();
         CpSolverStatus status = solver.solve(visitor.getModel());

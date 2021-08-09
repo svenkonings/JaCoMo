@@ -4,15 +4,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package nl.svenkonings.jacomo.solvers.ortools;
+package nl.svenkonings.jacomo.solvers.ortools.cpsolver;
 
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.solvers.SolverTest;
+import nl.svenkonings.jacomo.solvers.ortools.cpsolver.OrToolsCpSolver;
 
-public class OrToolsSolverTest implements SolverTest {
+public class OrToolsCpSolverTest implements SolverTest {
 
     @Override
     public Solver getSolver() {
-        return new OrToolsSolver();
+        return new OrToolsCpSolver();
     }
 }

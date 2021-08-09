@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.solvers.ortools;
 
+import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
@@ -16,11 +17,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OrToolsLoaderTest {
 
     @Test
-    public void loaderTest() {
+    public void loaderCpTest() {
         OrToolsLoader.loadLibrary();
         CpSolver solver = new CpSolver();
         CpModel model = new CpModel();
         CpSolverStatus status = solver.solve(model);
         assertEquals(status, CpSolverStatus.OPTIMAL);
+    }
+
+    @Test
+    public void loaderMpTest() {
+        OrToolsLoader.loadLibrary();
+        MPSolver mpSolver = MPSolver.createSolver("GLOP");
+        MPSolver.ResultStatus resultStatus = mpSolver.solve();
+        assertEquals(resultStatus, MPSolver.ResultStatus.OPTIMAL);
     }
 }

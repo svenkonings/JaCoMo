@@ -11,6 +11,8 @@ After the MVP is done the goals are to:
   - Copyable elements
 - Add more solver implementations
   - MiniZinc
+- Always use nullable values for instantiate
+- Add abilities to extend model and visitors
 
 ## v0.1 - MVP (In progress)
 Version 0.1 is a minimal viable product. It contains the following:

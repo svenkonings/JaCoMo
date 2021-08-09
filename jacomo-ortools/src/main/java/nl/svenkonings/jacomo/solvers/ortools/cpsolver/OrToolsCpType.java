@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package nl.svenkonings.jacomo.solvers.ortools;
+package nl.svenkonings.jacomo.solvers.ortools.cpsolver;
 
 import com.google.ortools.sat.Constraint;
 import com.google.ortools.sat.IntVar;
@@ -15,10 +15,10 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Represents the return value of visited elements using the {@link OrToolsVisitor}.
+ * Represents the return value of visited elements using the {@link OrToolsCpVisitor}.
  * The return value can be empty, an {@link IntVar} or a {@link Constraint}.
  */
-public class OrToolsType {
+public class OrToolsCpType {
     private final @Nullable IntVar intVar;
     private final @Nullable Constraint constraint;
     private final @Nullable Supplier<Constraint> inverseSupplier;
@@ -29,8 +29,8 @@ public class OrToolsType {
      *
      * @return the created return value
      */
-    public static OrToolsType none() {
-        return new OrToolsType(null, null, null);
+    public static OrToolsCpType none() {
+        return new OrToolsCpType(null, null, null);
     }
 
     /**
@@ -39,8 +39,8 @@ public class OrToolsType {
      * @param intVar the value to encapsulate
      * @return the created return value
      */
-    public static OrToolsType intVar(@NotNull IntVar intVar) {
-        return new OrToolsType(intVar, null, null);
+    public static OrToolsCpType intVar(@NotNull IntVar intVar) {
+        return new OrToolsCpType(intVar, null, null);
     }
 
     /**
@@ -51,11 +51,11 @@ public class OrToolsType {
      * @param inverseSupplier the supplier to create the inverse constraint
      * @return the created return value
      */
-    public static OrToolsType constraint(@NotNull Constraint constraint, @NotNull Supplier<Constraint> inverseSupplier) {
-        return new OrToolsType(null, constraint, inverseSupplier);
+    public static OrToolsCpType constraint(@NotNull Constraint constraint, @NotNull Supplier<Constraint> inverseSupplier) {
+        return new OrToolsCpType(null, constraint, inverseSupplier);
     }
 
-    private OrToolsType(@Nullable IntVar intVar, @Nullable Constraint constraint, @Nullable Supplier<Constraint> inverseSupplier) {
+    private OrToolsCpType(@Nullable IntVar intVar, @Nullable Constraint constraint, @Nullable Supplier<Constraint> inverseSupplier) {
         assert constraint == null || inverseSupplier != null;
         this.intVar = intVar;
         this.constraint = constraint;
@@ -132,9 +132,9 @@ public class OrToolsType {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrToolsType orToolsType = (OrToolsType) o;
-        return Objects.equals(intVar, orToolsType.intVar) &&
-                Objects.equals(constraint, orToolsType.constraint);
+        OrToolsCpType orToolsCpType = (OrToolsCpType) o;
+        return Objects.equals(intVar, orToolsCpType.intVar) &&
+                Objects.equals(constraint, orToolsCpType.constraint);
     }
 
     @Override
