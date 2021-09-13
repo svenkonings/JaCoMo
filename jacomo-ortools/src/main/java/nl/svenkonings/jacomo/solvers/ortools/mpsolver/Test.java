@@ -7,38 +7,33 @@
 package nl.svenkonings.jacomo.solvers.ortools.mpsolver;
 
 import com.google.ortools.linearsolver.MPConstraint;
+import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
 import nl.svenkonings.jacomo.solvers.ortools.OrToolsLoader;
 
 public class Test {
-    private static final double MinValue = -1.7976931348623157E+308;
-    private static final double MaxValue = 1.7976931348623157E+308;;
-
+    public static double MAX_INT_BOUND = Integer.MAX_VALUE / 100;
+    public static double MIN_INT_BOUND = Integer.MIN_VALUE / 100;
+    public static double BIG_M = MAX_INT_BOUND - MIN_INT_BOUND;
     public static void main(String[] args) {
         OrToolsLoader.loadLibrary();
         MPSolver mpSolver = MPSolver.createSolver("SCIP");
 
         // Create variables
-        MPVariable x = mpSolver.makeNumVar(2, 2, "x");
+        MPVariable x = mpSolver.makeNumVar(4, 4, "x");
         MPVariable y = mpSolver.makeNumVar(3, 3, "y");
 
         MPVariable gt = mpSolver.makeBoolVar("gt");
-        MPVariable le = mpSolver.makeBoolVar("le");
 
-        MPConstraint inverse = mpSolver.makeConstraint(1.0, 1.0);
-        inverse.setCoefficient(gt, 1.0);
-        inverse.setCoefficient(le, 1.0);
+        MPConstraint constraint = mpSolver.makeConstraint(-BIG_M, 0.0);
+        constraint.setCoefficient(x, 1.0);
+        constraint.setCoefficient(y, -1.0);
+        constraint.setCoefficient(gt, -BIG_M);
 
-        MPConstraint positiveConstraint = mpSolver.makeConstraint(Integer.MIN_VALUE / 1000, 0.0);
-        positiveConstraint.setCoefficient(x, 1.0);
-        positiveConstraint.setCoefficient(y, -1.0);
-        positiveConstraint.setCoefficient(gt, Integer.MIN_VALUE / 1000);
-
-        MPConstraint negativeConstraint = mpSolver.makeConstraint(Integer.MIN_VALUE / 1000, 0.0);
-        negativeConstraint.setCoefficient(y, 1.0);
-        negativeConstraint.setCoefficient(x, -1.0);
-        negativeConstraint.setCoefficient(le, Integer.MIN_VALUE / 1000);
+        MPObjective objective = mpSolver.objective();
+        objective.setCoefficient(gt, 1.0);
+        objective.setMinimization();
 
 //        // Constraint
 //        // x = y / 2
@@ -64,7 +59,6 @@ public class Test {
             System.out.println("x = " + x.solutionValue());
             System.out.println("y = " + y.solutionValue());
             System.out.println("gt = " + gt.solutionValue());
-            System.out.println("le = " + le.solutionValue());
         } else {
             System.err.println("The problem does not have an optimal solution!");
         }
