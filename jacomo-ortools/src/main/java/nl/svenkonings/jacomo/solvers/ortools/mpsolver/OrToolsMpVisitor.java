@@ -6,8 +6,8 @@
 
 package nl.svenkonings.jacomo.solvers.ortools.mpsolver;
 
+import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPConstraint;
-import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
 import nl.svenkonings.jacomo.elem.Elem;
@@ -27,14 +27,11 @@ import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnknownTypeException;
-import nl.svenkonings.jacomo.solvers.ortools.OrToolsLoader;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.lang.Double.NEGATIVE_INFINITY;
 
 @SuppressWarnings({"ConstantConditions", "IntegerDivisionInFloatingPointContext"})
 public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
@@ -57,7 +54,7 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
     private int genNameCounter;
 
     public OrToolsMpVisitor() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         solver = MPSolver.createSolver("SCIP");
         boolVars = new LinkedHashMap<>();
         realVars = new LinkedHashMap<>();

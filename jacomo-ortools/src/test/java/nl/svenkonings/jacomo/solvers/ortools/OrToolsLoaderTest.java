@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.solvers.ortools;
 
+import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.CpSolver;
@@ -18,7 +19,7 @@ public class OrToolsLoaderTest {
 
     @Test
     public void loaderCpTest() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         CpSolver solver = new CpSolver();
         CpModel model = new CpModel();
         CpSolverStatus status = solver.solve(model);
@@ -27,7 +28,7 @@ public class OrToolsLoaderTest {
 
     @Test
     public void loaderMpTest() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         MPSolver mpSolver = MPSolver.createSolver("GLOP");
         MPSolver.ResultStatus resultStatus = mpSolver.solve();
         assertEquals(resultStatus, MPSolver.ResultStatus.OPTIMAL);

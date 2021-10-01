@@ -6,18 +6,19 @@
 
 package nl.svenkonings.jacomo.solvers.ortools.mpsolver;
 
+import com.google.ortools.Loader;
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
-import nl.svenkonings.jacomo.solvers.ortools.OrToolsLoader;
 
 public class Test {
     public static double MAX_INT_BOUND = Integer.MAX_VALUE / 100;
     public static double MIN_INT_BOUND = Integer.MIN_VALUE / 100;
     public static double BIG_M = MAX_INT_BOUND - MIN_INT_BOUND;
+
     public static void main(String[] args) {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         MPSolver mpSolver = MPSolver.createSolver("SCIP");
 
         // Create variables

@@ -12,7 +12,6 @@ import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.solvers.SolverTest;
-import nl.svenkonings.jacomo.solvers.ortools.cpsolver.OrToolsCpSolver;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

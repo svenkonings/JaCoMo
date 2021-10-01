@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.solvers.ortools.cpsolver;
 
+import com.google.ortools.Loader;
 import com.google.ortools.sat.Constraint;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
@@ -26,7 +27,6 @@ import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
-import nl.svenkonings.jacomo.solvers.ortools.OrToolsLoader;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +53,7 @@ public class OrToolsCpVisitor implements Visitor<OrToolsCpType> {
      * Create a new OR-Tools visitor.
      */
     public OrToolsCpVisitor() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         model = new CpModel();
         boolVars = new LinkedHashMap<>();
         intVars = new LinkedHashMap<>();

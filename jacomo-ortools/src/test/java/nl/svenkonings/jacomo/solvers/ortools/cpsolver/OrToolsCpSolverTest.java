@@ -8,7 +8,6 @@ package nl.svenkonings.jacomo.solvers.ortools.cpsolver;
 
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.solvers.SolverTest;
-import nl.svenkonings.jacomo.solvers.ortools.cpsolver.OrToolsCpSolver;
 
 public class OrToolsCpSolverTest implements SolverTest {
 
