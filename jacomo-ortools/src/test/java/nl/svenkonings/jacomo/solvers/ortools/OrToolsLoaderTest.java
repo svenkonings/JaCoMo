@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.solvers.ortools;
 
+import com.google.ortools.Loader;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
@@ -17,7 +18,7 @@ public class OrToolsLoaderTest {
 
     @Test
     public void loaderTest() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         CpSolver solver = new CpSolver();
         CpModel model = new CpModel();
         CpSolverStatus status = solver.solve(model);

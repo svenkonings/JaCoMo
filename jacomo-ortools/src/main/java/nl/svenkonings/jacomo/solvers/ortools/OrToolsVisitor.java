@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.solvers.ortools;
 
+import com.google.ortools.Loader;
 import com.google.ortools.sat.Constraint;
 import com.google.ortools.sat.CpModel;
 import com.google.ortools.sat.IntVar;
@@ -52,7 +53,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
      * Create a new OR-Tools visitor.
      */
     public OrToolsVisitor() {
-        OrToolsLoader.loadLibrary();
+        Loader.loadNativeLibraries();
         model = new CpModel();
         boolVars = new LinkedHashMap<>();
         intVars = new LinkedHashMap<>();
