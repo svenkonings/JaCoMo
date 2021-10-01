@@ -54,8 +54,8 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     public OrToolsVisitor() {
         OrToolsLoader.loadLibrary();
         model = new CpModel();
-        boolVars = new HashMap<>();
-        intVars = new HashMap<>();
+        boolVars = new LinkedHashMap<>();
+        intVars = new LinkedHashMap<>();
         constraintMap = new HashMap<>();
         intVarMap = new HashMap<>();
         genNameCounter = 0;

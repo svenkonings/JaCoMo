@@ -19,6 +19,8 @@ import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.binary.BiIntExpr;
 import nl.svenkonings.jacomo.elem.variables.Var;
 import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
+import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
+import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
@@ -271,12 +273,34 @@ public class Checker implements Visitor<Elem> {
     }
 
     @Override
+    public Elem visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
+        addBoolVar(expressionBoolVar);
+        if (expressionBoolVar.hasValue()) {
+            return boolConst(expressionBoolVar);
+        } else {
+            BoolExpr expr = (BoolExpr) visit(expressionBoolVar.getExpression());
+            return new ExpressionBoolVar(expressionBoolVar.getName(), expr);
+        }
+    }
+
+    @Override
     public Elem visitIntVar(IntVar intVar) {
         addIntVar(intVar);
         if (intVar.hasValue()) {
             return intConst(intVar);
         } else {
             return intVar;
+        }
+    }
+
+    @Override
+    public Elem visitExpressionIntVar(ExpressionIntVar expressionIntVar) {
+        addIntVar(expressionIntVar);
+        if (expressionIntVar.hasValue()) {
+            return intConst(expressionIntVar);
+        } else {
+            IntExpr expr = (IntExpr) visit(expressionIntVar.getExpression());
+            return new ExpressionIntVar(expressionIntVar.getName(), expr);
         }
     }
 }

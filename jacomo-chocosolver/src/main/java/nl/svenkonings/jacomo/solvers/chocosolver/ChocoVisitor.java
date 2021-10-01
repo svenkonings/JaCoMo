@@ -30,10 +30,7 @@ import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Visitor which builds a ChocoSolver model from the visited elements.
@@ -54,8 +51,8 @@ public class ChocoVisitor implements Visitor<ChocoType> {
      */
     public ChocoVisitor() {
         model = new Model();
-        boolVars = new HashMap<>();
-        intVars = new HashMap<>();
+        boolVars = new LinkedHashMap<>();
+        intVars = new LinkedHashMap<>();
         constraintMap = new HashMap<>();
         reExpressionMap = new HashMap<>();
         arExpressionMap = new HashMap<>();
