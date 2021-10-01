@@ -51,13 +51,13 @@ public class OrToolsMpSolver implements Solver {
                 throw new DuplicateNameException(name);
             }
         }
-        for (MPVariable variable : visitor.getRealVars().values()) {
-            String name = variable.name();
-            if (!objectiveVars.contains(name)) {
-                objectiveVars.add(name);
-                objective.setCoefficient(variable, 1.0);
-            }
-        }
+//        for (MPVariable variable : visitor.getRealVars().values()) {
+//            String name = variable.name();
+//            if (!objectiveVars.contains(name)) {
+//                objectiveVars.add(name);
+//                objective.setCoefficient(variable, 1.0);
+//            }
+//        }
         objective.setMinimization();
         MPSolver.ResultStatus resultStatus = solver.solve();
         if (resultStatus != MPSolver.ResultStatus.OPTIMAL) {

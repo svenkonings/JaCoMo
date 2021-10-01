@@ -293,12 +293,12 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             inverseConstraint.setCoefficient(resultVar, 1.0);
             inverseConstraint.setCoefficient(inverseVar, 1.0);
             // If left is larger than right the result must be false
-            MPConstraint positiveConstraint = solver.makeConstraint(NEGATIVE_INFINITY, 0.0);
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, 0.0);
             positiveConstraint.setCoefficient(leftVar, 1.0);
             positiveConstraint.setCoefficient(rightVar, -1.0);
             positiveConstraint.setCoefficient(inverseVar, -BIG_M);
             // If right is larger than the result must be false
-            MPConstraint negativeConstraint = solver.makeConstraint(NEGATIVE_INFINITY, 0.0);
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, 0.0);
             negativeConstraint.setCoefficient(rightVar, 1.0);
             negativeConstraint.setCoefficient(leftVar, -1.0);
             negativeConstraint.setCoefficient(inverseVar, -BIG_M);
@@ -320,17 +320,13 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             MPVariable leftVar = realToVar(left);
             MPVariable rightVar = realToVar(right);
             MPVariable resultVar = genBoolVar();
-            MPVariable inverseVar = genBoolVar();
-            MPConstraint inverseConstraint = solver.makeConstraint(1.0, 1.0);
-            inverseConstraint.setCoefficient(resultVar, 1.0);
-            inverseConstraint.setCoefficient(inverseVar, 1.0);
             // If left is larger than right the result must be true
-            MPConstraint positiveConstraint = solver.makeConstraint(NEGATIVE_INFINITY, 0.0);
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, -1.0);
             positiveConstraint.setCoefficient(leftVar, 1.0);
             positiveConstraint.setCoefficient(rightVar, -1.0);
             positiveConstraint.setCoefficient(resultVar, -BIG_M);
             // If right is larger than the result must be true
-            MPConstraint negativeConstraint = solver.makeConstraint(NEGATIVE_INFINITY, 0.0);
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, -1.0);
             negativeConstraint.setCoefficient(rightVar, 1.0);
             negativeConstraint.setCoefficient(leftVar, -1.0);
             negativeConstraint.setCoefficient(resultVar, -BIG_M);
@@ -352,11 +348,20 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             MPVariable leftVar = realToVar(left);
             MPVariable rightVar = realToVar(right);
             MPVariable resultVar = genBoolVar();
-            MPConstraint constraint = solver.makeConstraint(-BIG_M, 0.0);
-            constraint.setCoefficient(leftVar, 1.0);
-            constraint.setCoefficient(rightVar, -1.0);
-            constraint.setCoefficient(resultVar, -BIG_M);
-            minimizeVars.add(resultVar);
+            MPVariable inverseVar = genBoolVar();
+            MPConstraint inverseConstraint = solver.makeConstraint(1.0, 1.0);
+            inverseConstraint.setCoefficient(resultVar, 1.0);
+            inverseConstraint.setCoefficient(inverseVar, 1.0);
+            // If left is larger than right the result must be true
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, 0.0);
+            positiveConstraint.setCoefficient(leftVar, 1.0);
+            positiveConstraint.setCoefficient(rightVar, -1.0);
+            positiveConstraint.setCoefficient(resultVar, -BIG_M);
+            // If right is larger or equal to left the result must be false
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, 1.0);
+            negativeConstraint.setCoefficient(rightVar, 1.0);
+            negativeConstraint.setCoefficient(leftVar, -1.0);
+            negativeConstraint.setCoefficient(inverseVar, -BIG_M);
             result = new MPBool(resultVar);
         }
         return OrToolsMpType.bool(result);
@@ -373,11 +378,20 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             MPVariable leftVar = realToVar(left);
             MPVariable rightVar = realToVar(right);
             MPVariable resultVar = genBoolVar();
-            MPConstraint constraint = solver.makeConstraint(-BIG_M, 0.0);
-            constraint.setCoefficient(leftVar, 1.0);
-            constraint.setCoefficient(rightVar, -1.0);
-            constraint.setCoefficient(resultVar, -BIG_M);
-            maximizeVars.add(resultVar);
+            MPVariable inverseVar = genBoolVar();
+            MPConstraint inverseConstraint = solver.makeConstraint(1.0, 1.0);
+            inverseConstraint.setCoefficient(resultVar, 1.0);
+            inverseConstraint.setCoefficient(inverseVar, 1.0);
+            // If left is larger or equal to right the result must be true
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, 1.0);
+            positiveConstraint.setCoefficient(leftVar, 1.0);
+            positiveConstraint.setCoefficient(rightVar, -1.0);
+            positiveConstraint.setCoefficient(resultVar, -BIG_M);
+            // If right is larger than left the result must be false
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, 0.0);
+            negativeConstraint.setCoefficient(rightVar, 1.0);
+            negativeConstraint.setCoefficient(leftVar, -1.0);
+            negativeConstraint.setCoefficient(inverseVar, -BIG_M);
             result = new MPBool(resultVar);
         }
         return OrToolsMpType.bool(result);
@@ -394,11 +408,20 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             MPVariable leftVar = realToVar(left);
             MPVariable rightVar = realToVar(right);
             MPVariable resultVar = genBoolVar();
-            MPConstraint constraint = solver.makeConstraint(-BIG_M, 0.0);
-            constraint.setCoefficient(rightVar, 1.0);
-            constraint.setCoefficient(leftVar, -1.0);
-            constraint.setCoefficient(resultVar, -BIG_M);
-            minimizeVars.add(resultVar);
+            MPVariable inverseVar = genBoolVar();
+            MPConstraint inverseConstraint = solver.makeConstraint(1.0, 1.0);
+            inverseConstraint.setCoefficient(resultVar, 1.0);
+            inverseConstraint.setCoefficient(inverseVar, 1.0);
+            // If left is larger or equal to right the result must be false
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, 1.0);
+            positiveConstraint.setCoefficient(leftVar, 1.0);
+            positiveConstraint.setCoefficient(rightVar, -1.0);
+            positiveConstraint.setCoefficient(inverseVar, -BIG_M);
+            // If right is larger than left the result must be true
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, 0.0);
+            negativeConstraint.setCoefficient(rightVar, 1.0);
+            negativeConstraint.setCoefficient(leftVar, -1.0);
+            negativeConstraint.setCoefficient(resultVar, -BIG_M);
             result = new MPBool(resultVar);
         }
         return OrToolsMpType.bool(result);
@@ -415,11 +438,20 @@ public class OrToolsMpVisitor implements Visitor<OrToolsMpType> {
             MPVariable leftVar = realToVar(left);
             MPVariable rightVar = realToVar(right);
             MPVariable resultVar = genBoolVar();
-            MPConstraint constraint = solver.makeConstraint(-BIG_M, 0.0);
-            constraint.setCoefficient(rightVar, 1.0);
-            constraint.setCoefficient(leftVar, -1.0);
-            constraint.setCoefficient(resultVar, -BIG_M);
-            maximizeVars.add(resultVar);
+            MPVariable inverseVar = genBoolVar();
+            MPConstraint inverseConstraint = solver.makeConstraint(1.0, 1.0);
+            inverseConstraint.setCoefficient(resultVar, 1.0);
+            inverseConstraint.setCoefficient(inverseVar, 1.0);
+            // If left is larger than right the result must be false
+            MPConstraint positiveConstraint = solver.makeConstraint(-BIG_M, 0.0);
+            positiveConstraint.setCoefficient(leftVar, 1.0);
+            positiveConstraint.setCoefficient(rightVar, -1.0);
+            positiveConstraint.setCoefficient(inverseVar, -BIG_M);
+            // If right is larger or equal to left the result must be true
+            MPConstraint negativeConstraint = solver.makeConstraint(-BIG_M, 1.0);
+            negativeConstraint.setCoefficient(rightVar, 1.0);
+            negativeConstraint.setCoefficient(leftVar, -1.0);
+            negativeConstraint.setCoefficient(resultVar, -BIG_M);
             result = new MPBool(resultVar);
         }
         return OrToolsMpType.bool(result);

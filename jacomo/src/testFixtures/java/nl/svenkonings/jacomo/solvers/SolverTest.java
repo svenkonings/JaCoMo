@@ -104,6 +104,24 @@ public interface SolverTest {
     @Test
     default void solveAnd() {
         Model model = new Model();
+        BoolExpr t = BoolExpr.constant(true);
+        BoolExpr f = BoolExpr.constant(false);
+        BoolVar var1 = model.boolVar(t.and(t));
+        BoolVar var2 = model.boolVar(t.and(f));
+        BoolVar var3 = model.boolVar(f.and(t));
+        BoolVar var4 = model.boolVar(f.and(f));
+        boolean result = getSolver().solveAndUpdateUnchecked(model);
+
+        assertTrue(result);
+        assertTrue(var1.getValue());
+        assertFalse(var2.getValue());
+        assertFalse(var3.getValue());
+        assertFalse(var4.getValue());
+    }
+
+    @Test
+    default void solveGtAnd() {
+        Model model = new Model();
         IntVar var1 = model.intVar(0, 10);
         IntVar var2 = model.intVar(0, 10);
         IntVar var3 = model.intVar(0, 10);
@@ -123,6 +141,24 @@ public interface SolverTest {
 
     @Test
     default void solveOr() {
+        Model model = new Model();
+        BoolExpr t = BoolExpr.constant(true);
+        BoolExpr f = BoolExpr.constant(false);
+        BoolVar var1 = model.boolVar(t.or(t));
+        BoolVar var2 = model.boolVar(t.or(f));
+        BoolVar var3 = model.boolVar(f.or(t));
+        BoolVar var4 = model.boolVar(f.or(f));
+        boolean result = getSolver().solveAndUpdateUnchecked(model);
+
+        assertTrue(result);
+        assertTrue(var1.getValue());
+        assertTrue(var2.getValue());
+        assertTrue(var3.getValue());
+        assertFalse(var4.getValue());
+    }
+
+    @Test
+    default void solveGtOr() {
         Model model = new Model();
         IntVar var1 = model.intVar(0, 1);
         IntVar var2 = model.intVar(0, 1);
