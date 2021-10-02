@@ -10,8 +10,6 @@ satisfaction problems in the integer domain.
 [![Maven Central](https://img.shields.io/maven-central/v/nl.svenkonings.jacomo/jacomo.svg?label=Maven%20Central&color=%234c1)](https://search.maven.org/search?q=g:%22nl.svenkonings.jacomo%22)
 [![Javadoc](https://javadoc.io/badge2/nl.svenkonings.jacomo/jacomo/javadoc.svg)](https://javadoc.io/doc/nl.svenkonings.jacomo)
 
-**Note: the OR-Tools solver has instability issues when doing multiple solves in the same Java process: [github.com/google/or-tools/issues/2091](https://github.com/google/or-tools/issues/2091)**
-
 ## 1. Getting started
 
 ### 1.1 Creating a model

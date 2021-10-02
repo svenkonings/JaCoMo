@@ -16,7 +16,7 @@ test {
 dependencies {
     implementation project(':jacomo')
     implementation 'org.jetbrains:annotations:22.0.0'
-    implementation 'com.google.ortools:ortools-java:9.0.9048'
+    implementation 'com.google.ortools:ortools-java:9.1.9490'
     testImplementation testFixtures(project(':jacomo'))
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
