@@ -81,6 +81,7 @@ public class ChocoSolver implements Solver {
                 parallelPortfolio.addModel(parallelVisitor.getModel());
                 parallelVisitors.add(parallelVisitor);
             }
+            parallelPortfolio.stealNogoodsOnRestarts();
             if (!parallelPortfolio.solve()) {
                 return null;
             }
