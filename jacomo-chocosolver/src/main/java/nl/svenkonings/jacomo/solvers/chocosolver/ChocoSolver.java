@@ -8,6 +8,7 @@ package nl.svenkonings.jacomo.solvers.chocosolver;
 
 import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
+import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
@@ -55,6 +56,9 @@ public class ChocoSolver implements Solver {
      * @param workers the number of workers to use.
      */
     public void setWorkers(int workers) {
+        if (workers < 0) {
+            throw new InvalidInputException("Can't have a negative amount of workers");
+        }
         this.workers = workers;
     }
 
