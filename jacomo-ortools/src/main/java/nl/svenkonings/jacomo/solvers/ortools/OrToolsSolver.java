@@ -22,10 +22,35 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OrToolsSolver implements Solver {
 
+    private boolean parallel;
+
     /**
      * Create a new OR-Tools solver.
      */
     public OrToolsSolver() {
+        parallel = true;
+    }
+
+    /**
+     * Returns whether the solving process is parallelized or not.
+     * If enabled the solving process will use the number of logical cores.
+     * Parallel solving causes the solving process to be non-deterministic.
+     *
+     * @return {@code true} if the solving process is parallelized.
+     */
+    public boolean isParallel() {
+        return parallel;
+    }
+
+    /**
+     * Set whether the solving process is parallelized or not.
+     * If enabled the solving process will use the number of logical cores.
+     * Parallel solving causes the solving process to be non-deterministic.
+     *
+     * @param parallel {@code true} if the solving process should be parallelized.
+     */
+    public void setParallel(boolean parallel) {
+        this.parallel = parallel;
     }
 
     @Override
@@ -33,6 +58,7 @@ public class OrToolsSolver implements Solver {
         OrToolsVisitor visitor = new OrToolsVisitor();
         model.visit(visitor);
         CpSolver solver = new CpSolver();
+        solver.getParameters().setNumSearchWorkers(parallel ? 0 : 1);
         CpSolverStatus status = solver.solve(visitor.getModel());
         switch (status) {
             case UNKNOWN:
