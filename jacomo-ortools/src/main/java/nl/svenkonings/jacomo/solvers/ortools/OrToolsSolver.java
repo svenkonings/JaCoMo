@@ -10,6 +10,7 @@ import com.google.ortools.sat.CpSolver;
 import com.google.ortools.sat.CpSolverStatus;
 import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
+import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
@@ -22,35 +23,40 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OrToolsSolver implements Solver {
 
-    private boolean parallel;
+    private int workers;
 
     /**
      * Create a new OR-Tools solver.
      */
     public OrToolsSolver() {
-        parallel = true;
+        workers = 0;
     }
 
     /**
-     * Returns whether the solving process is parallelized or not.
-     * If enabled the solving process will use the number of logical cores.
-     * Parallel solving causes the solving process to be non-deterministic.
+     * Returns the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all cores on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
      *
-     * @return {@code true} if the solving process is parallelized.
+     * @return the number of workers.
      */
-    public boolean isParallel() {
-        return parallel;
+    public int getWorkers() {
+        return workers;
     }
 
     /**
-     * Set whether the solving process is parallelized or not.
-     * If enabled the solving process will use the number of logical cores.
-     * Parallel solving causes the solving process to be non-deterministic.
+     * Set the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all cores on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
      *
-     * @param parallel {@code true} if the solving process should be parallelized.
+     * @param workers the number of workers to use.
      */
-    public void setParallel(boolean parallel) {
-        this.parallel = parallel;
+    public void setWorkers(int workers) {
+        if (workers < 0) {
+            throw new InvalidInputException("Can't have a negative amount of workers");
+        }
+        this.workers = workers;
     }
 
     @Override
@@ -58,7 +64,7 @@ public class OrToolsSolver implements Solver {
         OrToolsVisitor visitor = new OrToolsVisitor();
         model.visit(visitor);
         CpSolver solver = new CpSolver();
-        solver.getParameters().setNumSearchWorkers(parallel ? 0 : 1);
+        solver.getParameters().setNumSearchWorkers(workers);
         CpSolverStatus status = solver.solve(visitor.getModel());
         switch (status) {
             case UNKNOWN:

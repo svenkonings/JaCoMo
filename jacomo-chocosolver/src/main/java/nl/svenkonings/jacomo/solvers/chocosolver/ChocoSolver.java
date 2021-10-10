@@ -25,42 +25,50 @@ import java.util.NoSuchElementException;
  */
 public class ChocoSolver implements Solver {
 
-    private boolean parallel;
+    private int workers;
 
     /**
      * Create a new ChocoSolver solver.
      */
     public ChocoSolver() {
-        parallel = true;
+        workers = 0;
     }
 
     /**
-     * Returns whether the solving process is parallelized or not.
-     * If enabled the solving process will use the number of logical cores.
-     * Parallel solving causes the solving process to be non-deterministic.
+     * Returns the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all logical processors on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
      *
-     * @return {@code true} if the solving process is parallelized.
+     * @return the number of workers.
      */
-    public boolean isParallel() {
-        return parallel;
+    public int getWorkers() {
+        return workers;
     }
 
     /**
-     * Set whether the solving process is parallelized or not.
-     * If enabled the solving process will use the number of logical cores.
-     * Parallel solving causes the solving process to be non-deterministic.
+     * Set the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all logical processors on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
      *
-     * @param parallel {@code true} if the solving process should be parallelized.
+     * @param workers the number of workers to use.
      */
-    public void setParallel(boolean parallel) {
-        this.parallel = parallel;
+    public void setWorkers(int workers) {
+        this.workers = workers;
     }
 
     @Override
     public @Nullable VarMap solveUnchecked(@NotNull Model model) {
         ChocoVisitor visitor;
-        if (parallel) {
-            int threadCount = Runtime.getRuntime().availableProcessors();
+        if (workers == 1) {
+            visitor = new ChocoVisitor();
+            model.visit(visitor);
+            if (!visitor.getModel().getSolver().solve()) {
+                return null;
+            }
+        } else {
+            int threadCount = workers == 0 ? Runtime.getRuntime().availableProcessors() : workers;
             ParallelPortfolio parallelPortfolio = new ParallelPortfolio();
             List<ChocoVisitor> parallelVisitors = new ArrayList<>(threadCount);
             for (int i = 0; i < threadCount; i++) {
@@ -77,12 +85,6 @@ public class ChocoSolver implements Solver {
                     .filter(v -> v.getModel() == bestModel)
                     .findAny()
                     .orElseThrow(() -> new NoSuchElementException("No visitor matching the solved model was found"));
-        } else {
-            visitor = new ChocoVisitor();
-            model.visit(visitor);
-            if (!visitor.getModel().getSolver().solve()) {
-                return null;
-            }
         }
         VarMap result = new VarMap();
         visitor.getBoolVars().forEach((name, var) -> {
