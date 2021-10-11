@@ -75,7 +75,7 @@ public class Checker implements Visitor<Elem> {
         boolVars.clear();
         intVars.clear();
 
-        Set<Var> vars = new HashSet<>();
+        Set<Var> vars = new LinkedHashSet<>();
         for (Elem elem : visitedVars) {
             // Resolved vars have been replaced by expressions
             if (elem instanceof Var) {
@@ -83,7 +83,7 @@ public class Checker implements Visitor<Elem> {
             }
         }
 
-        Set<Constraint> constraints = new HashSet<>();
+        Set<Constraint> constraints = new LinkedHashSet<>();
         for (Elem elem : visitedConstraints) {
             // Do not add resolved constraints
             if (elem instanceof BoolExprConstraint && ((BoolExprConstraint) elem).getExpr().hasValue()) {
