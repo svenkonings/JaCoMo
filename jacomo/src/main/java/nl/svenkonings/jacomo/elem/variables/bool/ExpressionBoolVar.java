@@ -64,7 +64,7 @@ public class ExpressionBoolVar implements BoolVar {
 
     @Override
     public String toString() {
-        return boolVarString();
+        return String.format("bool %s = %s", name, expression);
     }
 
     @Override

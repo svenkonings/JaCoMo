@@ -27,8 +27,9 @@ public interface BoolVar extends Var, BoolExpr {
      */
     default String boolVarString() {
         String name = getName();
-        if (hasValue()) {
-            return String.format("bool %s = %b", name, getValue());
+        Boolean value = getValue();
+        if (value != null) {
+            return String.format("bool %s = %b", name, value);
         } else {
             return String.format("bool %s", name);
         }

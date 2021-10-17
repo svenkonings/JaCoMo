@@ -29,16 +29,17 @@ public interface IntVar extends Var, IntExpr {
      */
     default String intVarString() {
         String name = getName();
+        Integer value = getValue();
         Integer lowerBound = getLowerBound();
         Integer upperBound = getUpperBound();
-        if (hasValue()) {
-            return String.format("int %s = %d", name, lowerBound);
+        if (value != null) {
+            return String.format("int %s = %d", name, value);
         } else if (lowerBound != null && upperBound != null) {
-            return String.format("int %s = %d..%d", name, lowerBound, upperBound);
+            return String.format("int %s = [%d..%d]", name, lowerBound, upperBound);
         } else if (lowerBound != null) {
-            return String.format("int %s >= %d", name, lowerBound);
+            return String.format("int %s = [%d..]", name, lowerBound);
         } else if (upperBound != null) {
-            return String.format("int %s <= %d", name, upperBound);
+            return String.format("int %s = [..%d]", name, upperBound);
         } else {
             return String.format("int %s", name);
         }
