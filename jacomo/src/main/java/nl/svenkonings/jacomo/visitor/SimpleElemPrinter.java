@@ -81,12 +81,12 @@ public class SimpleElemPrinter implements Visitor<String> {
 
     @Override
     public String visitExpressionBoolVar(ExpressionBoolVar var) {
-        return var.hasValue() ? var.getValue().toString() : var.getExpression().toString();
+        return var.hasValue() ? var.getValue().toString() : visit(var.getExpression());
     }
 
     @Override
     public String visitExpressionIntVar(ExpressionIntVar var) {
-        return var.hasValue() ? var.getValue().toString() : var.getExpression().toString();
+        return var.hasValue() ? var.getValue().toString() : visit(var.getExpression());
     }
 
     @Override
@@ -96,11 +96,23 @@ public class SimpleElemPrinter implements Visitor<String> {
 
     @Override
     public String visitAndExpr(AndExpr andExpr) {
+        if (andExpr.getLeft().hasValue() && andExpr.getLeft().getValue()) {
+            return visit(andExpr.getRight());
+        }
+        if (andExpr.getRight().hasValue() && andExpr.getRight().getValue()) {
+            return visit(andExpr.getLeft());
+        }
         return printAssociativeBiExpr(andExpr, "&&");
     }
 
     @Override
     public String visitOrExpr(OrExpr orExpr) {
+        if (orExpr.getLeft().hasValue() && !orExpr.getLeft().getValue()) {
+            return visit(orExpr.getRight());
+        }
+        if (orExpr.getRight().hasValue() && !orExpr.getRight().getValue()) {
+            return visit(orExpr.getLeft());
+        }
         return printAssociativeBiExpr(orExpr, "||");
     }
 
@@ -165,19 +177,27 @@ public class SimpleElemPrinter implements Visitor<String> {
     }
 
     private String printUnExpr(UnExpr expr, String delimiter) {
+        if (expr.hasValue()) {
+            return expr.getValue().toString();
+        }
         if (expr.getType() == expr.getExpr().getType()) {
             UnExpr subExpr = (UnExpr) expr.getExpr();
             return visit(subExpr.getExpr());
-        } else {
-            return delimiter + visit(expr.getExpr());
         }
+        return delimiter + visit(expr.getExpr());
     }
 
     private String printBiExpr(BiExpr expr, String delimiter) {
+        if (expr.hasValue()) {
+            return expr.getValue().toString();
+        }
         return "(" + visit(expr.getLeft()) + " " + delimiter + " " + visit(expr.getRight()) + ")";
     }
 
     private String printAssociativeBiExpr(BiExpr expr, String delimiter) {
+        if (expr.hasValue()) {
+            return expr.getValue().toString();
+        }
         List<Expr> children = ElemUtil.collectAll(expr);
         return "(" +
                 children.stream()
@@ -187,6 +207,9 @@ public class SimpleElemPrinter implements Visitor<String> {
     }
 
     private String printAssociativeBiExpr(String prefix, BiExpr expr) {
+        if (expr.hasValue()) {
+            return expr.getValue().toString();
+        }
         List<Expr> children = ElemUtil.collectAll(expr);
         return prefix + "(" +
                 children.stream()

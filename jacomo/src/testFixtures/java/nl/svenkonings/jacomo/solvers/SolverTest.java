@@ -196,9 +196,9 @@ public interface SolverTest {
         boolean result = getSolver().solveAndUpdate(model);
 
         assertTrue(result);
-        assertTrue(-7 <= var1.getValue() && var1.getValue() <= 3);
+        assertTrue(-2 <= var1.getValue() && var1.getValue() <= 7);
         assertTrue(1 <= var2.getValue() && var2.getValue() <= 3);
-        assertTrue(-13 <= var3.getValue() && var3.getValue() <= 1);
+        assertTrue(-8 <= var3.getValue() && var3.getValue() <= 5);
     }
 
     @Test

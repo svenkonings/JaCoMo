@@ -645,10 +645,10 @@ public class Model {
         SimpleElemPrinter printer = new SimpleElemPrinter();
         return "Model {\n" +
                 "    vars {\n" +
-                varStream().map(var -> "        " + printer.printVar(var)).collect(Collectors.joining("\n")) + "\n" +
+                varStream().map(var -> "        " + printer.printVar(var)).distinct().collect(Collectors.joining("\n")) + "\n" +
                 "    }\n" +
                 "    constraints {\n" +
-                constraintStream().map(constraint -> "        " + printer.printConstraint(constraint)).collect(Collectors.joining("\n")) + "\n" +
+                constraintStream().map(constraint -> "        " + printer.printConstraint(constraint)).distinct().collect(Collectors.joining("\n")) + "\n" +
                 "    }\n" +
                 "}";
     }
