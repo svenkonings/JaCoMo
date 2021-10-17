@@ -12,18 +12,17 @@ import nl.svenkonings.jacomo.elem.constraints.Constraint;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.elem.variables.Var;
-import nl.svenkonings.jacomo.elem.variables.bool.BoolVar;
 import nl.svenkonings.jacomo.elem.variables.bool.ConstantBoolVar;
 import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
 import nl.svenkonings.jacomo.elem.variables.bool.InstantiatableBoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.BoundedIntVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ConstantIntVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
-import nl.svenkonings.jacomo.elem.variables.integer.IntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.ReservedNameException;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.util.ListUtil;
 import nl.svenkonings.jacomo.visitor.ElemCopier;
+import nl.svenkonings.jacomo.visitor.SimpleElemPrinter;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -301,8 +300,8 @@ public class Model {
     public Model copy() {
         ElemCopier copier = new ElemCopier();
         Model model = new Model();
-        vars.stream().map(copier::copy).forEachOrdered(model::addVarUnchecked);
-        constraints.stream().map(copier::copy).forEachOrdered(model::addConstraint);
+        varStream().map(copier::copy).forEachOrdered(model::addVarUnchecked);
+        constraintStream().map(copier::copy).forEachOrdered(model::addConstraint);
         return model;
     }
 
@@ -634,6 +633,24 @@ public class Model {
     @Override
     public String toString() {
         return String.format("Model(vars: %d, constraints: %d)", vars.size(), constraints.size());
+    }
+
+    /**
+     * Returns a string representation of this model,
+     * including all vars and constraints in the model.
+     *
+     * @return the full string representation
+     */
+    public String toFullString() {
+        SimpleElemPrinter printer = new SimpleElemPrinter();
+        return "Model {\n" +
+                "    vars {\n" +
+                varStream().map(var -> "        " + printer.printVar(var)).collect(Collectors.joining("\n")) + "\n" +
+                "    }\n" +
+                "    constraints {\n" +
+                constraintStream().map(constraint -> "        " + printer.printConstraint(constraint)).collect(Collectors.joining("\n")) + "\n" +
+                "    }\n" +
+                "}";
     }
 
     @Override

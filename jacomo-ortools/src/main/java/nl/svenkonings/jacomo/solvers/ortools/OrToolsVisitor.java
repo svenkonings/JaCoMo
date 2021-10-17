@@ -15,7 +15,6 @@ import com.google.ortools.util.Domain;
 import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.elem.expressions.BiExpr;
-import nl.svenkonings.jacomo.elem.expressions.Expr;
 import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
@@ -27,6 +26,7 @@ import nl.svenkonings.jacomo.elem.variables.bool.ExpressionBoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
 import nl.svenkonings.jacomo.exceptions.unchecked.DuplicateNameException;
 import nl.svenkonings.jacomo.exceptions.unchecked.UnexpectedTypeException;
+import nl.svenkonings.jacomo.util.ElemUtil;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -189,23 +189,10 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     }
 
     // Collects all children of chained binary expressions with the same type
-    private List<IntVar> collectAll(BiExpr expr) {
-        List<IntVar> vars = new ArrayList<>();
-        collectAll(expr, vars);
-        return vars;
-    }
-
-    private void collectAll(BiExpr expr, List<IntVar> vars) {
-        collectAll(expr, expr.getLeft(), vars);
-        collectAll(expr, expr.getRight(), vars);
-    }
-
-    private void collectAll(BiExpr expr, Expr child, List<IntVar> vars) {
-        if (expr.getType() == child.getType()) {
-            collectAll((BiExpr) child, vars);
-        } else {
-            vars.add(intVar(child, true));
-        }
+    private IntVar[] collectAll(BiExpr biExpr) {
+        return ElemUtil.collectAll(biExpr).stream()
+                .map(expr -> intVar(expr, true))
+                .toArray(IntVar[]::new);
     }
 
     @Override
@@ -229,7 +216,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
 
     @Override
     public OrToolsType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
-        IntVar[] vars = collectAll(biBoolExpr).toArray(new IntVar[0]);
+        IntVar[] vars = collectAll(biBoolExpr);
         switch (biBoolExpr.getType()) {
             case AndExpr:
                 return OrToolsType.constraint(model.addBoolAnd(vars),
@@ -323,7 +310,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     }
 
     private OrToolsType associativeBiIntExpr(BiIntExpr biIntExpr) {
-        IntVar[] vars = collectAll(biIntExpr).toArray(new IntVar[0]);
+        IntVar[] vars = collectAll(biIntExpr);
         IntVar var = genIntVar();
         switch (biIntExpr.getType()) {
             case AddExpr:
