@@ -74,16 +74,6 @@ public class ElemPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visitExpressionBoolVar(ExpressionBoolVar var) {
-        return visit(var.getExpression());
-    }
-
-    @Override
-    public String visitExpressionIntVar(ExpressionIntVar var) {
-        return visit(var.getExpression());
-    }
-
-    @Override
     public String visitNotExpr(NotExpr notExpr) {
         return printUnExpr(notExpr, "!");
     }
