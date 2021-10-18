@@ -26,23 +26,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Prints string representations of elements with simplified expressions.
+ * Prints string representations of elements with flattened expressions.
  */
-@SuppressWarnings("ConstantConditions")
-public class SimpleElemPrinter implements Visitor<String> {
+public class ElemPrinter implements Visitor<String> {
 
     /**
-     * Returns a string representation of the specified var with simplified expressions
+     * Returns a string representation of the specified var with flattened expressions.
      *
      * @param var the specified var
      * @return the string representation
      */
     public String printVar(Var var) {
         if (var instanceof ExpressionBoolVar) {
-            String expression = removeOuterBrackets(visit(((ExpressionBoolVar) var).getExpression()));
+            String expression = removeBrackets(visit(((ExpressionBoolVar) var).getExpression()));
             return String.format("bool %s = %s", var.getName(), expression);
         } else if (var instanceof ExpressionIntVar) {
-            String expression = removeOuterBrackets(visit(((ExpressionIntVar) var).getExpression()));
+            String expression = removeBrackets(visit(((ExpressionIntVar) var).getExpression()));
             return String.format("int %s = %s", var.getName(), expression);
         } else {
             return var.toString();
@@ -57,7 +56,7 @@ public class SimpleElemPrinter implements Visitor<String> {
      */
     public String printConstraint(Constraint constraint) {
         if (constraint instanceof BoolExprConstraint) {
-            String expression = removeOuterBrackets(visit(((BoolExprConstraint) constraint).getExpr()));
+            String expression = removeBrackets(visit(((BoolExprConstraint) constraint).getExpr()));
             return String.format("constraint %s", expression);
         } else {
             return constraint.toString();
@@ -70,23 +69,18 @@ public class SimpleElemPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visitExpr(Expr expr) {
-        return expr.hasValue() ? expr.getValue().toString() : expr.toString();
-    }
-
-    @Override
     public String visitVar(Var var) {
-        return var.hasValue() ? var.getValue().toString() : var.getName();
+        return var.getName();
     }
 
     @Override
     public String visitExpressionBoolVar(ExpressionBoolVar var) {
-        return var.hasValue() ? var.getValue().toString() : visit(var.getExpression());
+        return visit(var.getExpression());
     }
 
     @Override
     public String visitExpressionIntVar(ExpressionIntVar var) {
-        return var.hasValue() ? var.getValue().toString() : visit(var.getExpression());
+        return visit(var.getExpression());
     }
 
     @Override
@@ -96,23 +90,11 @@ public class SimpleElemPrinter implements Visitor<String> {
 
     @Override
     public String visitAndExpr(AndExpr andExpr) {
-        if (andExpr.getLeft().hasValue() && andExpr.getLeft().getValue()) {
-            return visit(andExpr.getRight());
-        }
-        if (andExpr.getRight().hasValue() && andExpr.getRight().getValue()) {
-            return visit(andExpr.getLeft());
-        }
         return printAssociativeBiExpr(andExpr, "&&");
     }
 
     @Override
     public String visitOrExpr(OrExpr orExpr) {
-        if (orExpr.getLeft().hasValue() && !orExpr.getLeft().getValue()) {
-            return visit(orExpr.getRight());
-        }
-        if (orExpr.getRight().hasValue() && !orExpr.getRight().getValue()) {
-            return visit(orExpr.getLeft());
-        }
         return printAssociativeBiExpr(orExpr, "||");
     }
 
@@ -177,48 +159,36 @@ public class SimpleElemPrinter implements Visitor<String> {
     }
 
     private String printUnExpr(UnExpr expr, String delimiter) {
-        if (expr.hasValue()) {
-            return expr.getValue().toString();
-        }
-        if (expr.getType() == expr.getExpr().getType()) {
-            UnExpr subExpr = (UnExpr) expr.getExpr();
-            return visit(subExpr.getExpr());
-        }
         return delimiter + visit(expr.getExpr());
     }
 
     private String printBiExpr(BiExpr expr, String delimiter) {
-        if (expr.hasValue()) {
-            return expr.getValue().toString();
-        }
-        return "(" + visit(expr.getLeft()) + " " + delimiter + " " + visit(expr.getRight()) + ")";
+        return addBrackets(visit(expr.getLeft()) + addSpaces(delimiter) + visit(expr.getRight()));
     }
 
     private String printAssociativeBiExpr(BiExpr expr, String delimiter) {
-        if (expr.hasValue()) {
-            return expr.getValue().toString();
-        }
         List<Expr> children = ElemUtil.collectAll(expr);
-        return "(" +
-                children.stream()
-                        .map(this::visit)
-                        .collect(Collectors.joining(" " + delimiter + " ")) +
-                ")";
+        return addBrackets(children.stream()
+                .map(this::visit)
+                .collect(Collectors.joining(addSpaces(delimiter))));
     }
 
     private String printAssociativeBiExpr(String prefix, BiExpr expr) {
-        if (expr.hasValue()) {
-            return expr.getValue().toString();
-        }
         List<Expr> children = ElemUtil.collectAll(expr);
-        return prefix + "(" +
-                children.stream()
-                        .map(this::visit)
-                        .collect(Collectors.joining(", ")) +
-                ")";
+        return prefix + addBrackets(children.stream()
+                .map(this::visit)
+                .collect(Collectors.joining(", ")));
     }
 
-    private String removeOuterBrackets(String string) {
+    private String addSpaces(String string) {
+        return " " + string + " ";
+    }
+
+    private String addBrackets(String string) {
+        return "(" + string + ")";
+    }
+
+    private String removeBrackets(String string) {
         if (string.startsWith("(") && string.endsWith(")")) {
             return string.substring(1, string.length() - 1);
         } else {

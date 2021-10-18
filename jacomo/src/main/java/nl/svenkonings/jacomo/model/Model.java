@@ -18,11 +18,13 @@ import nl.svenkonings.jacomo.elem.variables.bool.InstantiatableBoolVar;
 import nl.svenkonings.jacomo.elem.variables.integer.BoundedIntVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ConstantIntVar;
 import nl.svenkonings.jacomo.elem.variables.integer.ExpressionIntVar;
+import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.ReservedNameException;
 import nl.svenkonings.jacomo.solvers.Solver;
 import nl.svenkonings.jacomo.util.ListUtil;
+import nl.svenkonings.jacomo.visitor.Checker;
 import nl.svenkonings.jacomo.visitor.ElemCopier;
-import nl.svenkonings.jacomo.visitor.SimpleElemPrinter;
+import nl.svenkonings.jacomo.visitor.ElemPrinter;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +55,15 @@ public class Model {
     }
 
     // Variable methods
+
+    /**
+     * Returns {@code true} if this model contains variables.
+     *
+     * @return {@code true} if this model contains variables.
+     */
+    public boolean hasVars() {
+        return !vars.isEmpty();
+    }
 
     /**
      * Returns {@code true} if this model contains a var with the specified name,
@@ -193,6 +204,15 @@ public class Model {
     }
 
     // Constraint methods
+
+    /**
+     * Returns {@code true} if this model contains constraints.
+     *
+     * @return {@code true} if this model contains constraints.
+     */
+    public boolean hasConstraints() {
+        return !constraints.isEmpty();
+    }
 
     /**
      * Returns {@code true} if this model contains the specified constraint,
@@ -630,6 +650,16 @@ public class Model {
 
     // General methods
 
+    /**
+     * Checks this model and returns and optimized model.
+     *
+     * @return the optimized model
+     * @throws CheckException if one of the checks fails
+     */
+    public Model check() throws CheckException {
+        return new Checker().check(this);
+    }
+
     @Override
     public String toString() {
         return String.format("Model(vars: %d, constraints: %d)", vars.size(), constraints.size());
@@ -638,19 +668,41 @@ public class Model {
     /**
      * Returns a string representation of this model,
      * including all vars and constraints in the model.
+     * <p>
+     * Use {@link Model#check()} first to get a string representation of the
+     * optimized model.
      *
      * @return the full string representation
      */
     public String toFullString() {
-        SimpleElemPrinter printer = new SimpleElemPrinter();
-        return "Model {\n" +
-                "    vars {\n" +
-                varStream().map(var -> "        " + printer.printVar(var)).distinct().collect(Collectors.joining("\n")) + "\n" +
-                "    }\n" +
-                "    constraints {\n" +
-                constraintStream().map(constraint -> "        " + printer.printConstraint(constraint)).distinct().collect(Collectors.joining("\n")) + "\n" +
-                "    }\n" +
-                "}";
+        StringBuilder builder = new StringBuilder();
+        ElemPrinter printer = new ElemPrinter();
+        builder.append("Model {");
+        if (hasVars() || hasConstraints()) {
+            builder.append("\n");
+        }
+        if (hasVars()) {
+            builder.append("    ")
+                    .append("vars {")
+                    .append(varStream()
+                            .map(var -> "        " + printer.printVar(var))
+                            .collect(Collectors.joining("\n", "\n", "\n")))
+                    .append("    ")
+                    .append("}")
+                    .append("\n");
+        }
+        if (hasConstraints()) {
+            builder.append("    ")
+                    .append("constraints {")
+                    .append(constraintStream()
+                            .map(constraint -> "        " + printer.printConstraint(constraint))
+                            .collect(Collectors.joining("\n", "\n", "\n")))
+                    .append("    ")
+                    .append("}")
+                    .append("\n");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 
     @Override

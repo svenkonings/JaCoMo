@@ -16,7 +16,6 @@ import nl.svenkonings.jacomo.exceptions.unchecked.CheckException;
 import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
 import nl.svenkonings.jacomo.model.Model;
 import nl.svenkonings.jacomo.model.VarMap;
-import nl.svenkonings.jacomo.visitor.Checker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +36,7 @@ public interface Solver {
      * @throws CheckException if one of the checks fails
      */
     default boolean solveAndUpdate(@NotNull Model model) throws CheckException {
-        return solveAndUpdateUnchecked(new Checker().check(model));
+        return solveAndUpdateUnchecked(model.check());
     }
 
     /**
@@ -52,7 +51,7 @@ public interface Solver {
      * @throws CheckException if one of the checks fails
      */
     default @Nullable VarMap solve(@NotNull Model model) throws CheckException {
-        return solveUnchecked(new Checker().check(model));
+        return solveUnchecked(model.check());
     }
 
     /**
