@@ -7,12 +7,16 @@
 package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.elem.Elem;
+import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.elem.constraints.Constraint;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
+import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.unary.UnBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.ConstantIntExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
@@ -177,6 +181,18 @@ public class Checker implements Visitor<Elem> {
     }
 
     @Override
+    public Elem visitNotExpr(NotExpr notExpr) {
+        if (notExpr.hasValue()) {
+            return boolConst(notExpr);
+        } else if (notExpr.getExpr().getType() == Type.NotExpr) {
+            NotExpr subExpr = (NotExpr) notExpr.getExpr();
+            return visit(subExpr.getExpr());
+        } else {
+            return visitUnBoolExpr(notExpr);
+        }
+    }
+
+    @Override
     public Elem visitBiBoolExpr(BiBoolExpr biBoolExpr) {
         if (biBoolExpr.hasValue()) {
             return boolConst(biBoolExpr);
@@ -190,6 +206,32 @@ public class Checker implements Visitor<Elem> {
                 return left.or(right);
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
+        }
+    }
+
+    @Override
+    public Elem visitAndExpr(AndExpr andExpr) {
+        if (andExpr.hasValue()) {
+            return boolConst(andExpr);
+        } else if (andExpr.getLeft().hasValue() && andExpr.getLeft().getValue()) {
+            return visit(andExpr.getRight());
+        } else if (andExpr.getRight().hasValue() && andExpr.getRight().getValue()) {
+            return visit(andExpr.getLeft());
+        } else {
+            return visitBiBoolExpr(andExpr);
+        }
+    }
+
+    @Override
+    public Elem visitOrExpr(OrExpr orExpr) {
+        if (orExpr.hasValue()) {
+            return boolConst(orExpr);
+        } else if (orExpr.getLeft().hasValue() && !orExpr.getLeft().getValue()) {
+            return visit(orExpr.getRight());
+        } else if (orExpr.getRight().hasValue() && !orExpr.getRight().getValue()) {
+            return visit(orExpr.getLeft());
+        } else {
+            return visitBiBoolExpr(orExpr);
         }
     }
 
