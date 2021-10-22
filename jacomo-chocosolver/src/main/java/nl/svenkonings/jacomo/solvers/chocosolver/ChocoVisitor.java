@@ -113,10 +113,10 @@ public class ChocoVisitor implements Visitor<ChocoType> {
             constraint = result.getConstraint();
         } else if (result.isReExpression()) {
             ReExpression expr = result.getReExpression();
-            try {
+            if (expr instanceof BoolVar) {
+                constraint = model.arithm((BoolVar) expr, "=", 1);
+            } else {
                 constraint = expr.decompose();
-            } catch (UnsupportedOperationException e) {
-                constraint = expr.extension();
             }
         } else {
             throw new UnexpectedTypeException(elem);
