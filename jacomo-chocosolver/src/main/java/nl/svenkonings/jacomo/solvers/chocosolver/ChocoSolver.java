@@ -27,12 +27,14 @@ import java.util.NoSuchElementException;
 public class ChocoSolver implements Solver {
 
     private int workers;
+    private long timeLimit;
 
     /**
      * Create a new ChocoSolver solver.
      */
     public ChocoSolver() {
         workers = 0;
+        timeLimit = 0;
     }
 
     /**
@@ -62,6 +64,26 @@ public class ChocoSolver implements Solver {
         this.workers = workers;
     }
 
+    /**
+     * Get the time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @return the time limit in milliseconds
+     */
+    public long getTimeLimit() {
+        return timeLimit;
+    }
+
+    /**
+     * Set time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @param timeLimit the time limit in milliseconds
+     */
+    public void setTimeLimit(long timeLimit) {
+        this.timeLimit = timeLimit;
+    }
+
     @Override
     public @Nullable VarMap solveUnchecked(@NotNull Model model) {
         ChocoVisitor visitor;
@@ -72,13 +94,15 @@ public class ChocoSolver implements Solver {
                 return null;
             }
         } else {
-            int threadCount = workers == 0 ? Runtime.getRuntime().availableProcessors() : workers;
+            int threadCount = workers <= 0 ? Runtime.getRuntime().availableProcessors() : workers;
             ParallelPortfolio parallelPortfolio = new ParallelPortfolio();
             List<ChocoVisitor> parallelVisitors = new ArrayList<>(threadCount);
             for (int i = 0; i < threadCount; i++) {
                 ChocoVisitor parallelVisitor = new ChocoVisitor();
                 model.visit(parallelVisitor);
-                parallelPortfolio.addModel(parallelVisitor.getModel());
+                org.chocosolver.solver.Model chocoModel = parallelVisitor.getModel();
+                if (timeLimit > 0) chocoModel.getSolver().limitTime(timeLimit);
+                parallelPortfolio.addModel(chocoModel);
                 parallelVisitors.add(parallelVisitor);
             }
             parallelPortfolio.stealNogoodsOnRestarts();

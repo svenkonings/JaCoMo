@@ -24,12 +24,14 @@ import org.jetbrains.annotations.Nullable;
 public class OrToolsSolver implements Solver {
 
     private int workers;
+    private double timeLimit;
 
     /**
      * Create a new OR-Tools solver.
      */
     public OrToolsSolver() {
         workers = 0;
+        timeLimit = 0;
     }
 
     /**
@@ -59,12 +61,33 @@ public class OrToolsSolver implements Solver {
         this.workers = workers;
     }
 
+    /**
+     * Get the time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @return the time limit in seconds
+     */
+    public double getTimeLimit() {
+        return timeLimit;
+    }
+
+    /**
+     * Set time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @param timeLimit the time limit in seconds
+     */
+    public void setTimeLimit(double timeLimit) {
+        this.timeLimit = timeLimit;
+    }
+
     @Override
     public @Nullable VarMap solveUnchecked(@NotNull Model model) {
         OrToolsVisitor visitor = new OrToolsVisitor();
         model.visit(visitor);
         CpSolver solver = new CpSolver();
         solver.getParameters().setNumSearchWorkers(workers);
+        if (timeLimit > 0) solver.getParameters().setMaxTimeInSeconds(timeLimit);
         CpSolverStatus status = solver.solve(visitor.getModel());
         switch (status) {
             case UNKNOWN:
