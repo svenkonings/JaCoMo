@@ -45,6 +45,7 @@ public class ChocoSolver implements Solver {
      *
      * @return the number of workers.
      */
+    @Override
     public int getWorkers() {
         return workers;
     }
@@ -57,6 +58,7 @@ public class ChocoSolver implements Solver {
      *
      * @param workers the number of workers to use.
      */
+    @Override
     public void setWorkers(int workers) {
         if (workers < 0) {
             throw new InvalidInputException("Can't have a negative amount of workers");
@@ -68,8 +70,9 @@ public class ChocoSolver implements Solver {
      * Get the time limit to find a solution.
      * A value of 0 (default) means no time-limit.
      *
-     * @return the time limit in milliseconds
+     * @return the time limit in milliseconds.
      */
+    @Override
     public long getTimeLimit() {
         return timeLimit;
     }
@@ -78,9 +81,13 @@ public class ChocoSolver implements Solver {
      * Set time limit to find a solution.
      * A value of 0 (default) means no time-limit.
      *
-     * @param timeLimit the time limit in milliseconds
+     * @param timeLimit the time limit in milliseconds.
      */
+    @Override
     public void setTimeLimit(long timeLimit) {
+        if (timeLimit < 0) {
+            throw new InvalidInputException("Time limit can't be negative");
+        }
         this.timeLimit = timeLimit;
     }
 

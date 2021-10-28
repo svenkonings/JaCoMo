@@ -26,6 +26,55 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("ConstantConditions")
 public interface Solver {
+
+    /**
+     * Returns the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all logical processors on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
+     *
+     * @return the number of workers.
+     * @throws UnsupportedOperationException when this operation is not supported by the Solver implementation.
+     */
+    default int getWorkers() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Set the number of workers used to search for a solution.
+     * A value of 0 (default) means the solver will try to use all logical processors on the machine.
+     * A value of 1 means no parallelism will be used.
+     * Parallelism will cause the solving process to be non-deterministic.
+     *
+     * @param workers the number of workers to use.
+     * @throws UnsupportedOperationException when this operation is not supported by the Solver implementation.
+     */
+    default void setWorkers(int workers) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get the time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @return the time limit in milliseconds.
+     * @throws UnsupportedOperationException when this operation is not supported by the Solver implementation.
+     */
+    default long getTimeLimit() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Set time limit to find a solution.
+     * A value of 0 (default) means no time-limit.
+     *
+     * @param timeLimit the time limit in milliseconds.
+     * @throws UnsupportedOperationException when this operation is not supported by the Solver implementation.
+     */
+    default void setTimeLimit(long timeLimit) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Check, optimize, attempt to solve and update the specified model.
      * Returns {@code true} if the model has been solved and updated.

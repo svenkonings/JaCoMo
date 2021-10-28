@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class OrToolsSolver implements Solver {
 
     private int workers;
-    private double timeLimit;
+    private long timeLimit;
 
     /**
      * Create a new OR-Tools solver.
@@ -42,6 +42,7 @@ public class OrToolsSolver implements Solver {
      *
      * @return the number of workers.
      */
+    @Override
     public int getWorkers() {
         return workers;
     }
@@ -54,6 +55,7 @@ public class OrToolsSolver implements Solver {
      *
      * @param workers the number of workers to use.
      */
+    @Override
     public void setWorkers(int workers) {
         if (workers < 0) {
             throw new InvalidInputException("Can't have a negative amount of workers");
@@ -65,9 +67,10 @@ public class OrToolsSolver implements Solver {
      * Get the time limit to find a solution.
      * A value of 0 (default) means no time-limit.
      *
-     * @return the time limit in seconds
+     * @return the time limit in milliseconds.
      */
-    public double getTimeLimit() {
+    @Override
+    public long getTimeLimit() {
         return timeLimit;
     }
 
@@ -75,9 +78,13 @@ public class OrToolsSolver implements Solver {
      * Set time limit to find a solution.
      * A value of 0 (default) means no time-limit.
      *
-     * @param timeLimit the time limit in seconds
+     * @param timeLimit the time limit in milliseconds.
      */
-    public void setTimeLimit(double timeLimit) {
+    @Override
+    public void setTimeLimit(long timeLimit) {
+        if (timeLimit < 0) {
+            throw new InvalidInputException("Time limit can't be negative");
+        }
         this.timeLimit = timeLimit;
     }
 
@@ -87,7 +94,7 @@ public class OrToolsSolver implements Solver {
         model.visit(visitor);
         CpSolver solver = new CpSolver();
         solver.getParameters().setNumSearchWorkers(workers);
-        if (timeLimit > 0) solver.getParameters().setMaxTimeInSeconds(timeLimit);
+        if (timeLimit > 0) solver.getParameters().setMaxTimeInSeconds(timeLimit / 1000.0);
         CpSolverStatus status = solver.solve(visitor.getModel());
         switch (status) {
             case UNKNOWN:
