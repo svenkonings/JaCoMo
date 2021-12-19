@@ -1,6 +1,6 @@
 allprojects {
     group 'nl.svenkonings.jacomo'
-    version '0.1-RC4-SNAPSHOT'
+    version '0.1-RC4'
     repositories {
         mavenCentral()
     }

@@ -54,6 +54,22 @@ Version 0.1 is a minimal viable product. It contains the following:
 - JavaDoc documentation
 - Maven Central Repository release
 
+## v0.1-RC4
+The fourth release candidate of version 0.1. The following has changed from RC3:
+
+- Add parallelization settings to Solver interface and implementations
+- Add time limit settings to Solver interface and implementations
+- Implement parallel ChocoSolver search using ParallelPortfolio with stealing no-good solutions on restart
+- Keep element order of checked models
+- Improve `toString()` representation of variables
+- Add ElemPrinter for printing simplified string representations of elements
+- Add `toFullString()` to Model that also includes simplified variable and constraint expressions
+- Add optimizations to Checker for short-circuit evaluation of And- and Or-expressions and simplifying double negations
+- Add `check()` method to Model that checks the Model and returns a checked and optimized Model
+- Add `hasVars()` and `hasConstraints()` methods to Model
+- Improve the conversion of boolean variables to constraints in ChocoSolver implementation
+- Update OR-Tools and ChocoSolver
+
 ## v0.1-RC3
 The third release candidate of version 0.1. The following has changed from RC2:
 
