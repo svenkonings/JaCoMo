@@ -288,7 +288,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
                 model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left, right}, new int[]{1, -1}));
                 return OrToolsType.intVar(var);
             case MulExpr:
-                model.addProductEquality(var, new IntVar[]{left, right});
+                model.addMultiplicationEquality(var, new IntVar[]{left, right});
                 return OrToolsType.intVar(var);
             case DivExpr:
                 // OR-Tools does not support negative integer division
