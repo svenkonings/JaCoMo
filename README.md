@@ -5,6 +5,11 @@
 # JaCoMo
 JaCoMo is a high-level, solver-independent, Java constraint model for constraint
 satisfaction problems in the integer domain.
+JaCoMo can be used to model constrain satisfaction problems and then solve them
+using different solver implementations.
+Currently, supported solvers are:
+- [Choco-solver](https://github.com/chocoteam/choco-solver)
+- [OR-Tools](https://github.com/google/or-tools)
 
 [![Build](https://github.com/svenkonings/JaCoMo/workflows/build/badge.svg?branch=master&event=push)](https://github.com/svenkonings/JaCoMo/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush)
 [![Maven Central](https://img.shields.io/maven-central/v/nl.svenkonings.jacomo/jacomo.svg?label=Maven%20Central&color=%234c1)](https://search.maven.org/search?q=g:%22nl.svenkonings.jacomo%22)
@@ -177,7 +182,7 @@ viable product release is as follows:
 - [x] Model factory methods for creating variables
 - [x] Visitor pattern for traversing the model
 - [x] Solver implementations
-  - [x] ChocoSolver
+  - [x] Choco-solver
   - [x] OR-tools
 - [ ] Unit-test for non-trivial classes and system tests
   - [x] System tests (for all solvers)

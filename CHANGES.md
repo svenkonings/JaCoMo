@@ -47,7 +47,7 @@ Version 0.1 is a minimal viable product. It contains the following:
 - Model factory methods for creating variables
 - Visitor pattern for traversing the model
 - Solver implementations
-  - ChocoSolver
+  - Choco-solver
   - OR-tools
 - Unit-test for non-trivial classes and system tests
 - Getting started documentation with examples
@@ -68,7 +68,7 @@ The fourth release candidate of version 0.1. The following has changed from RC3:
 - Add `check()` method to Model that checks the Model and returns a checked and optimized Model
 - Add `hasVars()` and `hasConstraints()` methods to Model
 - Improve the conversion of boolean variables to constraints in ChocoSolver implementation
-- Update OR-Tools and ChocoSolver
+- Update OR-Tools and Choco-solver
 
 ## v0.1-RC3
 The third release candidate of version 0.1. The following has changed from RC2:
@@ -134,7 +134,7 @@ The first release candidate of version 0.1. It contains the following:
 - Model factory methods for creating variables
 - Visitor pattern for traversing the model
 - Solver implementations
-  - ChocoSolver
+  - Choco-solver
   - OR-tools
 - System tests
 - JavaDoc documentation
