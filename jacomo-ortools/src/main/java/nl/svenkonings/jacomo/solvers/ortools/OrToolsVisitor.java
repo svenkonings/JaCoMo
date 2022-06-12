@@ -7,14 +7,9 @@
 package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.Loader;
-import com.google.ortools.sat.Constraint;
-import com.google.ortools.sat.CpModel;
-import com.google.ortools.sat.IntVar;
-import com.google.ortools.sat.LinearExpr;
-import com.google.ortools.util.Domain;
+import com.google.ortools.sat.*;
 import nl.svenkonings.jacomo.elem.Elem;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
-import nl.svenkonings.jacomo.elem.expressions.BiExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.ConstantBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.BiBoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.ReBoolExpr;
@@ -40,14 +35,14 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
 
     private final @NotNull CpModel model;
 
-    private final @NotNull Map<String, IntVar> boolVars;
+    private final @NotNull Map<String, Literal> boolVars;
     private final @NotNull Map<String, IntVar> intVars;
 
     private final @NotNull Map<Elem, Constraint> constraintMap;
+    private final @NotNull Map<Elem, Literal> boolVarMap;
     private final @NotNull Map<Elem, IntVar> intVarMap;
 
     private int genNameCounter;
-    private final @NotNull List<IntVar> inverseVars;
 
     /**
      * Create a new OR-Tools visitor.
@@ -58,9 +53,9 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         boolVars = new LinkedHashMap<>();
         intVars = new LinkedHashMap<>();
         constraintMap = new HashMap<>();
+        boolVarMap = new HashMap<>();
         intVarMap = new HashMap<>();
         genNameCounter = 0;
-        inverseVars = new ArrayList<>();
     }
 
     /**
@@ -77,7 +72,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
      *
      * @return the mapping of boolean variable names to OR-Tools CP-SAT variables
      */
-    public @NotNull Map<String, IntVar> getBoolVars() {
+    public @NotNull Map<String, Literal> getBoolVars() {
         return boolVars;
     }
 
@@ -90,7 +85,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         return intVars;
     }
 
-    private void addBoolVar(String name, IntVar var) {
+    private void addBoolVar(String name, Literal var) {
         if (boolVars.containsKey(name)) {
             throw new DuplicateNameException("Variable name %s already exists. Var1: %s, Var2: %s", name, boolVars.get(name), var);
         } else if (intVars.containsKey(name)) {
@@ -112,35 +107,12 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         return "_cpsat" + genNameCounter++;
     }
 
-    private IntVar genBoolVar() {
+    private Literal genBoolVar() {
         return model.newBoolVar(genName());
     }
 
     private IntVar genIntVar() {
         return model.newIntVar(Integer.MIN_VALUE, Integer.MAX_VALUE, genName());
-    }
-
-    private boolean inverseExists(int index) {
-        return index < inverseVars.size() && inverseVars.get(index) != null;
-    }
-
-    private IntVar getInverse(IntVar boolVar) {
-        if (inverseExists(boolVar.getIndex())) {
-            return inverseVars.get(boolVar.getIndex());
-        } else {
-            IntVar inverseVar = genBoolVar();
-            model.addDifferent(boolVar, inverseVar);
-            setInverse(boolVar.getIndex(), inverseVar);
-            setInverse(inverseVar.getIndex(), boolVar);
-            return inverseVar;
-        }
-    }
-
-    private void setInverse(int index, IntVar boolVar) {
-        while (index >= inverseVars.size()) {
-            inverseVars.add(null);
-        }
-        inverseVars.set(index, boolVar);
     }
 
     private Constraint constraint(Elem elem) {
@@ -151,15 +123,8 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         Constraint constraint;
         if (result.isConstraint()) {
             constraint = result.getConstraint();
-        } else if (result.isIntVar()) {
-            IntVar var = result.getIntVar();
-            Domain domain = var.getDomain();
-            if (domain.min() == 0L && domain.max() == 1L) {
-                // Assume the variable is a boolean, should be true (1)
-                constraint = model.addEquality(result.getIntVar(), 1);
-            } else {
-                throw new UnexpectedTypeException(elem);
-            }
+        } else if (result.isBoolVar()) {
+            constraint = model.addEquality(result.getBoolVar(), 1L);
         } else {
             throw new UnexpectedTypeException(elem);
         }
@@ -167,7 +132,27 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         return constraint;
     }
 
-    private IntVar intVar(Elem elem, boolean convertConstraint) {
+    private Literal boolVar(Elem elem) {
+        if (boolVarMap.containsKey(elem)) {
+            return boolVarMap.get(elem);
+        }
+        OrToolsType result = visit(elem);
+        Literal boolVar;
+        if (result.isBoolVar()) {
+            boolVar = result.getBoolVar();
+        } else if (result.isConstraint()) {
+            Literal var = genBoolVar();
+            result.getConstraint().onlyEnforceIf(var);
+            result.getInverseConstraint().onlyEnforceIf(var.not());
+            boolVar = var;
+        } else {
+            throw new UnexpectedTypeException(elem);
+        }
+        boolVarMap.put(elem, boolVar);
+        return boolVar;
+    }
+
+    private IntVar intVar(Elem elem) {
         if (intVarMap.containsKey(elem)) {
             return intVarMap.get(elem);
         }
@@ -175,24 +160,11 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         IntVar intVar;
         if (result.isIntVar()) {
             intVar = result.getIntVar();
-        } else if (convertConstraint && result.isConstraint()) {
-            IntVar var = genBoolVar();
-            result.getConstraint().onlyEnforceIf(var);
-            IntVar inverseVar = getInverse(var);
-            result.getInverseConstraint().onlyEnforceIf(inverseVar);
-            intVar = var;
         } else {
             throw new UnexpectedTypeException(elem);
         }
         intVarMap.put(elem, intVar);
         return intVar;
-    }
-
-    // Collects all children of chained binary expressions with the same type
-    private IntVar[] collectAll(BiExpr biExpr) {
-        return ElemUtil.collectAll(biExpr).stream()
-                .map(expr -> intVar(expr, true))
-                .toArray(IntVar[]::new);
     }
 
     @Override
@@ -210,20 +182,22 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
 
     @Override
     public OrToolsType visitNotExpr(NotExpr notExpr) {
-        IntVar var = getInverse(intVar(notExpr.getExpr(), true));
-        return OrToolsType.intVar(var);
+        Literal var = boolVar(notExpr.getExpr()).not();
+        return OrToolsType.boolVar(var);
     }
 
     @Override
     public OrToolsType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
-        IntVar[] vars = collectAll(biBoolExpr);
+        Literal[] vars = ElemUtil.collectAll(biBoolExpr).stream()
+                .map(this::boolVar)
+                .toArray(Literal[]::new);
         switch (biBoolExpr.getType()) {
             case AndExpr:
                 return OrToolsType.constraint(model.addBoolAnd(vars),
-                        () -> model.addBoolOr(Arrays.stream(vars).map(this::getInverse).toArray(IntVar[]::new)));
+                        () -> model.addBoolOr(Arrays.stream(vars).map(Literal::not).toArray(Literal[]::new)));
             case OrExpr:
                 return OrToolsType.constraint(model.addBoolOr(vars),
-                        () -> model.addBoolAnd(Arrays.stream(vars).map(this::getInverse).toArray(IntVar[]::new)));
+                        () -> model.addBoolAnd(Arrays.stream(vars).map(Literal::not).toArray(Literal[]::new)));
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
         }
@@ -231,8 +205,8 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
 
     @Override
     public OrToolsType visitReBoolExpr(ReBoolExpr reBoolExpr) {
-        IntVar left = intVar(reBoolExpr.getLeft(), false);
-        IntVar right = intVar(reBoolExpr.getRight(), false);
+        IntVar left = intVar(reBoolExpr.getLeft());
+        IntVar right = intVar(reBoolExpr.getRight());
         switch (reBoolExpr.getType()) {
             case EqExpr:
                 return OrToolsType.constraint(model.addEquality(left, right),
@@ -279,13 +253,13 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     }
 
     private OrToolsType nonAssociativeBiIntExpr(BiIntExpr biIntExpr) {
-        IntVar left = intVar(biIntExpr.getLeft(), false);
-        IntVar right = intVar(biIntExpr.getRight(), false);
+        IntVar left = intVar(biIntExpr.getLeft());
+        IntVar right = intVar(biIntExpr.getRight());
         IntVar var = genIntVar();
         switch (biIntExpr.getType()) {
             case SubExpr:
                 // OPTIMIZATION: Combine multiple subtraction scalar expressions
-                model.addEquality(var, LinearExpr.scalProd(new IntVar[]{left, right}, new int[]{1, -1}));
+                model.addEquality(var, LinearExpr.weightedSum(new IntVar[]{left, right}, new long[]{1L, -1L}));
                 return OrToolsType.intVar(var);
             case MulExpr:
                 model.addMultiplicationEquality(var, new IntVar[]{left, right});
@@ -310,7 +284,9 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     }
 
     private OrToolsType associativeBiIntExpr(BiIntExpr biIntExpr) {
-        IntVar[] vars = collectAll(biIntExpr);
+        IntVar[] vars = ElemUtil.collectAll(biIntExpr).stream()
+                .map(this::intVar)
+                .toArray(IntVar[]::new);
         IntVar var = genIntVar();
         switch (biIntExpr.getType()) {
             case AddExpr:
@@ -330,32 +306,31 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     @Override
     public OrToolsType visitBoolVar(BoolVar boolVar) {
         String name = boolVar.getName();
-        IntVar var;
+        Literal var;
         if (boolVars.containsKey(name)) {
             var = boolVars.get(name);
         } else {
             if (boolVar.hasValue()) {
-                int value = boolVar.getValue() ? 1 : 0;
-                var = model.newConstant(value);
+                var = boolVar.getValue() ? model.trueLiteral() : model.falseLiteral();
             } else {
                 var = model.newBoolVar(name);
             }
             addBoolVar(name, var);
         }
-        return OrToolsType.intVar(var);
+        return OrToolsType.boolVar(var);
     }
 
     @Override
     public OrToolsType visitExpressionBoolVar(ExpressionBoolVar expressionBoolVar) {
         String name = expressionBoolVar.getName();
-        IntVar var;
+        Literal var;
         if (boolVars.containsKey(name)) {
             var = boolVars.get(name);
         } else {
-            var = intVar(expressionBoolVar.getExpression(), true);
+            var = boolVar(expressionBoolVar.getExpression());
             addBoolVar(name, var);
         }
-        return OrToolsType.intVar(var);
+        return OrToolsType.boolVar(var);
     }
 
     @Override
@@ -384,7 +359,7 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         if (intVars.containsKey(name)) {
             var = intVars.get(name);
         } else {
-            var = intVar(expressionIntVar.getExpression(), false);
+            var = intVar(expressionIntVar.getExpression());
             addIntVar(name, var);
         }
         return OrToolsType.intVar(var);

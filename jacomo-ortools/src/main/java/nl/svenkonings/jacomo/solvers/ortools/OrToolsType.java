@@ -8,6 +8,7 @@ package nl.svenkonings.jacomo.solvers.ortools;
 
 import com.google.ortools.sat.Constraint;
 import com.google.ortools.sat.IntVar;
+import com.google.ortools.sat.Literal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,7 @@ import java.util.function.Supplier;
  * The return value can be empty, an {@link IntVar} or a {@link Constraint}.
  */
 public class OrToolsType {
+    private final @Nullable Literal boolVar;
     private final @Nullable IntVar intVar;
     private final @Nullable Constraint constraint;
     private final @Nullable Supplier<Constraint> inverseSupplier;
@@ -30,7 +32,17 @@ public class OrToolsType {
      * @return the created return value
      */
     public static OrToolsType none() {
-        return new OrToolsType(null, null, null);
+        return new OrToolsType(null, null, null, null);
+    }
+
+    /**
+     * Create an {@link Literal} return value.
+     *
+     * @param boolVar the value to encapsulate
+     * @return the created return value
+     */
+    public static OrToolsType boolVar(@NotNull Literal boolVar) {
+        return new OrToolsType(boolVar, null, null, null);
     }
 
     /**
@@ -40,7 +52,7 @@ public class OrToolsType {
      * @return the created return value
      */
     public static OrToolsType intVar(@NotNull IntVar intVar) {
-        return new OrToolsType(intVar, null, null);
+        return new OrToolsType(null, intVar, null, null);
     }
 
     /**
@@ -52,15 +64,34 @@ public class OrToolsType {
      * @return the created return value
      */
     public static OrToolsType constraint(@NotNull Constraint constraint, @NotNull Supplier<Constraint> inverseSupplier) {
-        return new OrToolsType(null, constraint, inverseSupplier);
+        return new OrToolsType(null, null, constraint, inverseSupplier);
     }
 
-    private OrToolsType(@Nullable IntVar intVar, @Nullable Constraint constraint, @Nullable Supplier<Constraint> inverseSupplier) {
+    private OrToolsType(@Nullable Literal boolVar, @Nullable IntVar intVar, @Nullable Constraint constraint, @Nullable Supplier<Constraint> inverseSupplier) {
         assert constraint == null || inverseSupplier != null;
+        this.boolVar = boolVar;
         this.intVar = intVar;
         this.constraint = constraint;
         this.inverseSupplier = inverseSupplier;
         this.inverseConstraint = null;
+    }
+
+    /**
+     * Returns whether this value is an {@link Literal}.
+     *
+     * @return {@code true} if this value is an {@link Literal}
+     */
+    public boolean isBoolVar() {
+        return boolVar != null;
+    }
+
+    /**
+     * Returns the inner {@link Literal}.
+     *
+     * @return the inner {@link Literal} if it exists, {@code null} otherwise
+     */
+    public @Nullable Literal getBoolVar() {
+        return boolVar;
     }
 
     /**
@@ -119,8 +150,10 @@ public class OrToolsType {
 
     @Override
     public String toString() {
-        if (isIntVar()) {
-            return "ArExpression: " + intVar;
+        if (isBoolVar()) {
+            return "Literal: " + boolVar;
+        } else if (isIntVar()) {
+            return "IntVar: " + intVar;
         } else if (isConstraint()) {
             return "Constraint: " + constraint;
         } else {
@@ -133,12 +166,13 @@ public class OrToolsType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrToolsType orToolsType = (OrToolsType) o;
-        return Objects.equals(intVar, orToolsType.intVar) &&
+        return Objects.equals(boolVar, orToolsType.boolVar) &&
+                Objects.equals(intVar, orToolsType.intVar) &&
                 Objects.equals(constraint, orToolsType.constraint);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(intVar, constraint);
+        return Objects.hash(boolVar, intVar, constraint);
     }
 }
