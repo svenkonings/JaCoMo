@@ -141,13 +141,18 @@ boolean solved = solver.solveAndUpdate(model) // Solved is false since there is 
 
 ## 2. Extending functionality
 ### 2.1 Element overview
+See the image below for an overview of available elements and how they relate to each other. A solid arrow indicates the parent element. Dashed arrows indicate additional implemented interfaces.
+
 [![Elements](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg?sanitize=true)](https://github.com/svenkonings/JaCoMo/raw/master/img/Elements.svg)
+<sup>*Click image for larger version*</sup>
 
 ### 2.2 Custom visitors
-
+Custom visitors can be added by implementing the `Visitor` interface. When a visitor encounters an element, it will try to call its visit implementation for that element type. If no immediate implementation is found, the visitor will traverse up the parent tree till it finds an implementation for the visited element. If no implementation is found, a `NotImplementedException` is thrown.
 
 ### 2.3 Custom elements
+Custom elements should extend the `Elem` interface. When adding custom elements the `Visitor` interface should also be extended with corresponding visit methods for the new element types and the main `visit` method should be adapted as well (only for the new element types, for existing elements `super.visit` can be used).
 
+Existing `Visitor` implementations also need to be extended to use them with the new element types. The extended visitor only needs to implement visit methods for the new element types. Existing elements will be handled by the base visitor implementation (although the implementations can be overwritten if desired).
 
 ## 3. Progress
 The current version is a work-in-progress. The progress for the v0.1 minimum
