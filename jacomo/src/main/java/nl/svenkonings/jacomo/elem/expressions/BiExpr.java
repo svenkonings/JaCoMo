@@ -6,16 +6,18 @@
 
 package nl.svenkonings.jacomo.elem.expressions;
 
-import nl.svenkonings.jacomo.elem.Type;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Represents a binary expression with two sub-expressions.
  */
 public interface BiExpr extends Expr {
     @Override
-    default @NotNull Type getType() {
-        return Type.BiExpr;
+    default @NotNull List<? extends Expr> getChildren() {
+        return ListUtil.of(getLeft(), getRight());
     }
 
     /**

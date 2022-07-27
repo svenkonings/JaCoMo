@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.expressions.integer.binary;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +30,6 @@ public class MinExpr implements BiIntExpr {
     public MinExpr(@NotNull IntExpr left, @NotNull IntExpr right) {
         this.left = left;
         this.right = right;
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.MinExpr;
     }
 
     @Override

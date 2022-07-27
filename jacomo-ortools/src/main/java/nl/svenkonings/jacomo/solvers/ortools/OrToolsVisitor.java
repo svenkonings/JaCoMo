@@ -25,7 +25,10 @@ import nl.svenkonings.jacomo.util.ElemUtil;
 import nl.svenkonings.jacomo.visitor.Visitor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Visitor which builds a OR-Tools CP-SAT model from the visited elements.
@@ -192,10 +195,10 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
                 .map(this::boolVar)
                 .toArray(Literal[]::new);
         switch (biBoolExpr.getType()) {
-            case AndExpr:
+            case "AndExpr":
                 return OrToolsType.constraint(model.addBoolAnd(vars),
                         () -> model.addBoolOr(Arrays.stream(vars).map(Literal::not).toArray(Literal[]::new)));
-            case OrExpr:
+            case "OrExpr":
                 return OrToolsType.constraint(model.addBoolOr(vars),
                         () -> model.addBoolAnd(Arrays.stream(vars).map(Literal::not).toArray(Literal[]::new)));
             default:
@@ -208,22 +211,22 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         IntVar left = intVar(reBoolExpr.getLeft());
         IntVar right = intVar(reBoolExpr.getRight());
         switch (reBoolExpr.getType()) {
-            case EqExpr:
+            case "EqExpr":
                 return OrToolsType.constraint(model.addEquality(left, right),
                         () -> model.addDifferent(left, right));
-            case NeExpr:
+            case "NeExpr":
                 return OrToolsType.constraint(model.addDifferent(left, right),
                         () -> model.addEquality(left, right));
-            case GtExpr:
+            case "GtExpr":
                 return OrToolsType.constraint(model.addGreaterThan(left, right),
                         () -> model.addLessOrEqual(left, right));
-            case GeExpr:
+            case "GeExpr":
                 return OrToolsType.constraint(model.addGreaterOrEqual(left, right),
                         () -> model.addLessThan(left, right));
-            case LtExpr:
+            case "LtExpr":
                 return OrToolsType.constraint(model.addLessThan(left, right),
                         () -> model.addGreaterOrEqual(left, right));
-            case LeExpr:
+            case "LeExpr":
                 return OrToolsType.constraint(model.addLessOrEqual(left, right),
                         () -> model.addGreaterThan(left, right));
             default:
@@ -239,13 +242,13 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
     @Override
     public OrToolsType visitBiIntExpr(BiIntExpr biIntExpr) {
         switch (biIntExpr.getType()) {
-            case SubExpr:
-            case MulExpr: // Although multiplication is associative, OR-Tools does not yet support flattening them
-            case DivExpr:
+            case "SubExpr":
+            case "MulExpr": // Although multiplication is associative, OR-Tools does not yet support flattening them
+            case "DivExpr":
                 return nonAssociativeBiIntExpr(biIntExpr);
-            case AddExpr:
-            case MinExpr:
-            case MaxExpr:
+            case "AddExpr":
+            case "MinExpr":
+            case "MaxExpr":
                 return associativeBiIntExpr(biIntExpr);
             default:
                 throw new UnexpectedTypeException(biIntExpr);
@@ -257,14 +260,14 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
         IntVar right = intVar(biIntExpr.getRight());
         IntVar var = genIntVar();
         switch (biIntExpr.getType()) {
-            case SubExpr:
+            case "SubExpr":
                 // OPTIMIZATION: Combine multiple subtraction scalar expressions
                 model.addEquality(var, LinearExpr.weightedSum(new IntVar[]{left, right}, new long[]{1L, -1L}));
                 return OrToolsType.intVar(var);
-            case MulExpr:
+            case "MulExpr":
                 model.addMultiplicationEquality(var, new IntVar[]{left, right});
                 return OrToolsType.intVar(var);
-            case DivExpr:
+            case "DivExpr":
                 // OR-Tools does not support negative integer division
                 if (left.getDomain().min() < 0) {
                     IntVar oldLeftVar = left;
@@ -289,13 +292,13 @@ public class OrToolsVisitor implements Visitor<OrToolsType> {
                 .toArray(IntVar[]::new);
         IntVar var = genIntVar();
         switch (biIntExpr.getType()) {
-            case AddExpr:
+            case "AddExpr":
                 model.addEquality(var, LinearExpr.sum(vars));
                 return OrToolsType.intVar(var);
-            case MinExpr:
+            case "MinExpr":
                 model.addMinEquality(var, vars);
                 return OrToolsType.intVar(var);
-            case MaxExpr:
+            case "MaxExpr":
                 model.addMaxEquality(var, vars);
                 return OrToolsType.intVar(var);
             default:

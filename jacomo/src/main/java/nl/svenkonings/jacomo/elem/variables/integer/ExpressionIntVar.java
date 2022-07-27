@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.variables.integer;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -46,11 +45,6 @@ public class ExpressionIntVar implements IntVar {
     @Override
     public @NotNull List<IntExpr> getChildren() {
         return ListUtil.of(expression);
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.ExpressionIntVar;
     }
 
     @Override

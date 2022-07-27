@@ -6,6 +6,7 @@
 
 package nl.svenkonings.jacomo.elem;
 
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,14 +21,16 @@ public interface Elem {
      *
      * @return the list of children.
      */
-    @NotNull List<? extends Elem> getChildren();
+    default @NotNull List<? extends Elem> getChildren() {
+        return ListUtil.of();
+    }
 
     /**
      * Get the type of this element.
      *
      * @return the type.
      */
-    default @NotNull Type getType() {
-        return Type.Elem;
+    default @NotNull String getType() {
+        return getClass().getSimpleName();
     }
 }

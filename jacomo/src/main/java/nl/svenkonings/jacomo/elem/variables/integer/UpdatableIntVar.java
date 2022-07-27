@@ -6,19 +6,12 @@
 
 package nl.svenkonings.jacomo.elem.variables.integer;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an updatable integer variable.
  */
 public interface UpdatableIntVar extends IntVar {
-    @Override
-    default @NotNull Type getType() {
-        return Type.UpdatableIntVar;
-    }
-
     /**
      * Instantiate this integer variable with the specified value.
      *

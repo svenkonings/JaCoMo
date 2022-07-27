@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.expressions.bool.unary;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,11 +26,6 @@ public class NotExpr implements UnBoolExpr {
      */
     public NotExpr(@NotNull BoolExpr expr) {
         this.expr = expr;
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.NotExpr;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ElemUtil {
     }
 
     private static void collectAll(BiExpr expr, Expr child, List<Expr> vars) {
-        if (expr.getType() == child.getType()) {
+        if (expr.getType().equals(child.getType())) {
             collectAll((BiExpr) child, vars);
         } else {
             vars.add(child);

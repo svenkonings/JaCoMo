@@ -6,13 +6,11 @@
 
 package nl.svenkonings.jacomo.elem.expressions.bool;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.Expr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.AndExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.binary.OrExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.unary.NotExpr;
 import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
@@ -21,11 +19,6 @@ import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
  * Represents a boolean expression.
  */
 public interface BoolExpr extends Expr {
-    @Override
-    default @NotNull Type getType() {
-        return Type.BoolExpr;
-    }
-
     @Override
     @Nullable Boolean getValue();
 

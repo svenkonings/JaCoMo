@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.constraints;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,11 +40,6 @@ public class BoolExprConstraint implements Constraint {
     @Override
     public @NotNull List<BoolExpr> getChildren() {
         return ListUtil.of(expr);
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.BoolExprConstraint;
     }
 
     @Override

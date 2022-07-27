@@ -7,7 +7,6 @@
 package nl.svenkonings.jacomo.visitor;
 
 import nl.svenkonings.jacomo.elem.Elem;
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.constraints.BoolExprConstraint;
 import nl.svenkonings.jacomo.elem.constraints.Constraint;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
@@ -173,7 +172,7 @@ public class Checker implements Visitor<Elem> {
         }
         BoolExpr expr = (BoolExpr) visit(unBoolExpr.getExpr());
         switch (unBoolExpr.getType()) {
-            case NotExpr:
+            case "NotExpr":
                 return expr.not();
             default:
                 throw new UnexpectedTypeException(unBoolExpr);
@@ -184,7 +183,7 @@ public class Checker implements Visitor<Elem> {
     public Elem visitNotExpr(NotExpr notExpr) {
         if (notExpr.hasValue()) {
             return boolConst(notExpr);
-        } else if (notExpr.getExpr().getType() == Type.NotExpr) {
+        } else if (notExpr.getExpr().getType().equals("NotExpr")) {
             NotExpr subExpr = (NotExpr) notExpr.getExpr();
             return visit(subExpr.getExpr());
         } else {
@@ -200,9 +199,9 @@ public class Checker implements Visitor<Elem> {
         BoolExpr left = (BoolExpr) visit(biBoolExpr.getLeft());
         BoolExpr right = (BoolExpr) visit(biBoolExpr.getRight());
         switch (biBoolExpr.getType()) {
-            case AndExpr:
+            case "AndExpr":
                 return left.and(right);
-            case OrExpr:
+            case "OrExpr":
                 return left.or(right);
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
@@ -243,17 +242,17 @@ public class Checker implements Visitor<Elem> {
         IntExpr left = (IntExpr) visit(reBoolExpr.getLeft());
         IntExpr right = (IntExpr) visit(reBoolExpr.getRight());
         switch (reBoolExpr.getType()) {
-            case EqExpr:
+            case "EqExpr":
                 return left.eq(right);
-            case NeExpr:
+            case "NeExpr":
                 return left.ne(right);
-            case GtExpr:
+            case "GtExpr":
                 return left.gt(right);
-            case GeExpr:
+            case "GeExpr":
                 return left.ge(right);
-            case LtExpr:
+            case "LtExpr":
                 return left.lt(right);
-            case LeExpr:
+            case "LeExpr":
                 return left.le(right);
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
@@ -282,17 +281,17 @@ public class Checker implements Visitor<Elem> {
         IntExpr left = (IntExpr) visit(biIntExpr.getLeft());
         IntExpr right = (IntExpr) visit(biIntExpr.getRight());
         switch (biIntExpr.getType()) {
-            case AddExpr:
+            case "AddExpr":
                 return left.add(right);
-            case SubExpr:
+            case "SubExpr":
                 return left.sub(right);
-            case MulExpr:
+            case "MulExpr":
                 return left.mul(right);
-            case DivExpr:
+            case "DivExpr":
                 return left.div(right);
-            case MinExpr:
+            case "MinExpr":
                 return left.min(right);
-            case MaxExpr:
+            case "MaxExpr":
                 return left.max(right);
             default:
                 throw new UnexpectedTypeException(biIntExpr);

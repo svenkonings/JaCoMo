@@ -180,9 +180,9 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     public ChocoType visitBiBoolExpr(BiBoolExpr biBoolExpr) {
         BoolVar[] vars = collectAll(biBoolExpr).toArray(new BoolVar[0]);
         switch (biBoolExpr.getType()) {
-            case AndExpr:
+            case "AndExpr":
                 return ChocoType.constraint(model.and(vars));
-            case OrExpr:
+            case "OrExpr":
                 return ChocoType.constraint(model.or(vars));
             default:
                 throw new UnexpectedTypeException(biBoolExpr);
@@ -202,7 +202,7 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     }
 
     private void collectAll(BiBoolExpr expr, BoolExpr child, List<BoolVar> vars) {
-        if (expr.getType() == child.getType()) {
+        if (expr.getType().equals(child.getType())) {
             collectAll((BiBoolExpr) child, vars);
         } else {
             vars.add(reExpression(child).boolVar());
@@ -214,17 +214,17 @@ public class ChocoVisitor implements Visitor<ChocoType> {
         ArExpression left = arExpression(reBoolExpr.getLeft());
         ArExpression right = arExpression(reBoolExpr.getRight());
         switch (reBoolExpr.getType()) {
-            case EqExpr:
+            case "EqExpr":
                 return ChocoType.reExpression(left.eq(right));
-            case NeExpr:
+            case "NeExpr":
                 return ChocoType.reExpression(left.ne(right));
-            case GtExpr:
+            case "GtExpr":
                 return ChocoType.reExpression(left.gt(right));
-            case GeExpr:
+            case "GeExpr":
                 return ChocoType.reExpression(left.ge(right));
-            case LtExpr:
+            case "LtExpr":
                 return ChocoType.reExpression(left.lt(right));
-            case LeExpr:
+            case "LeExpr":
                 return ChocoType.reExpression(left.le(right));
             default:
                 throw new UnexpectedTypeException(reBoolExpr);
@@ -240,13 +240,13 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     @Override
     public ChocoType visitBiIntExpr(BiIntExpr biIntExpr) {
         switch (biIntExpr.getType()) {
-            case SubExpr:
-            case DivExpr:
+            case "SubExpr":
+            case "DivExpr":
                 return nonAssociativeBiIntExpr(biIntExpr);
-            case AddExpr:
-            case MulExpr:
-            case MinExpr:
-            case MaxExpr:
+            case "AddExpr":
+            case "MulExpr":
+            case "MinExpr":
+            case "MaxExpr":
                 return associativeBiIntExpr(biIntExpr);
             default:
                 throw new UnexpectedTypeException(biIntExpr);
@@ -257,9 +257,9 @@ public class ChocoVisitor implements Visitor<ChocoType> {
         ArExpression left = arExpression(biIntExpr.getLeft());
         ArExpression right = arExpression(biIntExpr.getRight());
         switch (biIntExpr.getType()) {
-            case SubExpr:
+            case "SubExpr":
                 return ChocoType.arExpression(left.sub(right));
-            case DivExpr:
+            case "DivExpr":
                 return ChocoType.arExpression(left.div(right));
             default:
                 throw new UnexpectedTypeException(biIntExpr);
@@ -270,16 +270,16 @@ public class ChocoVisitor implements Visitor<ChocoType> {
         ArExpression[] children = collectAll(biIntExpr).toArray(new ArExpression[0]);
         ArExpression.Operator operator;
         switch (biIntExpr.getType()) {
-            case AddExpr:
+            case "AddExpr":
                 operator = ArExpression.Operator.ADD;
                 break;
-            case MulExpr:
+            case "MulExpr":
                 operator = ArExpression.Operator.MUL;
                 break;
-            case MinExpr:
+            case "MinExpr":
                 operator = ArExpression.Operator.MIN;
                 break;
-            case MaxExpr:
+            case "MaxExpr":
                 operator = ArExpression.Operator.MAX;
                 break;
             default:
@@ -301,7 +301,7 @@ public class ChocoVisitor implements Visitor<ChocoType> {
     }
 
     private void collectAll(BiIntExpr expr, IntExpr child, List<ArExpression> results) {
-        if (expr.getType() == child.getType()) {
+        if (expr.getType().equals(child.getType())) {
             collectAll((BiIntExpr) child, results);
         } else {
             results.add(arExpression(child));

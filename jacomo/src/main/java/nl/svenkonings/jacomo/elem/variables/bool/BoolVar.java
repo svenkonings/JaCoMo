@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.variables.bool;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.elem.variables.Var;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +14,6 @@ import org.jetbrains.annotations.NotNull;
  * Represents a named boolean variable.
  */
 public interface BoolVar extends Var, BoolExpr {
-    @Override
-    default @NotNull Type getType() {
-        return Type.BoolVar;
-    }
-
     /**
      * Returns a string representation of this variable.
      *

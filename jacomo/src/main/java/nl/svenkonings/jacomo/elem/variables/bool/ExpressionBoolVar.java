@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.variables.bool;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +44,6 @@ public class ExpressionBoolVar implements BoolVar {
     @Override
     public @NotNull List<BoolExpr> getChildren() {
         return ListUtil.of(expression);
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.ExpressionBoolVar;
     }
 
     @Override

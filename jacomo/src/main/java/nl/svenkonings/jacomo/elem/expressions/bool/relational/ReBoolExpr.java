@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.expressions.bool.relational;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.BiExpr;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
@@ -20,13 +19,8 @@ import java.util.List;
  */
 public interface ReBoolExpr extends BoolExpr, BiExpr {
     @Override
-    default @NotNull List<IntExpr> getChildren() {
+    default @NotNull List<? extends IntExpr> getChildren() {
         return ListUtil.of(getLeft(), getRight());
-    }
-
-    @Override
-    default @NotNull Type getType() {
-        return Type.ReBoolExpr;
     }
 
     /**

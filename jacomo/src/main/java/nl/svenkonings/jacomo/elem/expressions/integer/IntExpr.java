@@ -6,12 +6,10 @@
 
 package nl.svenkonings.jacomo.elem.expressions.integer;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.Expr;
 import nl.svenkonings.jacomo.elem.expressions.bool.relational.*;
 import nl.svenkonings.jacomo.elem.expressions.integer.binary.*;
 import nl.svenkonings.jacomo.exceptions.unchecked.InvalidInputException;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
@@ -20,11 +18,6 @@ import static nl.svenkonings.jacomo.util.ArrayUtil.foldLeft;
  * Represents an integer expression.
  */
 public interface IntExpr extends Expr {
-    @Override
-    default @NotNull Type getType() {
-        return Type.IntExpr;
-    }
-
     @Override
     @Nullable Integer getValue();
 

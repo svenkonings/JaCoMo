@@ -6,12 +6,8 @@
 
 package nl.svenkonings.jacomo.elem.variables.bool;
 
-import nl.svenkonings.jacomo.elem.Elem;
-import nl.svenkonings.jacomo.elem.Type;
-import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,16 +31,6 @@ public class ConstantBoolVar implements BoolVar {
     @Override
     public @NotNull String getName() {
         return name;
-    }
-
-    @Override
-    public @NotNull List<? extends Elem> getChildren() {
-        return ListUtil.of();
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.ConstantBoolVar;
     }
 
     @Override

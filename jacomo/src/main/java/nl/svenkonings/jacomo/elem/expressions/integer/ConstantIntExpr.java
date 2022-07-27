@@ -6,12 +6,8 @@
 
 package nl.svenkonings.jacomo.elem.expressions.integer;
 
-import nl.svenkonings.jacomo.elem.Elem;
-import nl.svenkonings.jacomo.elem.Type;
-import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,16 +24,6 @@ public class ConstantIntExpr implements IntExpr {
      */
     public ConstantIntExpr(int value) {
         this.value = value;
-    }
-
-    @Override
-    public @NotNull List<? extends Elem> getChildren() {
-        return ListUtil.of();
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.ConstantIntExpr;
     }
 
     @Override

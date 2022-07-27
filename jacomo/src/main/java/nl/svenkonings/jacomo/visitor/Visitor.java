@@ -218,96 +218,96 @@ public interface Visitor<T> {
      */
     default T visit(Elem elem) throws UnknownTypeException {
         switch (elem.getType()) {
-            case Elem:
+            case "Elem":
                 return visitElem(elem);
             // Constraints
-            case Constraint:
+            case "Constraint":
                 return visitConstraint((Constraint) elem);
-            case BoolExprConstraint:
+            case "BoolExprConstraint":
                 return visitBoolExprConstraint((BoolExprConstraint) elem);
             // Expressions
-            case Expr:
+            case "Expr":
                 return visitExpr((Expr) elem);
-            case UnExpr:
+            case "UnExpr":
                 return visitUnExpr((UnExpr) elem);
-            case BiExpr:
+            case "BiExpr":
                 return visitBiExpr((BiExpr) elem);
             // Bool expressions
-            case BoolExpr:
+            case "BoolExpr":
                 return visitBoolExpr((BoolExpr) elem);
             // Unary bool expressions
-            case UnBoolExpr:
+            case "UnBoolExpr":
                 return visitUnBoolExpr((UnBoolExpr) elem);
-            case NotExpr:
+            case "NotExpr":
                 return visitNotExpr((NotExpr) elem);
-            case ConstantBoolExpr:
+            case "ConstantBoolExpr":
                 return visitConstantBoolExpr((ConstantBoolExpr) elem);
             // Binary bool expressions
-            case BiBoolExpr:
+            case "BiBoolExpr":
                 return visitBiBoolExpr((BiBoolExpr) elem);
-            case AndExpr:
+            case "AndExpr":
                 return visitAndExpr((AndExpr) elem);
-            case OrExpr:
+            case "OrExpr":
                 return visitOrExpr((OrExpr) elem);
             // Relational bool expressions
-            case ReBoolExpr:
+            case "ReBoolExpr":
                 return visitReBoolExpr((ReBoolExpr) elem);
-            case EqExpr:
+            case "EqExpr":
                 return visitEqExpr((EqExpr) elem);
-            case NeExpr:
+            case "NeExpr":
                 return visitNeExpr((NeExpr) elem);
-            case GtExpr:
+            case "GtExpr":
                 return visitGtExpr((GtExpr) elem);
-            case GeExpr:
+            case "GeExpr":
                 return visitGeExpr((GeExpr) elem);
-            case LtExpr:
+            case "LtExpr":
                 return visitLtExpr((LtExpr) elem);
-            case LeExpr:
+            case "LeExpr":
                 return visitLeExpr((LeExpr) elem);
             // Int expressions
-            case IntExpr:
+            case "IntExpr":
                 return visitIntExpr((IntExpr) elem);
-            case ConstantIntExpr:
+            case "ConstantIntExpr":
                 return visitConstantIntExpr((ConstantIntExpr) elem);
             // Binary int expressions
-            case BiIntExpr:
+            case "BiIntExpr":
                 return visitBiIntExpr((BiIntExpr) elem);
-            case AddExpr:
+            case "AddExpr":
                 return visitAddExpr((AddExpr) elem);
-            case SubExpr:
+            case "SubExpr":
                 return visitSubExpr((SubExpr) elem);
-            case MulExpr:
+            case "MulExpr":
                 return visitMulExpr((MulExpr) elem);
-            case DivExpr:
+            case "DivExpr":
                 return visitDivExpr((DivExpr) elem);
-            case MinExpr:
+            case "MinExpr":
                 return visitMinExpr((MinExpr) elem);
-            case MaxExpr:
+            case "MaxExpr":
                 return visitMaxExpr((MaxExpr) elem);
             // Variables
-            case Var:
+            case "Var":
                 return visitVar((Var) elem);
             // Bool variables
-            case BoolVar:
+            case "BoolVar":
                 return visitBoolVar((BoolVar) elem);
-            case ConstantBoolVar:
+            case "ConstantBoolVar":
                 return visitConstantBoolVar((ConstantBoolVar) elem);
-            case ExpressionBoolVar:
+            case "ExpressionBoolVar":
                 return visitExpressionBoolVar((ExpressionBoolVar) elem);
-            case UpdatableBoolVar:
+            case "UpdatableBoolVar":
                 return visitUpdatableBoolVar((UpdatableBoolVar) elem);
-            case InstantiatableBoolVar:
+            case "InstantiatableBoolVar":
                 return visitInstantiatableBoolVar((InstantiatableBoolVar) elem);
             // Int variables
-            case IntVar:
+            case "IntVar":
                 return visitIntVar((IntVar) elem);
-            case ConstantIntVar:
+            case "ConstantIntVar":
                 return visitConstantIntVar((ConstantIntVar) elem);
-            case ExpressionIntVar:
+            case "ExpressionIntVar":
                 return visitExpressionIntVar((ExpressionIntVar) elem);
-            case UpdatableIntVar:
+            case "UpdatableIntVar":
                 return visitUpdatableIntVar((UpdatableIntVar) elem);
-            case BoundedIntVar:
+            case "BoundedIntVar":
                 return visitBoundedIntVar((BoundedIntVar) elem);
             default:
                 throw new UnknownTypeException("Unknown type: %s", elem.getType());

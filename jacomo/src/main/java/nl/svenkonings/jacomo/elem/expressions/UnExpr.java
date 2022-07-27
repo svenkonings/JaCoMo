@@ -6,16 +6,18 @@
 
 package nl.svenkonings.jacomo.elem.expressions;
 
-import nl.svenkonings.jacomo.elem.Type;
+import nl.svenkonings.jacomo.util.ListUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Represents a unary expression with a single sub-expressions.
  */
 public interface UnExpr extends Expr {
     @Override
-    default @NotNull Type getType() {
-        return Type.UnExpr;
+    default @NotNull List<? extends Expr> getChildren() {
+        return ListUtil.of(getExpr());
     }
 
     /**

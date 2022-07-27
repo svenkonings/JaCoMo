@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.variables.integer;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.integer.IntExpr;
 import nl.svenkonings.jacomo.elem.variables.Var;
 import nl.svenkonings.jacomo.exceptions.unchecked.ContradictionException;
@@ -17,11 +16,6 @@ import org.jetbrains.annotations.Nullable;
  * Represents a named integer variable.
  */
 public interface IntVar extends Var, IntExpr {
-    @Override
-    default @NotNull Type getType() {
-        return Type.IntVar;
-    }
-
     /**
      * Returns a string representation of this variable.
      *

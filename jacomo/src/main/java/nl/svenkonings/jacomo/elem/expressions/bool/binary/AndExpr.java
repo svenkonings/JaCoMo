@@ -6,7 +6,6 @@
 
 package nl.svenkonings.jacomo.elem.expressions.bool.binary;
 
-import nl.svenkonings.jacomo.elem.Type;
 import nl.svenkonings.jacomo.elem.expressions.bool.BoolExpr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,11 +29,6 @@ public class AndExpr implements BiBoolExpr {
     public AndExpr(@NotNull BoolExpr left, @NotNull BoolExpr right) {
         this.left = left;
         this.right = right;
-    }
-
-    @Override
-    public @NotNull Type getType() {
-        return Type.AndExpr;
     }
 
     @Override
