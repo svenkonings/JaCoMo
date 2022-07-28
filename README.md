@@ -192,7 +192,7 @@ viable product release is as follows:
 - [ ] Unit-test for non-trivial classes and system tests
   - [x] System tests (for all solvers)
   - [x] Expressions
-  - [ ] Variables
+  - [x] Variables
   - [ ] Helper objects (Model, VarMap, Checker, ElemCopier)
 - [x] Getting started documentation with examples
 - [x] JavaDoc documentation
