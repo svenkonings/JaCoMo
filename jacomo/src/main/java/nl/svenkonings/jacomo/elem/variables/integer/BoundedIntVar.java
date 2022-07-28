@@ -59,9 +59,7 @@ public class BoundedIntVar implements UpdatableIntVar {
      */
     public BoundedIntVar(@NotNull String name, @Nullable Integer lowerBound, @Nullable Integer upperBound) throws ContradictionException {
         this.name = name;
-        if (lowerBound != null && upperBound != null && lowerBound > upperBound) {
-            throw new ContradictionException("Lower bound %d is higher than upper bound %d", lowerBound, upperBound);
-        }
+        checkBounds(lowerBound, upperBound);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
@@ -87,12 +85,7 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     @Override
     public void instantiateValue(int value) throws ContradictionException {
-        if (lowerBound != null && value < lowerBound) {
-            throw new ContradictionException("New value %d is lower than lower bound %d", value, lowerBound);
-        }
-        if (upperBound != null && value > upperBound) {
-            throw new ContradictionException("New value %d is higher than upper bound %d", value, upperBound);
-        }
+        checkValue(value);
         lowerBound = value;
         upperBound = value;
     }
@@ -109,12 +102,7 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     @Override
     public void updateLowerBound(int lowerBound) throws ContradictionException {
-        if (this.lowerBound != null && lowerBound < this.lowerBound) {
-            throw new ContradictionException("New lower bound %d is lower than current lower bound %d", lowerBound, this.lowerBound);
-        }
-        if (this.upperBound != null && lowerBound > this.upperBound) {
-            throw new ContradictionException("New lower bound %d is higher than current upper bound %d", lowerBound, this.upperBound);
-        }
+        checkLowerBound(lowerBound);
         this.lowerBound = lowerBound;
     }
 
@@ -130,13 +118,50 @@ public class BoundedIntVar implements UpdatableIntVar {
 
     @Override
     public void updateUpperBound(int upperBound) throws ContradictionException {
+        checkUpperBound(upperBound);
+        this.upperBound = upperBound;
+    }
+
+    @Override
+    public void updateBounds(int lowerBound, int upperBound) throws ContradictionException {
+        checkBounds(lowerBound, upperBound);
+        checkLowerBound(lowerBound);
+        checkUpperBound(upperBound);
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+    }
+
+    private void checkValue(int value) throws ContradictionException {
+        if (lowerBound != null && value < lowerBound) {
+            throw new ContradictionException("New value %d is lower than lower bound %d", value, lowerBound);
+        }
+        if (upperBound != null && value > upperBound) {
+            throw new ContradictionException("New value %d is higher than upper bound %d", value, upperBound);
+        }
+    }
+
+    private void checkBounds(Integer lowerBound, Integer upperBound) throws ContradictionException {
+        if (lowerBound != null && upperBound != null && lowerBound > upperBound) {
+            throw new ContradictionException("Lower bound %d is higher than upper bound %d", lowerBound, upperBound);
+        }
+    }
+
+    private void checkLowerBound(int lowerBound) throws ContradictionException {
+        if (this.lowerBound != null && lowerBound < this.lowerBound) {
+            throw new ContradictionException("New lower bound %d is lower than current lower bound %d", lowerBound, this.lowerBound);
+        }
+        if (this.upperBound != null && lowerBound > this.upperBound) {
+            throw new ContradictionException("New lower bound %d is higher than current upper bound %d", lowerBound, this.upperBound);
+        }
+    }
+
+    private void checkUpperBound(int upperBound) throws ContradictionException {
         if (this.upperBound != null && upperBound > this.upperBound) {
             throw new ContradictionException("New upper bound %d is higher than current upper bound %d", upperBound, this.upperBound);
         }
         if (this.lowerBound != null && upperBound < this.lowerBound) {
             throw new ContradictionException("New upper bound %d is lower than current lower bound %d", upperBound, this.lowerBound);
         }
-        this.upperBound = upperBound;
     }
 
     @Override

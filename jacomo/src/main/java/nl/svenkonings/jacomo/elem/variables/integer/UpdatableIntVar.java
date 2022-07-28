@@ -47,8 +47,5 @@ public interface UpdatableIntVar extends IntVar {
      * @throws ContradictionException if one of the specified value is
      *                                outside the bounds of this variable
      */
-    default void updateBounds(int lowerBound, int upperBound) throws ContradictionException {
-        updateLowerBound(lowerBound);
-        updateUpperBound(upperBound);
-    }
+    void updateBounds(int lowerBound, int upperBound) throws ContradictionException;
 }
