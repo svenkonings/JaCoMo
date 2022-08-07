@@ -39,7 +39,7 @@ BoolVar b6 = model.boolVar("z", b3.or(b4)); // Boolean variable with given name 
 ```
 #### 1.2.2 Integer variables
 ```java
-IntVar i1  = model.intVar();                // Integer variable with generated name
+IntVar i1  = model.intVar();                // Integer variable with generated name (_int_0, _int_1, etc.)
 IntVar i2  = model.intVar("u");             // Integer variable with given name
 IntVar i3  = model.intVar(3);               // Integer variable with generated name and given value
 IntVar i4  = model.intVar("v", 4);          // Integer variable with given name and given value

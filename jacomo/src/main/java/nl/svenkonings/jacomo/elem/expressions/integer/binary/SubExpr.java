@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Represents an Subtraction expression.
+ * Represents a Subtraction expression.
  */
 @SuppressWarnings("ConstantConditions")
 public class SubExpr implements BiIntExpr {

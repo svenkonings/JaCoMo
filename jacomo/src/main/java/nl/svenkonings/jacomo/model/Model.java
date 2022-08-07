@@ -173,7 +173,7 @@ public class Model {
     }
 
     /**
-     * Add the specified collection of vars to this model without checking f00or generated names.
+     * Add the specified collection of vars to this model without checking for generated names.
      * All existing vars with the same names will be replaced.
      *
      * @param vars the specified collection of vars
@@ -248,9 +248,9 @@ public class Model {
     }
 
     /**
-     * Returns a stream of the constrains in this model.
+     * Returns a stream of the constraints in this model.
      *
-     * @return a stream of the constrains in this model.
+     * @return a stream of the constraints in this model.
      */
     public @NotNull Stream<Constraint> constraintStream() {
         return constraints.stream();
@@ -452,7 +452,7 @@ public class Model {
     }
 
     /**
-     * Create a integer constant with the specified value and a generated name,
+     * Create an integer constant with the specified value and a generated name,
      * and add it to this model. If this model already contains the constant,
      * no constant is created and the existing constant is returned instead.
      *
@@ -471,7 +471,7 @@ public class Model {
     }
 
     /**
-     * Create a integer variable with the specified name and value,
+     * Create an integer variable with the specified name and value,
      * and add it to this model.
      *
      * @param name  the specified name
@@ -485,7 +485,7 @@ public class Model {
     }
 
     /**
-     * Create a integer variable with the specified expression and a generated name,
+     * Create an integer variable with the specified expression and a generated name,
      * and add it to this model.
      *
      * @param expr the specified expression
@@ -499,7 +499,7 @@ public class Model {
     }
 
     /**
-     * Create a integer variable with the specified name and expression,
+     * Create an integer variable with the specified name and expression,
      * and add it to this model.
      *
      * @param name the specified name

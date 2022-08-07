@@ -38,7 +38,7 @@ public interface IntExpr extends Expr {
     /**
      * Returns whether this integer expression has a (instantiated) upper-bound.
      *
-     * @return {@code true} if this expression has a upper-bound
+     * @return {@code true} if this expression has an upper-bound
      */
     boolean hasUpperBound();
 

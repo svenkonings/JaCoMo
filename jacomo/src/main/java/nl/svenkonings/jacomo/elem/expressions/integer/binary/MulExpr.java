@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Represents an Multiplication expression.
+ * Represents a Multiplication expression.
  */
 @SuppressWarnings("ConstantConditions")
 public class MulExpr implements BiIntExpr {

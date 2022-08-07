@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Represents an Division expression.
+ * Represents a Division expression.
  */
 @SuppressWarnings({"ConstantConditions", "UnnecessaryUnboxing"})
 public class DivExpr implements BiIntExpr {

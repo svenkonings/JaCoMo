@@ -28,7 +28,7 @@ public class ArrayUtil {
      * @param <T>      the type of the elements
      * @param <U>      the result type. Since the first element is used as the initial result,
      *                 the result type has to extend {@link T}
-     * @return the reduce result
+     * @return the final result
      * @throws InvalidInputException if the array has less than two elements
      */
     public static <T, U extends T> U foldLeft(T[] array, BiFunction<T, T, U> function) throws InvalidInputException {

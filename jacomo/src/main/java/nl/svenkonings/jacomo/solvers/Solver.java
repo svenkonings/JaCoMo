@@ -121,7 +121,7 @@ public interface Solver {
     }
 
     /**
-     * Attempt to to solve the specified model. Returns a
+     * Attempt to solve the specified model. Returns a
      * {@link VarMap} containing the resolved variables, or {@code null} if
      * the model couldn't be solved. Does not check or optimize the
      * model. All variables present in the model should be included in the map.
