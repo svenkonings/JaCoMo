@@ -120,7 +120,7 @@ Solver solver = new ChocoSolver() // Pick solver implementation
 VarMap vars = solver.solve(model); // Solves the model and returns variable map with resulting values
 IntVar x2 = vars.getVar("x"); // Get the solved variable x
 x2.getValue() // 3, the solved variable x has value 3
-x.getValue(); // null, the model has not been updated thus x only has not been instantiated
+x.getValue(); // null, the model has not been updated thus x has not been instantiated
 vars.getVar("y").getValue() // 2, the solved variable y has value 2
 
 boolean solved = solver.solveAndUpdate(model) // Solves the model and updates the variables directly
@@ -155,45 +155,53 @@ Custom elements should extend the `Elem` interface. When adding custom elements 
 Existing `Visitor` implementations also need to be extended to use them with the new element types. The extended visitor only needs to implement visit methods for the new element types. Existing elements will be handled by the base visitor implementation (although the implementations can be overwritten if desired).
 
 ## 3. Progress
-The current version is a work-in-progress. The progress for the v0.1 minimum
-viable product release is as follows:
-- [x] Basic model containing variables and constraints
-  - [x] Basic variables
-    - [x] Boolean
-    - [x] Integer
-  - [x] Basic expressions
-    - [x] Constants
-      - [x] Boolean
-      - [x] Integer
-    - [x] Boolean logic
-      - [x] And
-      - [x] Or
-      - [x] Not
-    - [x] Relational expressions
-      - [x] Equals
-      - [x] Not equals
-      - [x] Lesser than
-      - [x] Lesser or equals
-      - [x] Greater than
-      - [x] Greater or equals
-    - [x] Basic arithmetic expressions
-      - [x] Addition
-      - [x] Subtraction
-      - [x] Multiplication
-      - [x] Integer division
-      - [x] Minimum
-      - [x] Maximum
-  - [x] Boolean constraints
-- [x] Model factory methods for creating variables
-- [x] Visitor pattern for traversing the model
-- [x] Solver implementations
-  - [x] Choco-solver
-  - [x] OR-tools
-- [ ] Unit-test for non-trivial classes and system tests
-  - [x] System tests (for all solvers)
-  - [x] Expressions
-  - [x] Variables
-  - [ ] Helper objects (Model, VarMap, Checker, ElemCopier)
-- [x] Getting started documentation with examples
-- [x] JavaDoc documentation
-- [x] Maven Central Repository release
+Version 0.1 is a minimal viable product. It contains the following:
+
+- Basic model containing variables and constraints
+  - Basic variables
+    - Boolean
+    - Integer
+  - Basic expressions
+    - Constants
+      - Boolean
+      - Integer
+    - Boolean logic
+      - And
+      - Or
+      - Not
+    - Relational expressions
+      - Equals
+      - Not equals
+      - Lesser than
+      - Lesser or equals
+      - Greater than
+      - Greater or equals
+    - Basic arithmetic expressions
+      - Addition
+      - Subtraction
+      - Multiplication
+      - Integer division
+      - Minimum
+      - Maximum
+  - Boolean constraints
+- Model factory methods for creating variables
+- Visitor pattern for traversing the model
+- Solver implementations
+  - Choco-solver
+  - OR-tools
+- Unit-test for non-trivial classes and system tests
+- Getting started documentation with examples
+- JavaDoc documentation
+- Maven Central Repository release
+
+Future goals are to:
+
+- Expand the model with more operations
+  - Xor expression
+  - Real variables
+  - Additional types of constraints
+- Add more solver implementations
+  - MiniZinc
+  - OscaR
+  - JaCop
+  - Yuck

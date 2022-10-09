@@ -14,7 +14,7 @@ After the MVP is done the goals are to:
   - JaCop
   - Yuck
 
-## v0.1 - MVP (In progress)
+## v0.1 - MVP
 Version 0.1 is a minimal viable product. It contains the following:
 
 - Basic model containing variables and constraints
@@ -53,6 +53,14 @@ Version 0.1 is a minimal viable product. It contains the following:
 - Getting started documentation with examples
 - JavaDoc documentation
 - Maven Central Repository release
+
+The following has changed from RC4:
+
+- Use Strings instead of enums for element types (improves extensibility of the model)
+- Add documentation for extending the model
+- Add unit tests for complex variables, the model and the visitor implementation
+- Update dependencies
+- Use the new OR-Tools Literal and BoolVar classes
 
 ## v0.1-RC4
 The fourth release candidate of version 0.1. The following has changed from RC3:
